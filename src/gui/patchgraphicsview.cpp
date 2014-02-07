@@ -23,12 +23,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <iostream>
 
 #include <QMouseEvent>
+#include <QBrush>
 
-PatchGraphicsView::PatchGraphicsView(QGraphicsScene *scene, QWidget *parent) :
-    QGraphicsView(scene, parent),
+PatchGraphicsView::PatchGraphicsView(QWidget *parent) :
+    QGraphicsView(new QGraphicsScene(parent), parent),
+    patch_  (0),
     action_ (A_NOTHING)
 {
+    setBackgroundBrush(QBrush(QColor(30,30,40)));
 }
+
+
+void PatchGraphicsView::setPatch(CSMOD::Patch * patch)
+{
+    patch_ = patch;
+}
+
+
+
+
+
+
+
+
 
 void PatchGraphicsView::keyPressEvent(QKeyEvent * e)
 {

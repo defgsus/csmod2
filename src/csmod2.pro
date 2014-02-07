@@ -30,7 +30,8 @@ SOURCES += \
     mod/module.cpp \
     mod/connector.cpp \
     mod/connection.cpp \
-    mod/patch.cpp
+    mod/patch.cpp \
+    gui/connectoritem.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -42,4 +43,5 @@ HEADERS += \
     mod/base.h \
     mod/connector.h \
     mod/connection.h \
-    mod/patch.h
+    mod/patch.h \
+    gui/connectoritem.h

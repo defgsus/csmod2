@@ -20,10 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "patchview.h"
 
-#include "moduleitem.h"
-#include "cableitem.h"
-#include "patchgraphicsview.h"
-
 #include <QPainter>
 #include <QPalette>
 #include <QScrollArea>
@@ -34,8 +30,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QGraphicsView>
 #include <QToolBar>
 
+#include "moduleitem.h"
+#include "cableitem.h"
+#include "patchgraphicsview.h"
+
+#include "mod/module.h"
+#include "mod/patch.h"
+
 PatchView::PatchView(QWidget *parent) :
-    QFrame(parent)
+    QFrame(parent),
+    patch_  (0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -54,16 +58,13 @@ PatchView::PatchView(QWidget *parent) :
     auto tb = new QToolBar(this);
     l0->addWidget(tb);
 
-    auto scene = new QGraphicsScene(this);
-    auto view = new PatchGraphicsView(scene, this);
-    l0->addWidget(view);
-    //view->translate(200,2000);
-    //view->setSceneRect(0,0,1000,1000);
-    //view->scale(2,2);
-
+    pview_ = new PatchGraphicsView(this);
+    l0->addWidget(pview_);
+    /*
     for (int i=0; i<300; ++i)
     {
-        auto m = new ModuleItem();
+        auto mod = new CSMOD::TestModule();
+        auto m = new ModuleItem(mod);
         scene->addItem( m );
         m->setPos(i*10, rand()%100);
     }
@@ -74,6 +75,7 @@ PatchView::PatchView(QWidget *parent) :
         scene->addItem(c);
         c->setLine(rand()%400, rand()%400, rand()%400, rand()%400);
     }
+    */
     //scene->addRect(0,0,50,50);
     //scene->addRect(width()-10,30,50,50);
     /*
@@ -103,6 +105,29 @@ QSize PatchView::sizeHint() const
 {
     return QSize(800,600);
 }
+
+
+void PatchView::setPatch(CSMOD::Patch * patch)
+{
+    patch_ = patch;
+    pview_->setPatch(patch_);
+
+    int k=0;
+    for (auto m : patch_->modules())
+    {
+        auto mitem = new ModuleItem(m);
+        pview_->scene()->addItem(mitem);
+        mitem->setPos(10 + k*120, 10);
+        ++k;
+    }
+}
+
+
+
+
+
+
+
 
 /*
 void PatchView::paintEvent(QPaintEvent * event)

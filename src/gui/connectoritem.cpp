@@ -18,49 +18,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef PATCHVIEW_H
-#define PATCHVIEW_H
+#include "connectoritem.h"
 
-#include <QFrame>
+#include <QBrush>
 
-namespace CSMOD {
-class Module;
-class Connection;
-class Connector;
-class Patch;
-}
+#include "moduleitem.h"
 
-class PatchGraphicsView;
 
-/** direct view into a patch */
-class PatchView : public QFrame
+
+ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
+    :   QGraphicsRectItem(parent),
+        moduleItem_  (parent),
+        con_         (con)
 {
-    Q_OBJECT
-public:
-    explicit PatchView(QWidget *parent = 0);
+    setFlags(
+          QGraphicsItem::ItemIsSelectable
+        | QGraphicsItem::ItemIsFocusable
+        //| QGraphicsItem::ItemClipsToShape
+        );
 
-    QSize sizeHint() const;
-
-    /** Assigns a patch for editing/viewing.
-        Set to NULL to deconnect. */
-    void setPatch(CSMOD::Patch * patch);
-
-signals:
-
-public slots:
-
-protected:
-    virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseMoveEvent(QMouseEvent *);
-    virtual void mouseReleaseEvent(QMouseEvent *);
-
-    //virtual void paintEvent(QPaintEvent *);
-
-    // __________ PROTECTED MEMBER __________________
-
-    CSMOD::Patch * patch_;
-    PatchGraphicsView * pview_;
-
-};
-
-#endif // PATCHVIEW_H
+    setBrush(QBrush(QColor(50,50,50)));
+    setRect(0,0, 10, 10);
+}

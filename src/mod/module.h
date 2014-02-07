@@ -31,17 +31,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 class Container;
-
+class Patch;
 
 class Module
 {
+    // To adjust some private settings
+    friend class Patch;
+
     public:
 
-    Module(const std::string& className)
-        :   className_(className),
-            idName_   (className),
-            name_     (className)
-    { }
+    Module(const std::string& className);
 
     virtual ~Module();
 
@@ -60,6 +59,9 @@ class Module
 
     /** returns the user-defined name */
     const std::string& name() const { return name_; }
+
+    /** return Patch, this Module belongs to */
+    Patch * patch() const { return patch_; }
 
     // ------------ basic settings --------------------
 
@@ -110,6 +112,11 @@ class Module
     /** simply wipes out all connectors */
     void deleteConnectors_();
 
+    // _______________ PRIVATE MEMBER _________________
+
+    /** containing Patch */
+    Patch * patch_;
+
     /** all Connectors of this module */
     std::vector<Connector*> cons_;
 
@@ -134,7 +141,9 @@ class TestModule : public Module
 
     TestModule() : Module("TestModule")
     {
+        for (int i=0; i<1+rand()%10; ++i)
         add_(new AudioConnector(this, Connector::IN,  "audio_in", "audio in"));
+        for (int i=0; i<1+rand()%10; ++i)
         add_(new AudioConnector(this, Connector::OUT, "audio_out", "audio out"));
     }
 

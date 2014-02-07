@@ -20,16 +20,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "moduleitem.h"
 
+#include <iostream>
 
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
-#include <iostream>
+#include "mod/module.h"
+#include "mod/connector.h"
+#include "connectoritem.h"
 
-ModuleItem::ModuleItem(QGraphicsItem *parent) :
+ModuleItem::ModuleItem(CSMOD::Module * module, QGraphicsItem *parent) :
     QGraphicsRectItem(parent),
     focus_  (false),
-    sel_    (false)
+    sel_    (false),
+    module_ (0)
 {
     setFlags(
         QGraphicsItem::ItemIsMovable
@@ -40,15 +44,58 @@ ModuleItem::ModuleItem(QGraphicsItem *parent) :
         //| QGraphicsItem::ItemSendsGeometryChanges
         //| QGraphicsItem::ItemSendsScenePositionChanges
                 );
-    //setBackgroundRole(QPalette::Light);
-    setRect(0,0,100,100);
 
-    auto it = new QGraphicsSimpleTextItem(this);
+    updateFromModule_(module);
+
+/*    auto it = new QGraphicsSimpleTextItem(this);
     it->setText("hello");
+    */
 }
 
 
-void ModuleItem::paint(QPainter * p, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ModuleItem::updateFromModule_(CSMOD::Module * module)
+{
+    deleteChildItems_();
+    module_ = module;
+
+    int width = 100;
+
+    int num_in = 0, num_out = 0;
+    for (size_t i=0; i<module_->numConnectors(); ++i)
+    {
+        auto c = module_->connector(i);
+        auto ci = new ConnectorItem(this, c);
+
+        if (c->dir() == CSMOD::Connector::IN)
+        {
+            ci->setPos(0, 10 + num_in * 15);
+            ++num_in;
+        }
+        else
+        {
+            ci->setPos(width - 10, 10 + num_out * 15);
+            ++num_out;
+        }
+    }
+
+    setRect(0,0,width, std::max(num_in, num_out) * 15 + 20);
+}
+
+void ModuleItem::deleteChildItems_()
+{
+    for (auto c : childItems())
+        delete c;
+    childItems().clear();
+}
+
+
+
+
+
+
+void ModuleItem::paint(QPainter * p, const
+                       QStyleOptionGraphicsItem * /*option*/,
+                       QWidget * /*widget*/)
 {
     p->setBrush(QColor(10 + hasFocus() * 180,
                        50 + hasCursor() * 50,
@@ -56,6 +103,8 @@ void ModuleItem::paint(QPainter * p, const QStyleOptionGraphicsItem *option, QWi
                        ));
     p->drawRect(rect());
 }
+
+
 
 /*
 void ModuleItem::mousePressEvent(QGraphicsSceneMouseEvent * e)

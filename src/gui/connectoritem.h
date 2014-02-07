@@ -18,49 +18,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef PATCHVIEW_H
-#define PATCHVIEW_H
+#ifndef CONNECTORITEM_H
+#define CONNECTORITEM_H
 
-#include <QFrame>
+#include <QGraphicsRectItem>
 
-namespace CSMOD {
-class Module;
-class Connection;
-class Connector;
-class Patch;
-}
+namespace CSMOD { class Connector; }
+class ModuleItem;
 
-class PatchGraphicsView;
-
-/** direct view into a patch */
-class PatchView : public QFrame
+class ConnectorItem : public QGraphicsRectItem
 {
-    Q_OBJECT
 public:
-    explicit PatchView(QWidget *parent = 0);
+    explicit ConnectorItem(ModuleItem * parent, CSMOD::Connector * con);
 
-    QSize sizeHint() const;
-
-    /** Assigns a patch for editing/viewing.
-        Set to NULL to deconnect. */
-    void setPatch(CSMOD::Patch * patch);
-
-signals:
-
-public slots:
+    CSMOD::Connector * connector() const { return con_; }
 
 protected:
-    virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseMoveEvent(QMouseEvent *);
-    virtual void mouseReleaseEvent(QMouseEvent *);
 
-    //virtual void paintEvent(QPaintEvent *);
+    //virtual void res
 
-    // __________ PROTECTED MEMBER __________________
-
-    CSMOD::Patch * patch_;
-    PatchGraphicsView * pview_;
-
+    ModuleItem * moduleItem_;
+    CSMOD::Connector * con_;
 };
 
-#endif // PATCHVIEW_H
+#endif // CONNECTORITEM_H

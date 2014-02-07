@@ -53,6 +53,7 @@ Module * Patch::getModule(const std::string& idname)
 bool Patch::addModule(Module * module)
 {
     modules_.push_back(module);
+    module->patch_ = this;
     return true;
 }
 

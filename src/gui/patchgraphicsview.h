@@ -23,13 +23,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsView>
 
-class QGraphicsScene;
+namespace CSMOD { class Patch; }
 
 class PatchGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit PatchGraphicsView(QGraphicsScene * scene, QWidget *parent = 0);
+    explicit PatchGraphicsView(QWidget *parent = 0);
+
+    /** Assigns a patch for editing/viewing.
+        Set to NULL to deconnect. */
+    void setPatch(CSMOD::Patch * patch);
 
 signals:
 
@@ -50,9 +54,14 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *event);
 
+    // ___________ PROTECTED MEMBER ____________
+
+    CSMOD::Patch * patch_;
+
     Action action_;
     QPoint lastm_;
     QTransform lastt_;
+
 };
 
 #endif // PATCHGRAPHICSVIEW_H

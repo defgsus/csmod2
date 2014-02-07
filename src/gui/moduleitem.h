@@ -23,16 +23,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsItem>
 
+namespace CSMOD { class Module; }
+
+
 class ModuleItem : public QGraphicsRectItem
 {
 public:
-    explicit ModuleItem(QGraphicsItem *parent = 0);
+    explicit ModuleItem(CSMOD::Module * module, QGraphicsItem *parent = 0);
 
 signals:
 
 public slots:
 
 protected:
+
+    virtual void updateFromModule_(CSMOD::Module * module);
+
+    void deleteChildItems_();
 
     //virtual void paintEvent(QPaintEvent *);
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -46,6 +53,8 @@ protected:
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
     */
     bool focus_, sel_;
+
+    CSMOD::Module * module_;
 };
 
 #endif // MODULEITEM_H

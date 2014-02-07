@@ -20,11 +20,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "mainwindow.h"
 
-#include "patchview.h"
-
 #include <QLayout>
 #include <QStatusBar>
 #include <QPushButton>
+
+#include "patchview.h"
+#include "mod/patch.h"
+#include "mod/module.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -38,6 +40,11 @@ MainWindow::MainWindow(QWidget *parent)
     patchview_ = new PatchView();
     setCentralWidget(patchview_);
     //l0->addWidget(patchview_);
+
+    auto p = new CSMOD::Patch();
+    for (int i=0; i<40; ++i)
+        p->addModule(new CSMOD::TestModule);
+    patchview_->setPatch(p);
 }
 
 MainWindow::~MainWindow()
