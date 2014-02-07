@@ -25,10 +25,19 @@ SOURCES += \
     gui/mainwindow.cpp \
     gui/patchview.cpp \
     gui/moduleitem.cpp \
-    gui/patchgraphicsview.cpp
+    gui/patchgraphicsview.cpp \
+    gui/cableitem.cpp \
+    mod/module.cpp \
+    mod/connector.cpp \
+    mod/connection.cpp
 
 HEADERS += \
     gui/mainwindow.h \
     gui/patchview.h \
     gui/moduleitem.h \
-    gui/patchgraphicsview.h
+    gui/patchgraphicsview.h \
+    gui/cableitem.h \
+    mod/module.h \
+    mod/base.h \
+    mod/connector.h \
+    mod/connection.h

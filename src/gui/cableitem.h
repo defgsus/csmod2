@@ -18,34 +18,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef MODULEITEM_H
-#define MODULEITEM_H
+#ifndef CABLEITEM_H
+#define CABLEITEM_H
 
-#include <QGraphicsItem>
+#include <QGraphicsLineItem>
 
-class ModuleItem : public QGraphicsRectItem
+class ModuleItem;
+
+class CableItem : public QGraphicsLineItem
 {
 public:
-    explicit ModuleItem(QGraphicsItem *parent = 0);
-
-signals:
-
-public slots:
-
-protected:
-
-    //virtual void paintEvent(QPaintEvent *);
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    /*
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
-    */
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
-    /*virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-    */
-    bool focus_, sel_;
+    explicit CableItem(QGraphicsItem * parent = 0);
 };
 
-#endif // MODULEITEM_H
+#endif // CABLEITEM_H

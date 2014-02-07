@@ -1,0 +1,95 @@
+/***************************************************************************
+
+Copyright (C) 2014  stefan.berke @ modular-audio-graphics.com
+
+This source is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either
+version 3.0 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this software; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+****************************************************************************/
+
+#ifndef CSMOD_MOD_CONNECTOR_H
+#define CSMOD_MOD_CONNECTOR_H
+
+#include <string>
+
+namespace CSMOD {
+
+
+class Module;
+
+
+
+class Connector
+{
+    public:
+
+    /** direction of Connectors */
+    enum Direction
+    {
+        IN,
+        OUT
+    };
+
+    Connector(Module * module, const std::string& idname, const std::string& name,
+              Direction dir)
+        :	module_	(module),
+            dir_    (dir),
+            idname_	(idname),
+            name_	(name)
+    { }
+
+    // ------ getter ---------
+
+    /** Module, this Connector belongs to */
+    Module * module() const { return module_; }
+    /** direction (input or output) */
+    Direction dir() const { return dir_; }
+    /** persistent global id */
+    const std::string& idname() const { return idname_; }
+    /** humand-readable name */
+    const std::string& name() const { return name_; }
+
+    // -------- connectors -------------
+
+    /** return true if this connector and 'other' are connectable */
+    virtual bool isConnectable(Connector * other) = 0;
+
+    // __________ PRIVATE ______________
+
+    private:
+
+    /** parent module */
+    Module * module_;
+
+    /** direction in/out */
+    Direction dir_;
+
+    std::string
+    /** persistent name */
+        idname_,
+    /** user defined name */
+        name_;
+};
+
+
+
+
+
+
+
+
+
+} // namespace CSMOD
+
+#endif // CSMOD_MOD_CONNECTOR_H

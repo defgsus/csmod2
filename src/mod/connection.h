@@ -18,34 +18,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef MODULEITEM_H
-#define MODULEITEM_H
+#ifndef CSMOD_MOD_CONNECTION_H
+#define CSMOD_MOD_CONNECTION_H
 
-#include <QGraphicsItem>
+#include <string>
 
-class ModuleItem : public QGraphicsRectItem
+namespace CSMOD
 {
-public:
-    explicit ModuleItem(QGraphicsItem *parent = 0);
 
-signals:
+class Module;
+class Connector;
 
-public slots:
+/** abstract connection type */
+class Connection
+{
+    public:
 
-protected:
+    Connection(Connector * connectorFrom, Connector * connectorTo);
 
-    //virtual void paintEvent(QPaintEvent *);
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    /*
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
-    */
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
-    /*virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-    */
-    bool focus_, sel_;
+    // ------ getter ---------
+
+    Module * moduleFrom() const { return moduleFrom_; }
+    Module * moduleTo() const { return moduleTo_; }
+
+    Connector * connectorFrom() const { return connectorFrom_; }
+    Connector * connectorTo() const { return connectorTo_; }
+
+    // __________ PRIVATE ______________
+
+    private:
+
+    Module	* moduleFrom_,
+            * moduleTo_;
+
+    Connector
+            * connectorFrom_,
+            * connectorTo_;
 };
 
-#endif // MODULEITEM_H
+} // namespace CSMOD
+
+#endif // CSMOD_MOD_CONNECTION_H

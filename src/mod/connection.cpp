@@ -18,34 +18,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef MODULEITEM_H
-#define MODULEITEM_H
+#include "connection.h"
 
-#include <QGraphicsItem>
+#include <assert.h>
 
-class ModuleItem : public QGraphicsRectItem
+#include "module.h"
+
+
+namespace CSMOD
 {
-public:
-    explicit ModuleItem(QGraphicsItem *parent = 0);
 
-signals:
+Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
+        :	moduleFrom_		(connectorFrom->module()),
+            moduleTo_		(connectorTo->module()),
+            connectorFrom_	(connectorFrom),
+            connectorTo_	(connectorTo)
+{
+    assert(connectorFrom_->dir() != connectorTo_->dir() && "invalid connection of same direction");
+}
 
-public slots:
-
-protected:
-
-    //virtual void paintEvent(QPaintEvent *);
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    /*
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
-    */
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
-    /*virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-    */
-    bool focus_, sel_;
-};
-
-#endif // MODULEITEM_H
+} // namespace CSMOD

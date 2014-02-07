@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "patchview.h"
 
 #include "moduleitem.h"
+#include "cableitem.h"
 #include "patchgraphicsview.h"
 
 #include <QPainter>
@@ -65,6 +66,13 @@ PatchView::PatchView(QWidget *parent) :
         auto m = new ModuleItem();
         scene->addItem( m );
         m->setPos(i*10, rand()%100);
+    }
+
+    for (int i=0; i<100; ++i)
+    {
+        auto c = new CableItem();
+        scene->addItem(c);
+        c->setLine(rand()%400, rand()%400, rand()%400, rand()%400);
     }
     //scene->addRect(0,0,50,50);
     //scene->addRect(width()-10,30,50,50);

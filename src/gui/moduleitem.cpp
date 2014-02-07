@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "moduleitem.h"
 
+
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
@@ -40,7 +41,10 @@ ModuleItem::ModuleItem(QGraphicsItem *parent) :
         //| QGraphicsItem::ItemSendsScenePositionChanges
                 );
     //setBackgroundRole(QPalette::Light);
-    setRect(0,0,50,50);
+    setRect(0,0,100,100);
+
+    auto it = new QGraphicsSimpleTextItem(this);
+    it->setText("hello");
 }
 
 
@@ -74,15 +78,15 @@ void ModuleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 }
 
 
-
+*/
 void ModuleItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     focus_ = true;
     update();
-
+    std::cout << "hello\n";
 }
 
-
+/*
 void ModuleItem::hoverMoveEvent(QGraphicsSceneHoverEvent *)
 {
     update();
