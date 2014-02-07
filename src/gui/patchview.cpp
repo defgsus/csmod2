@@ -115,7 +115,9 @@ void PatchView::setPatch(CSMOD::Patch * patch)
     int k=0;
     for (auto m : patch_->modules())
     {
+        // create a graphic representation of Module
         auto mitem = new ModuleItem(m);
+        // add to graphic scene
         pview_->scene()->addItem(mitem);
         mitem->setPos(10 + k*120, 10);
         ++k;

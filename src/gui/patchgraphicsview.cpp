@@ -24,13 +24,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QMouseEvent>
 #include <QBrush>
+#include <QPen>
+#include <QPoint>
 
 PatchGraphicsView::PatchGraphicsView(QWidget *parent) :
     QGraphicsView(new QGraphicsScene(parent), parent),
     patch_  (0),
     action_ (A_NOTHING)
 {
-    setBackgroundBrush(QBrush(QColor(30,30,40)));
+    setBackgroundBrush(Qt::NoBrush);
 }
 
 
@@ -43,7 +45,34 @@ void PatchGraphicsView::setPatch(CSMOD::Patch * patch)
 
 
 
+void PatchGraphicsView::paintEvent(QPaintEvent *event)
+{
+    QPainter p(this->viewport());
 
+    // ---- background ----
+
+    p.setBrush(QBrush(QColor(30,30,40)));
+    p.drawRect(rect());
+
+    // grid
+
+    p.setPen(QPen(QColor(40,40,45)));
+
+    // line distance with zoom
+    int dist = mapFromScene(50,0).x() - mapFromScene(0,0).x();
+    int ox = mapFromScene(0,0).x() % dist;
+    int oy = mapFromScene(0,0).y() % dist;
+
+    for (int i=0; i<100+width(); i += dist)
+        p.drawLine(ox+i,0, ox+i,height());
+
+    for (int i=0; i<height(); i += dist)
+        p.drawLine(0, oy+i, width(), oy+i);
+
+    // ---- children ----
+
+    QGraphicsView::paintEvent(event);
+}
 
 
 

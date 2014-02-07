@@ -58,6 +58,8 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
     deleteChildItems_();
     module_ = module;
 
+    if (!module_) return;
+
     int width = 100;
 
     int num_in = 0, num_out = 0;
