@@ -18,29 +18,63 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "mainwindow.h"
+#include "module.h"
 
-#include "patchview.h"
+#include <QPainter>
+#include <QMouseEvent>
 
-#include <QLayout>
-#include <QStatusBar>
-#include <QPushButton>
+#include <iostream>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+Module::Module(QWidget *parent) :
+    QWidget(parent),
+    focus_  (false),
+    sel_    (false)
 {
-    //auto sb = new QStatusBar();
-    //setStatusBar(sb);
-
-    //auto l0 = new QVBoxLayout(centralWidget());
-
-    //auto b = new QPushButton(centralWidget());
-    patchview_ = new PatchView();
-    setCentralWidget(patchview_);
-    //l0->addWidget(patchview_);
+    setBackgroundRole(QPalette::Light);
 }
 
-MainWindow::~MainWindow()
-{
 
+
+void Module::paintEvent(QPaintEvent * )
+{
+    QPainter p(this);
+
+    p.setBrush(QColor(10 + sel_ * 180,50 + focus_ * 50,10));
+    p.drawRect(rect());
+}
+
+
+void Module::mousePressEvent(QMouseEvent * e)
+{
+    lastx_ = x();
+    lasty_ = y();
+    lastmx_ = e->globalX();
+    lastmy_ = e->globalY();
+
+    sel_ = true;
+    update();
+}
+
+void Module::mouseMoveEvent(QMouseEvent * e)
+{
+    move(lastx_ + e->globalX() - lastmx_,
+         lasty_ + e->globalY() - lastmy_);
+}
+
+void Module::mouseReleaseEvent(QMouseEvent * e)
+{
+    sel_ = false;
+    update();
+}
+
+void Module::enterEvent(QEvent * e)
+{
+    focus_ = true;
+    update();
+}
+
+void Module::leaveEvent(QEvent * e)
+{
+    focus_ = false;
+    update();
 }

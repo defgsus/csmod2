@@ -18,15 +18,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "gui/mainwindow.h"
-#include <QApplication>
+#ifndef MODULE_H
+#define MODULE_H
 
-int main(int argc, char *argv[])
+#include <QWidget>
+
+class Module : public QWidget
 {
-    QApplication a(argc, argv);
+    Q_OBJECT
+public:
+    explicit Module(QWidget *parent = 0);
 
-    MainWindow w;
-    w.show();
+signals:
 
-    return a.exec();
-}
+public slots:
+
+protected:
+    virtual void paintEvent(QPaintEvent *);
+
+    virtual void mousePressEvent(QMouseEvent *);
+    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+
+    virtual void enterEvent(QEvent *);
+    virtual void leaveEvent(QEvent *);
+
+    bool focus_, sel_;
+    int lastx_, lasty_,
+        lastmx_, lastmy_;
+};
+
+#endif // MODULE_H

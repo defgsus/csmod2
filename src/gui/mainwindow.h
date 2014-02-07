@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QMainWindow>
 
+class PatchView;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -30,6 +32,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+private:
+
+    PatchView * patchview_;
 };
 
 #endif // MAINWINDOW_H

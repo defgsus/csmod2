@@ -18,15 +18,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "gui/mainwindow.h"
-#include <QApplication>
+#ifndef PATCHVIEW_H
+#define PATCHVIEW_H
 
-int main(int argc, char *argv[])
+#include <QFrame>
+
+/** direct view into a patch */
+class PatchView : public QFrame
 {
-    QApplication a(argc, argv);
+    Q_OBJECT
+public:
+    explicit PatchView(QWidget *parent = 0);
 
-    MainWindow w;
-    w.show();
+    virtual QSize sizeHint() const;
+signals:
 
-    return a.exec();
-}
+public slots:
+
+
+    virtual void paintEvent(QPaintEvent *);
+};
+
+#endif // PATCHVIEW_H

@@ -14,9 +14,19 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TEMPLATE = app
 
+######### FLAGS ########
+
+QMAKE_CXXFLAGS = --std=c++0x
+
 ######## FILES #########
 
-SOURCES +=  main.cpp \
-            gui/mainwindow.cpp
+SOURCES += \
+    main.cpp \
+    gui/mainwindow.cpp \
+    gui/patchview.cpp \
+    gui/module.cpp
 
-HEADERS +=  gui/mainwindow.h
+HEADERS += \
+    gui/mainwindow.h \
+    gui/patchview.h \
+    gui/module.h
