@@ -41,8 +41,8 @@ class Connector
         OUT
     };
 
-    Connector(Module * module, const std::string& idname, const std::string& name,
-              Direction dir)
+    Connector(Module * module, Direction dir,
+              const std::string& idname, const std::string& name)
         :	module_	(module),
             dir_    (dir),
             idname_	(idname),
@@ -85,6 +85,19 @@ class Connector
 
 
 
+
+class AudioConnector : public Connector
+{
+public:
+    AudioConnector(Module * module, Direction dir,
+                   const std::string& idname, const std::string& name)
+        : Connector(module, dir, idname, name)
+    { }
+
+    virtual bool isConnectable(Connector * other) { return
+                dynamic_cast<AudioConnector*>(other); }
+
+};
 
 
 

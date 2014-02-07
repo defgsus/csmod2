@@ -37,10 +37,9 @@ class Module
 {
     public:
 
-    Module(const std::string& className,
-           const std::string& idName)
+    Module(const std::string& className)
         :   className_(className),
-            idName_   (idName),
+            idName_   (className),
             name_     (className)
     { }
 
@@ -73,13 +72,13 @@ class Module
     // ------------- connectors -----------------------
 
     /** return number of all connectors */
-    size_t numConnectors() const { return connector_.size(); }
+    size_t numConnectors() const { return cons_.size(); }
 
     /** return the specific connector or 0 if out of range */
-    Connector * connector(size_t index) const { return (index<connector_.size())? connector_[index] : 0; }
+    Connector * connector(size_t index) const { return (index<cons_.size())? cons_[index] : 0; }
 
-    /** push all connectors of this module onto the supplied vector */
-    void getConnectors(std::vector<Connector*>& connectors);
+    /** read access to all Connectors of this module. */
+    const std::vector<Connector*>& connectors() const { return cons_; }
 
     // -------------- container -----------------------
 
@@ -97,7 +96,7 @@ class Module
     /** adds a new Connector instance.
         <p>ownership is taken.</p>
         <p>the given instance is returned by the function.</p> */
-    Connector* addConnector_(Connector * c);
+    Connector* add_(Connector * c);
 
     // -------------- container -----------------------
 
@@ -112,7 +111,7 @@ class Module
     void deleteConnectors_();
 
     /** all Connectors of this module */
-    std::vector<Connector*> connector_;
+    std::vector<Connector*> cons_;
 
     std::string
     /** derived classes name */
@@ -125,6 +124,23 @@ class Module
 };
 
 
+
+
+
+
+class TestModule : public Module
+{
+    public:
+
+    TestModule() : Module("TestModule")
+    {
+        add_(new AudioConnector(this, Connector::IN,  "audio_in", "audio in"));
+        add_(new AudioConnector(this, Connector::OUT, "audio_out", "audio out"));
+    }
+
+    virtual Module * cloneClass() const { return new TestModule; }
+
+};
 
 
 

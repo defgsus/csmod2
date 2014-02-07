@@ -18,32 +18,43 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
+#include "patch.h"
+
+
+#include "connector.h"
+#include "connection.h"
 #include "module.h"
 
 namespace CSMOD {
 
 
-Module::~Module()
+Patch::Patch()
 {
-    deleteConnectors_();
+
+}
+
+Patch::~Patch()
+{
+    for(auto m : modules_)
+        delete m;
 }
 
 
-// ------------------- connectors ---------------------
+// -------------------- modules ------------------------
 
-Connector* Module::add_(Connector * c)
+Module * Patch::getModule(const std::string& idname)
 {
-    cons_.push_back(c);
-    return c;
+    for (auto m : modules_)
+        if (idname == m->idName())
+            return m;
+    return 0;
 }
 
-void Module::deleteConnectors_()
+bool Patch::addModule(Module * module)
 {
-    for (auto c : cons_)
-        delete c;
-    cons_.clear();
+    modules_.push_back(module);
+    return true;
 }
-
 
 
 } // namespace CSMOD

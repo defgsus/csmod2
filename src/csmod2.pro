@@ -29,7 +29,8 @@ SOURCES += \
     gui/cableitem.cpp \
     mod/module.cpp \
     mod/connector.cpp \
-    mod/connection.cpp
+    mod/connection.cpp \
+    mod/patch.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -40,4 +41,5 @@ HEADERS += \
     mod/module.h \
     mod/base.h \
     mod/connector.h \
-    mod/connection.h
+    mod/connection.h \
+    mod/patch.h
