@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <string>
 
+#include "mod/base.h"
+
 namespace CSMOD {
 
 
@@ -83,6 +85,24 @@ class Connector
 };
 
 
+
+class ValueConnector : public Connector
+{
+public:
+    ValueConnector(Module * module, Direction dir,
+                   const std::string& idname, const std::string& name)
+        : Connector(module, dir, idname, name)
+    { }
+
+    virtual bool isConnectable(Connector * other)
+    { return (dir() != other->dir() && dynamic_cast<ValueConnector*>(other) != 0); }
+
+    csfloat value() const { return value_; }
+    void value(csfloat v) { value_ = v; }
+
+protected:
+    csfloat value_;
+};
 
 
 

@@ -134,25 +134,6 @@ class Module
 
 
 
-
-class TestModule : public Module
-{
-    public:
-
-    TestModule() : Module("TestModule")
-    {
-        for (int i=0; i<1+rand()%10; ++i)
-        add_(new AudioConnector(this, Connector::IN,  "audio_in", "audio in"));
-        for (int i=0; i<1+rand()%10; ++i)
-        add_(new AudioConnector(this, Connector::OUT, "audio_out", "audio out"));
-    }
-
-    virtual Module * cloneClass() const { return new TestModule; }
-
-};
-
-
-
 } // namespace CSMOD
 
 #endif // MOD_MODULE_H

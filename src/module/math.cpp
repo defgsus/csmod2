@@ -18,38 +18,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "mainwindow.h"
+#include "math.h"
 
-#include <QLayout>
-#include <QStatusBar>
-#include <QPushButton>
+namespace CSMOD {
+namespace MODULE {
 
-#include "patchview.h"
-#include "mod/patch.h"
-#include "mod/module.h"
-#include "mod/model.h"
-#include "module/math.h"
-
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-{
-    model_ =     new CSMOD::Model();
-    patchview_ = new PatchView();
-
-    setCentralWidget(patchview_);
-
-    auto p = new CSMOD::Patch();
-    for (int i=0; i<40; ++i)
-        p->addModule(new CSMOD::MODULE::Math);
-
-    model_->setPatch(p);
-    model_->addPatchView(patchview_);
-    patchview_->setModel(model_);
-
-    patchview_->setPatch(p);
-}
-
-MainWindow::~MainWindow()
+Math::Math(Operation op)
+    : Module("TestModule"),
+      op_   (op)
 {
 
+   for (int i=0; i<2; ++i)
+   {
+       auto in = new ValueConnector(this, Connector::IN,  "in", "in");
+       inputs_.push_back( in );
+       add_( in );
+   }
+
+   add_( output_ = new ValueConnector(this, Connector::OUT, "out", "out") );
 }
+
+} // namespace MODULE
+} // namespace CSMOD

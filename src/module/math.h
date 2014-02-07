@@ -18,38 +18,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "mainwindow.h"
+#ifndef MATH_H
+#define MATH_H
 
-#include <QLayout>
-#include <QStatusBar>
-#include <QPushButton>
-
-#include "patchview.h"
-#include "mod/patch.h"
 #include "mod/module.h"
-#include "mod/model.h"
-#include "module/math.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+namespace CSMOD {
+namespace MODULE {
+
+class Math : public Module
 {
-    model_ =     new CSMOD::Model();
-    patchview_ = new PatchView();
+public:
+    enum Operation
+    {
+        O_ADD,
+        O_SUB,
+        O_MUL,
+        O_DIV
+    };
 
-    setCentralWidget(patchview_);
+    Math(Operation op = O_ADD);
 
-    auto p = new CSMOD::Patch();
-    for (int i=0; i<40; ++i)
-        p->addModule(new CSMOD::MODULE::Math);
+    virtual Math * cloneClass() const { return new Math(op_); }
 
-    model_->setPatch(p);
-    model_->addPatchView(patchview_);
-    patchview_->setModel(model_);
+protected:
+    Operation op_;
 
-    patchview_->setPatch(p);
-}
+    std::vector<ValueConnector*> inputs_;
+    ValueConnector * output_;
+};
 
-MainWindow::~MainWindow()
-{
+} // namespace MODULE
+} // namespace CSMOD
 
-}
+#endif // MATH_H
