@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "patchview.h"
 
+#include <iostream>
+
 #include <QPainter>
 #include <QPalette>
 #include <QScrollArea>
@@ -34,13 +36,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "cableitem.h"
 #include "patchgraphicsview.h"
 
+#include "log.h"
 #include "mod/module.h"
 #include "mod/patch.h"
 
 PatchView::PatchView(QWidget *parent) :
     QFrame(parent),
-    patch_  (0)
+    model_  (0),
+    patch_  (0),
+    pview_  (0)
 {
+    CSMOD_DEBUGF("PatchView::PatchView(" << parent << ")");
+
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -58,47 +65,9 @@ PatchView::PatchView(QWidget *parent) :
     auto tb = new QToolBar(this);
     l0->addWidget(tb);
 
-    pview_ = new PatchGraphicsView(this);
+    pview_ = new PatchGraphicsView(this, this);
     l0->addWidget(pview_);
-    /*
-    for (int i=0; i<300; ++i)
-    {
-        auto mod = new CSMOD::TestModule();
-        auto m = new ModuleItem(mod);
-        scene->addItem( m );
-        m->setPos(i*10, rand()%100);
-    }
 
-    for (int i=0; i<100; ++i)
-    {
-        auto c = new CableItem();
-        scene->addItem(c);
-        c->setLine(rand()%400, rand()%400, rand()%400, rand()%400);
-    }
-    */
-    //scene->addRect(0,0,50,50);
-    //scene->addRect(width()-10,30,50,50);
-    /*
-    auto l = new QVBoxLayout(this);
-    l->setContentsMargins(0,0,0,0);
-
-    auto sb = new QScrollArea(this);
-    l->addWidget(sb);
-    sb->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    sb->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    sb->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    auto w = new QWidget(sb);
-    w->setBackgroundRole(QPalette::Dark);
-
-    for (int i=0; i<300; ++i)
-    {
-        auto b = new Module(w);
-        b->setGeometry(i*10, rand()%1000, 80,80);
-    }
-    w->setGeometry(QRect(0,0,1000,1000));
-
-    sb->setWidget(w);
-    */
 }
 
 QSize PatchView::sizeHint() const
@@ -109,24 +78,60 @@ QSize PatchView::sizeHint() const
 
 void PatchView::setPatch(CSMOD::Patch * patch)
 {
+    CSMOD_DEBUGF("PatchView::setPatch(" << patch << ")");
+
     patch_ = patch;
     pview_->setPatch(patch_);
+
+    moduleitems_.clear();
+    cableitems_.clear();
 
     int k=0;
     for (auto m : patch_->modules())
     {
         // create a graphic representation of Module
-        auto mitem = new ModuleItem(m);
+        auto mitem = new ModuleItem(m, pview_);
         // add to graphic scene
         pview_->scene()->addItem(mitem);
         mitem->setPos(10 + k*120, 10);
         ++k;
+        moduleitems_.push_back(mitem);
     }
+
+    // add connections
+    for (auto c : patch_->connections())
+    {
+        auto citem = new CableItem(c);
+        pview_->scene()->addItem(citem);
+        cableitems_.push_back(citem);
+    }
+
 }
 
+void PatchView::setModel(CSMOD::Model * model)
+{
+    CSMOD_DEBUGF("PatchView::setModel(" << model << ")");
 
+    model_ = model;
+    pview_->setModel(model);
+}
 
+void PatchView::updateFromPatch()
+{
+    CSMOD_DEBUGF("PatchView::updateFromPatch()");
 
+    setPatch(patch_);
+}
+
+void PatchView::updateCables()
+{
+    CSMOD_DEBUGF("PatchView::updateCables()");
+
+    for (auto ci : cableitems_)
+    {
+        ci->updatePos();
+    }
+}
 
 
 

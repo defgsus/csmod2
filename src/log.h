@@ -18,27 +18,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_CABLEITEM_H
-#define CSMOD_CABLEITEM_H
+#ifndef LOG_H
+#define LOG_H
 
-#include <QGraphicsLineItem>
+#include <iostream>
 
-namespace CSMOD { class Connection; }
+// ------------------------ debugging ---------------------------
 
-class ModuleItem;
+#define CSMOD_DEBUG(arg__) { std::cerr << arg__ << std::endl; }
 
-class CableItem : public QGraphicsLineItem
-{
-public:
-    explicit CableItem(CSMOD::Connection * con, QGraphicsItem * parent = 0);
+#if (1)
+#define CSMOD_DEBUGF(arg__) { std::cerr << arg__ << std::endl; }
+#else
+#define CSMOD_DEBUGF(unused__) { }
+#endif
 
-    CSMOD::Connection * connection() const { return con_; }
+#if (0)
+#define CSMOD_DEBUGE(arg__) { std::cerr << arg__ << std::endl; }
+#else
+#define CSMOD_DEBUGE(unused__) { }
+#endif
 
-    /** update position to module's connectors */
-    void updatePos();
+// ------------------- error reporting --------------------------
 
-protected:
-    CSMOD::Connection * con_;
-};
+#define CSMOD_RT_ERROR(arg__) { std::cerr << "RT ERROR: " << arg__ << std::endl; }
 
-#endif // CSMOD_CABLEITEM_H
+#endif // LOG_H

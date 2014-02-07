@@ -29,11 +29,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/connector.h"
 #include "connectoritem.h"
 
-ModuleItem::ModuleItem(CSMOD::Module * module, QGraphicsItem *parent) :
+ModuleItem::ModuleItem(CSMOD::Module * module,
+                       PatchGraphicsView * view,
+                       QGraphicsItem *parent) :
     QGraphicsRectItem(parent),
     focus_  (false),
     sel_    (false),
-    module_ (0)
+    module_ (0),
+    view_  (view)
 {
     setFlags(
         QGraphicsItem::ItemIsMovable
@@ -50,6 +53,17 @@ ModuleItem::ModuleItem(CSMOD::Module * module, QGraphicsItem *parent) :
 /*    auto it = new QGraphicsSimpleTextItem(this);
     it->setText("hello");
     */
+}
+
+
+void ModuleItem::markConnectorsThatMatch(CSMOD::Connector * con)
+{
+    for (auto i : childItems())
+    if (auto c = dynamic_cast<ConnectorItem*>(i))
+    {
+        c->matchConnector(con);
+    }
+    update();
 }
 
 

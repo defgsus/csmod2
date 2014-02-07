@@ -27,23 +27,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "patchview.h"
 #include "mod/patch.h"
 #include "mod/module.h"
+#include "mod/model.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    //auto sb = new QStatusBar();
-    //setStatusBar(sb);
-
-    //auto l0 = new QVBoxLayout(centralWidget());
-
-    //auto b = new QPushButton(centralWidget());
+    model_ =     new CSMOD::Model();
     patchview_ = new PatchView();
+
     setCentralWidget(patchview_);
-    //l0->addWidget(patchview_);
 
     auto p = new CSMOD::Patch();
     for (int i=0; i<40; ++i)
         p->addModule(new CSMOD::TestModule);
+
+    model_->setPatch(p);
+    model_->addPatchView(patchview_);
+    patchview_->setModel(model_);
+
     patchview_->setPatch(p);
 }
 

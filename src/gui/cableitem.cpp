@@ -20,17 +20,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "cableitem.h"
 
-CableItem::CableItem(QGraphicsItem * parent)
-    :   QGraphicsLineItem(parent)
+#include "log.h"
+#include "mod/connection.h"
+
+CableItem::CableItem(CSMOD::Connection * con, QGraphicsItem * parent)
+    :   QGraphicsLineItem(parent),
+        con_             (con)
 {
+    CSMOD_DEBUGF("CableItem::CableItem(" << con << ", " << parent);
+
     setFlags(
-        QGraphicsItem::ItemIsMovable
-        | QGraphicsItem::ItemIsSelectable
-        | QGraphicsItem::ItemIsFocusable
-        | QGraphicsItem::ItemClipsToShape
-        | QGraphicsItem::ItemClipsChildrenToShape
+        //QGraphicsItem::ItemIsMovable
+          QGraphicsItem::ItemIsSelectable
+        //| QGraphicsItem::ItemIsFocusable
+        //| QGraphicsItem::ItemClipsToShape
+        //| QGraphicsItem::ItemClipsChildrenToShape
         //| QGraphicsItem::ItemSendsGeometryChanges
         //| QGraphicsItem::ItemSendsScenePositionChanges
                 );
 
+}
+
+
+void CableItem::updatePos()
+{
+    if (!con_) return;
 }

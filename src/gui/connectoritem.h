@@ -24,7 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QGraphicsRectItem>
 
 namespace CSMOD { class Connector; }
+
 class ModuleItem;
+class PatchGraphicsView;
 
 class ConnectorItem : public QGraphicsRectItem
 {
@@ -33,12 +35,28 @@ public:
 
     CSMOD::Connector * connector() const { return con_; }
 
+    /** return point for connection in scene coords */
+    QPointF sceneConnectPoint() const;
+
+    /** see if connectors match and set internal state. */
+    void matchConnector(CSMOD::Connector * con);
+
 protected:
 
-    //virtual void res
+    // ------------- events --------------
+
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
     ModuleItem * moduleItem_;
     CSMOD::Connector * con_;
+    PatchGraphicsView * view_;
+
+    bool is_con_,
+        matches_;
 };
 
 #endif // CONNECTORITEM_H

@@ -31,7 +31,8 @@ SOURCES += \
     mod/connector.cpp \
     mod/connection.cpp \
     mod/patch.cpp \
-    gui/connectoritem.cpp
+    gui/connectoritem.cpp \
+    mod/model.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -44,4 +45,6 @@ HEADERS += \
     mod/connector.h \
     mod/connection.h \
     mod/patch.h \
-    gui/connectoritem.h
+    gui/connectoritem.h \
+    log.h \
+    mod/model.h

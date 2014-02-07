@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QMainWindow>
 
+namespace CSMOD { class Model; }
+
 class PatchView;
 
 class MainWindow : public QMainWindow
@@ -34,7 +36,7 @@ public:
     ~MainWindow();
 
 private:
-
+    CSMOD::Model * model_;
     PatchView * patchview_;
 };
 

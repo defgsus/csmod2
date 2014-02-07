@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 class Module;
+class Connector;
 class Connection;
 
 /** (recursive) container for Modules and Connections */
@@ -62,6 +63,15 @@ public:
         If false is returned, there was something wrong
         and the Module is not added. */
     bool addModule(Module * module);
+
+    // ---------- connections ------------
+
+    const Connections& connections() const { return cons_; }
+
+    /** Connects both connectors if possible */
+    Connection * connect(Connector * con1, Connector * con2);
+    /** Removes the given Connection */
+    bool disconnect(Connection * con);
 
     // ________ PROTECTED ________________
 

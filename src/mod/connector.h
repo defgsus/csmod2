@@ -94,8 +94,8 @@ public:
         : Connector(module, dir, idname, name)
     { }
 
-    virtual bool isConnectable(Connector * other) { return
-                dynamic_cast<AudioConnector*>(other); }
+    virtual bool isConnectable(Connector * other)
+    { return (dir() != other->dir() && dynamic_cast<AudioConnector*>(other) != 0); }
 
 };
 

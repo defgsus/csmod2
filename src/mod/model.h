@@ -18,27 +18,53 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_CABLEITEM_H
-#define CSMOD_CABLEITEM_H
+#ifndef CSMOD_MOD_MODEL_H
+#define CSMOD_MOD_MODEL_H
 
-#include <QGraphicsLineItem>
+#include <vector>
 
-namespace CSMOD { class Connection; }
+class PatchView;
 
-class ModuleItem;
+namespace CSMOD {
 
-class CableItem : public QGraphicsLineItem
+class Patch;
+class Module;
+class Connector;
+class Connection;
+
+/** @brief class for threadsafe editing */
+class Model
 {
 public:
-    explicit CableItem(CSMOD::Connection * con, QGraphicsItem * parent = 0);
+    // ---------------- ctor --------------
 
-    CSMOD::Connection * connection() const { return con_; }
+    Model();
+    ~Model();
 
-    /** update position to module's connectors */
-    void updatePos();
+    // ------------- containers -----------
 
-protected:
-    CSMOD::Connection * con_;
+    /** set Patch to work on, or disconnect with NULL */
+    void setPatch(Patch * root_patch);
+
+    void addPatchView(PatchView * view);
+
+    // -------- module handling -----------
+
+    // -------- connection handling -------
+
+    bool connect(Connector * from, Connector * to);
+
+    bool disconnect(Connection * con);
+
+private:
+
+    void updateViews_();
+
+    Patch * patch_;
+    std::vector<PatchView*> views_;
 };
 
-#endif // CSMOD_CABLEITEM_H
+} // namespace CSMOD
+
+
+#endif // CSMOD_MOD_MODEL_H

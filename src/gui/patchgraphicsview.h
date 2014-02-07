@@ -23,17 +23,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsView>
 
-namespace CSMOD { class Patch; }
+namespace CSMOD {
+class Patch;
+class Connector;
+class Model;
+}
+
+class PatchView;
+class ConnectorItem;
+
 
 class PatchGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit PatchGraphicsView(QWidget *parent = 0);
+    explicit PatchGraphicsView(PatchView * view, QWidget *parent = 0);
+    virtual ~PatchGraphicsView();
 
     /** Assigns a patch for editing/viewing.
         Set to NULL to deconnect. */
     void setPatch(CSMOD::Patch * patch);
+    void setModel(CSMOD::Model * model);
+    //void updateFromPatch();
+
+    void startConnect(ConnectorItem * con);
+    void moveConnect(const QPointF & scene_pos);
+    void endConnect(const QPointF & scene_pos);
+
+    void markConnectorsThatMatch(CSMOD::Connector * con);
 
 signals:
 
@@ -58,12 +75,16 @@ protected:
 
     // ___________ PROTECTED MEMBER ____________
 
+    CSMOD::Model * model_;
     CSMOD::Patch * patch_;
+    PatchView * view_;
 
     Action action_;
     QPoint lastm_;
     QTransform lastt_;
 
+    ConnectorItem * con_from_, * con_to_;
+    QGraphicsLineItem * con_line_;
 };
 
 #endif // PATCHGRAPHICSVIEW_H

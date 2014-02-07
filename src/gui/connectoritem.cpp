@@ -21,16 +21,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connectoritem.h"
 
 #include <QBrush>
+#include <QPainter>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneDragDropEvent>
+
+#include "log.h"
+#include "mod/connector.h"
 
 #include "moduleitem.h"
-
-
+#include "patchgraphicsview.h"
 
 ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
     :   QGraphicsRectItem(parent),
         moduleItem_  (parent),
-        con_         (con)
+        con_         (con),
+        view_   (parent->view()),
+        is_con_ (false),
+        matches_    (false)
 {
+    CSMOD_DEBUGF("ConnectorItem::ConnectorItem(" << parent << ", " << con << ")");
+
     setFlags(
           QGraphicsItem::ItemIsSelectable
         | QGraphicsItem::ItemIsFocusable
@@ -39,4 +49,87 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
 
     setBrush(QBrush(QColor(50,50,50)));
     setRect(0,0, 10, 10);
+}
+
+
+QPointF ConnectorItem::sceneConnectPoint() const
+{
+    if (con_->dir() == CSMOD::Connector::IN)
+        return mapToScene(1, rect().height()/2);
+    else
+        return mapToScene(rect().width()-1, rect().height()/2);
+}
+
+void ConnectorItem::matchConnector(CSMOD::Connector * con)
+{
+    matches_ = (con_==0 || con==0)? false :
+                con_->isConnectable(con);
+}
+
+
+// ---------------------- paint ---------------------------
+
+void ConnectorItem::paint(QPainter *p, const QStyleOptionGraphicsItem * /*option*/, QWidget * /*widget*/)
+{
+    CSMOD_DEBUGE("ConnectorItem::paint(" << p << ")");
+
+    if (matches_)
+        p->setPen(QPen(QColor(200,200,200)));
+    else
+        p->setPen(Qt::NoPen);
+
+    p->setBrush(QColor(50 + hasFocus() * 180,
+                       100 + hasCursor() * 50,
+                       50 + isSelected() * 100
+                       ));
+    p->drawRect(rect());
+}
+
+// ---------------------- events --------------------------
+
+void ConnectorItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
+{
+    CSMOD_DEBUGE("ConnectorItem::mousePressEvent(" << e->pos().x() << ", " << e->pos().y() << ")");
+
+    // start connecting
+    if (e->button() == Qt::LeftButton)
+    {
+        is_con_ = true;
+        view_->startConnect(this);
+        e->accept();
+
+        /*
+        Drag *drag = new QDrag(this);
+        QMimeData *mimeData = new QMimeData;
+
+        mimeData->setData(mimeType, data);
+        drag->setMimeData(mimeData);
+
+        Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
+        */
+    }
+    QGraphicsRectItem::mousePressEvent(e);
+}
+
+void ConnectorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
+{
+    CSMOD_DEBUGE("ConnectorItem::mouseMoveEvent(" << e->pos().x() << ", " << e->pos().y() << ")");
+
+    if (is_con_)
+    {
+        view_->moveConnect(e->scenePos());
+    }
+
+    QGraphicsRectItem::mouseMoveEvent(e);
+}
+
+void ConnectorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
+{
+    CSMOD_DEBUGE("ConnectorItem::mouseReleaseEvent(" << e->pos().x() << ", " << e->pos().y() << ")");
+
+    if (is_con_)
+        view_->endConnect(e->scenePos());
+    is_con_ = false;
+
+    QGraphicsRectItem::mouseReleaseEvent(e);
 }

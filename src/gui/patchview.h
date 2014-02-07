@@ -28,9 +28,13 @@ class Module;
 class Connection;
 class Connector;
 class Patch;
+class Model;
 }
 
 class PatchGraphicsView;
+class ModuleItem;
+class CableItem;
+
 
 /** direct view into a patch */
 class PatchView : public QFrame
@@ -45,6 +49,14 @@ public:
         Set to NULL to deconnect. */
     void setPatch(CSMOD::Patch * patch);
 
+    void setModel(CSMOD::Model * model);
+
+    /** update changes in patch */
+    void updateFromPatch();
+
+    /** update all cable positions */
+    void updateCables();
+
 signals:
 
 public slots:
@@ -58,9 +70,12 @@ protected:
 
     // __________ PROTECTED MEMBER __________________
 
+    CSMOD::Model * model_;
     CSMOD::Patch * patch_;
     PatchGraphicsView * pview_;
 
+    std::vector<ModuleItem*> moduleitems_;
+    std::vector<CableItem*> cableitems_;
 };
 
 #endif // PATCHVIEW_H
