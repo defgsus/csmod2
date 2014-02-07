@@ -20,9 +20,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "cableitem.h"
 
+#include <QPen>
+#include <QPainter>
+
 #include "log.h"
 #include "mod/connection.h"
 #include "connectoritem.h"
+
 
 CableItem::CableItem(CSMOD::Connection * con,
                      ConnectorItem * ci1, ConnectorItem * ci2,
@@ -30,14 +34,14 @@ CableItem::CableItem(CSMOD::Connection * con,
     :   QGraphicsLineItem(parent),
         con_             (con),
         citem1_          (ci1),
-        citem2_          (ci2)
+        citem2_          (ci2),
+        color_           (120,150,120)
 {
     CSMOD_DEBUGF("CableItem::CableItem(" << con << ", " << ci1 << ", " << ci2 << ", " << parent << ")");
 
     setFlags(
-        //QGraphicsItem::ItemIsMovable
           QGraphicsItem::ItemIsSelectable
-        //| QGraphicsItem::ItemIsFocusable
+        | QGraphicsItem::ItemIsFocusable
         //| QGraphicsItem::ItemClipsToShape
         //| QGraphicsItem::ItemClipsChildrenToShape
         //| QGraphicsItem::ItemSendsGeometryChanges
@@ -57,4 +61,19 @@ void CableItem::updatePos()
                 citem1_->sceneConnectPoint(),
                 citem2_->sceneConnectPoint()
                 ));
+}
+
+
+// ----------------------- paint -------------------------------
+
+void CableItem::paint(QPainter * p, const
+                       QStyleOptionGraphicsItem * /*option*/,
+                       QWidget * /*widget*/)
+{
+    if (isSelected() || hasFocus())
+        p->setPen(QPen(color_.lighter(), 3));
+    else
+        p->setPen(QPen(color_, 1));
+
+    p->drawLine(line());
 }

@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_DEBUGF(unused__) { }
 #endif
 
-#if (0)
+#if (1)
 #define CSMOD_DEBUGE(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGE(unused__) { }

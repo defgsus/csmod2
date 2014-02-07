@@ -161,6 +161,12 @@ void PatchGraphicsView::markConnectorsThatMatch(CSMOD::Connector * con)
 }
 
 
+
+
+
+// ----------------------------- paint ---------------------------------
+
+
 void PatchGraphicsView::paintEvent(QPaintEvent *event)
 {
     CSMOD_DEBUGE("PatchGraphicsView::paintEvent(" << event << ")");
@@ -170,7 +176,11 @@ void PatchGraphicsView::paintEvent(QPaintEvent *event)
     // ---- background ----
 
     p.setBrush(QBrush(QColor(30,30,40)));
-    p.drawRect(rect());
+    QRect r(rect());
+    // we need to paint a bit over the edge to
+    // facilitate QPainter's efficient repaint
+    r.adjust(-1,-1,1,1);
+    p.drawRect(r);
 
     // grid
 
@@ -181,7 +191,7 @@ void PatchGraphicsView::paintEvent(QPaintEvent *event)
     int ox = mapFromScene(0,0).x() % dist;
     int oy = mapFromScene(0,0).y() % dist;
 
-    for (int i=0; i<100+width(); i += dist)
+    for (int i=0; i<20+width(); i += dist)
         p.drawLine(ox+i,0, ox+i,height());
 
     for (int i=0; i<height(); i += dist)
@@ -193,6 +203,11 @@ void PatchGraphicsView::paintEvent(QPaintEvent *event)
 
 }
 
+
+
+
+
+// ------------------------ event ---------------------------
 
 
 void PatchGraphicsView::keyPressEvent(QKeyEvent * e)
@@ -208,6 +223,9 @@ void PatchGraphicsView::keyReleaseEvent(QKeyEvent * e)
 
 void PatchGraphicsView::mousePressEvent(QMouseEvent * e)
 {
+    CSMOD_DEBUGE("PatchGraphicsViewer::mousePressEvent("
+                 << e->x() << ", " << e->y() << ", " << e->button() << ")");
+
     // zoom
     if (e->button() == Qt::RightButton
         && !itemAt(e->x(), e->y()))
@@ -236,6 +254,9 @@ void PatchGraphicsView::mousePressEvent(QMouseEvent * e)
 
 void PatchGraphicsView::mouseMoveEvent(QMouseEvent * e)
 {
+    CSMOD_DEBUGE("PatchGraphicsViewer::mouseMoveEvent("
+                 << e->x() << ", " << e->y() << ", " << e->button() << ")");
+
     if (action_ == A_ZOOM)
     {
         qreal zoom = std::max(0.1, std::min(5.0,
@@ -254,6 +275,9 @@ void PatchGraphicsView::mouseMoveEvent(QMouseEvent * e)
 
 void PatchGraphicsView::mouseReleaseEvent(QMouseEvent * e)
 {
+    CSMOD_DEBUGE("PatchGraphicsViewer::mouseReleaseEvent("
+                 << e->x() << ", " << e->y() << ", " << e->button() << ")");
+
     action_ = A_NOTHING;
     QGraphicsView::mouseReleaseEvent(e);
     setDragMode(QGraphicsView::NoDrag);

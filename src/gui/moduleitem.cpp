@@ -25,25 +25,28 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
+#include "log.h"
 #include "mod/module.h"
 #include "mod/connector.h"
 #include "connectoritem.h"
+#include "patchview.h"
+#include "patchgraphicsview.h"
 
 ModuleItem::ModuleItem(CSMOD::Module * module,
                        PatchGraphicsView * view,
-                       QGraphicsItem *parent) :
-    QGraphicsRectItem(parent),
-    focus_  (false),
-    sel_    (false),
-    module_ (0),
-    view_  (view)
+                       QGraphicsItem *parent)
+    :   QGraphicsRectItem(parent),
+        module_ (0),
+        view_   (view),
+        action_ (A_NOTHING)
 {
+
     setFlags(
-        QGraphicsItem::ItemIsMovable
-        | QGraphicsItem::ItemIsSelectable
-        | QGraphicsItem::ItemIsFocusable
-        | QGraphicsItem::ItemClipsToShape
-        | QGraphicsItem::ItemClipsChildrenToShape
+//        QGraphicsItem::ItemIsMovable
+         //QGraphicsItem::ItemIsSelectable
+          QGraphicsItem::ItemIsFocusable
+        //| QGraphicsItem::ItemClipsToShape
+        //| QGraphicsItem::ItemClipsChildrenToShape
         //| QGraphicsItem::ItemSendsGeometryChanges
         //| QGraphicsItem::ItemSendsScenePositionChanges
                 );
@@ -56,15 +59,6 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
 }
 
 
-void ModuleItem::markConnectorsThatMatch(CSMOD::Connector * con)
-{
-    for (auto i : childItems())
-    if (auto c = dynamic_cast<ConnectorItem*>(i))
-    {
-        c->matchConnector(con);
-    }
-    update();
-}
 
 
 void ModuleItem::updateFromModule_(CSMOD::Module * module)
@@ -101,49 +95,86 @@ void ModuleItem::deleteChildItems_()
 {
     for (auto c : childItems())
         delete c;
+
     childItems().clear();
 }
 
 
 
+// -------------------- selection ------------------------------
+
+void ModuleItem::markConnectorsThatMatch(CSMOD::Connector * con)
+{
+    for (auto i : childItems())
+    if (auto c = dynamic_cast<ConnectorItem*>(i))
+    {
+        c->matchConnector(con);
+    }
+    update();
+}
 
 
+
+
+// ----------------------- paint -------------------------------
 
 void ModuleItem::paint(QPainter * p, const
                        QStyleOptionGraphicsItem * /*option*/,
                        QWidget * /*widget*/)
 {
-    p->setBrush(QColor(10 + hasFocus() * 40,
-                       50 + hasCursor() * 50,
-                       10 + isSelected() * 100
+    p->setBrush(QColor(30 + hasFocus() * 10  ,
+                       50 + hasFocus() * 20,
+                       30 + hasFocus() * 10
                        ));
     p->drawRect(rect());
 }
 
 
 
-/*
+
 void ModuleItem::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {
-    sel_ = true;
-    update();
+    CSMOD_DEBUGE("ModuleItem::mousePressEvent("
+                 << e->pos().x() << ", " << e->pos().y() << ", " << e->button() << ")");
+
+    if (e->button() == Qt::LeftButton)
+    {
+        action_ = A_DRAGPOS;
+        e->accept();
+        return;
+    }
+    QGraphicsRectItem::mousePressEvent(e);
 }
+
 
 void ModuleItem::mouseMoveEvent(QGraphicsSceneMouseEvent * e)
 {
-    moveBy(e->scenePos().x() - e->lastScenePos().x(),
-           e->scenePos().y() - e->lastScenePos().y());
+    CSMOD_DEBUGE("ModuleItem::mouseMoveEvent("
+                 << e->pos().x() << ", " << e->pos().y() << ", " << e->button() << ")");
+
+    if (action_ == A_DRAGPOS)
+    {
+        moveBy(e->scenePos().x() - e->lastScenePos().x(),
+               e->scenePos().y() - e->lastScenePos().y());
+        // update cables connected to this module
+        view_->patchView()->updateCables(module_);
+    }
+
+    QGraphicsRectItem::mouseMoveEvent(e);
 }
 
 
-void ModuleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
+void ModuleItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
 {
-    sel_ = false;
-    update();
+    CSMOD_DEBUGE("ModuleItem::mouseReleaseEvent("
+                 << e->pos().x() << ", " << e->pos().y() << ", " << e->button() << ")");
+
+    action_ = A_NOTHING;
+
+    QGraphicsRectItem::mouseReleaseEvent(e);
 }
 
-
-*/
+/*
 void ModuleItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     focus_ = true;
@@ -151,7 +182,7 @@ void ModuleItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
     std::cout << "hello\n";
 }
 
-/*
+
 void ModuleItem::hoverMoveEvent(QGraphicsSceneHoverEvent *)
 {
     update();

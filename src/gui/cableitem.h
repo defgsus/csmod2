@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_CABLEITEM_H
 
 #include <QGraphicsLineItem>
+#include <QColor>
 
 namespace CSMOD { class Connection; }
 
@@ -40,9 +41,22 @@ public:
     /** update position to module's connectors */
     void updatePos();
 
+    /** base color */
+    const QColor& color() const { return color_; }
+    void color(const QColor& color) { color_ = color; }
+
 protected:
+
+    // ------------------- paint -------------------------
+
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+    // ------------------- events ------------------------
+
+
     CSMOD::Connection * con_;
     ConnectorItem * citem1_, * citem2_;
+    QColor color_;
 };
 
 #endif // CSMOD_CABLEITEM_H

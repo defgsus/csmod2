@@ -29,6 +29,12 @@ class PatchGraphicsView;
 
 class ModuleItem : public QGraphicsRectItem
 {
+    enum Action
+    {
+        A_NOTHING,
+        A_DRAGPOS
+    };
+
 public:
     explicit ModuleItem(CSMOD::Module * module,
                         PatchGraphicsView * view, QGraphicsItem *parent = 0);
@@ -36,7 +42,12 @@ public:
     CSMOD::Module * module() const { return module_; }
     PatchGraphicsView * view() const { return view_; }
 
+    // -------- selection / highlighting ---------------
+
     void markConnectorsThatMatch(CSMOD::Connector * con);
+
+    /** select this module */
+    void select();
 
 signals:
 
@@ -48,21 +59,25 @@ protected:
 
     void deleteChildItems_();
 
-    //virtual void paintEvent(QPaintEvent *);
+    // ------------------- paint -------------------------
+
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    /*
+
+    // ------------------- events ------------------------
+
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
-    */
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
-    /*virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
+
+    /* TODO virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
     */
-    bool focus_, sel_;
-
     CSMOD::Module * module_;
     PatchGraphicsView * view_;
+
+    Action action_;
+
 };
 
 #endif // MODULEITEM_H

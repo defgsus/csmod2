@@ -58,6 +58,8 @@ public:
 
     /** update all cable positions */
     void updateCables();
+    /** update all cables connected to this module */
+    void updateCables(CSMOD::Module * mod);
 
 signals:
 

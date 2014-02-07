@@ -41,16 +41,20 @@ public:
     virtual ~PatchGraphicsView();
 
     /** Assigns a patch for editing/viewing.
-        Set to NULL to deconnect. */
+        Set to NULL to disconnect. */
     void setPatch(CSMOD::Patch * patch);
     void setModel(CSMOD::Model * model);
-    //void updateFromPatch();
+
+    PatchView * patchView() const { return view_; }
+
+    // -------- for dragging cables -----------
 
     void startConnect(ConnectorItem * con);
     void moveConnect(const QPointF & scene_pos);
     void endConnect(const QPointF & scene_pos);
 
     void markConnectorsThatMatch(CSMOD::Connector * con);
+
 
 signals:
 

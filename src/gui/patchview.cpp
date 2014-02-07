@@ -82,11 +82,13 @@ void PatchView::setPatch(CSMOD::Patch * patch)
 {
     CSMOD_DEBUGF("PatchView::setPatch(" << patch << ")");
 
+    // set patch
     patch_ = patch;
     pview_->setPatch(patch_);
 
     // clear scene
     pview_->scene()->clear();
+
     // clear quicklists
     moduleitems_.clear();
     cableitems_.clear();
@@ -96,21 +98,13 @@ void PatchView::setPatch(CSMOD::Patch * patch)
     {
         createModuleItem_(m);
     }
+
     // create CableItems for each Connection
     for (auto c : patch_->connections())
     {
         createCableItem_(c);
     }
-/*
-    for (auto c : patch_->connections())
-    {
-        auto c1 = findConnectorItem_(c->connectorFrom()),
-             c2 = findConnectorItem_(c->connectorTo());
-        auto citem = new CableItem(c, c1, c2);
-        pview_->scene()->addItem(citem);
-        cableitems_.push_back(citem);
-    }
-*/
+
     updateCables();
 }
 
@@ -191,6 +185,8 @@ void PatchView::updateFromPatch()
     updateCables();
 }
 
+
+
 void PatchView::updateCables()
 {
     CSMOD_DEBUGF("PatchView::updateCables()");
@@ -201,6 +197,17 @@ void PatchView::updateCables()
     }
 }
 
+void PatchView::updateCables(CSMOD::Module * mod)
+{
+    CSMOD_DEBUGF("PatchView::updateCables(" << mod << ")");
+
+    for (auto ci : cableitems_)
+    if (ci->connection()->connectorFrom()->module() == mod
+     || ci->connection()->connectorTo()->module() == mod)
+    {
+        ci->updatePos();
+    }
+}
 
 // ---------------------- module items --------------------------
 
@@ -238,6 +245,7 @@ ConnectorItem * PatchView::findConnectorItem_(CSMOD::Connector * con)
     // find the module for this Connector
     ModuleItem * mi = findModuleItem_(con->module());
     if (!mi) return 0;
+
     // find the ConnectorItem
     for (auto i : mi->childItems())
     if (auto ci = dynamic_cast<ConnectorItem*>(i))
