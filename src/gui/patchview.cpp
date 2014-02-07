@@ -32,13 +32,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QGraphicsView>
 #include <QToolBar>
 
-#include "moduleitem.h"
-#include "cableitem.h"
-#include "patchgraphicsview.h"
 
 #include "log.h"
 #include "mod/module.h"
+#include "mod/connection.h"
 #include "mod/patch.h"
+#include "connectoritem.h"
+#include "moduleitem.h"
+#include "cableitem.h"
+#include "patchgraphicsview.h"
 
 PatchView::PatchView(QWidget *parent) :
     QFrame(parent),
@@ -83,29 +85,33 @@ void PatchView::setPatch(CSMOD::Patch * patch)
     patch_ = patch;
     pview_->setPatch(patch_);
 
+    // clear scene
+    pview_->scene()->clear();
+    // clear quicklists
     moduleitems_.clear();
     cableitems_.clear();
 
-    int k=0;
+    // create ModuleItem for each Module
     for (auto m : patch_->modules())
     {
-        // create a graphic representation of Module
-        auto mitem = new ModuleItem(m, pview_);
-        // add to graphic scene
-        pview_->scene()->addItem(mitem);
-        mitem->setPos(10 + k*120, 10);
-        ++k;
-        moduleitems_.push_back(mitem);
+        createModuleItem_(m);
     }
-
-    // add connections
+    // create CableItems for each Connection
     for (auto c : patch_->connections())
     {
-        auto citem = new CableItem(c);
+        createCableItem_(c);
+    }
+/*
+    for (auto c : patch_->connections())
+    {
+        auto c1 = findConnectorItem_(c->connectorFrom()),
+             c2 = findConnectorItem_(c->connectorTo());
+        auto citem = new CableItem(c, c1, c2);
         pview_->scene()->addItem(citem);
         cableitems_.push_back(citem);
     }
-
+*/
+    updateCables();
 }
 
 void PatchView::setModel(CSMOD::Model * model)
@@ -120,7 +126,69 @@ void PatchView::updateFromPatch()
 {
     CSMOD_DEBUGF("PatchView::updateFromPatch()");
 
-    setPatch(patch_);
+    // update ModuleItem for each Module
+    for (auto m : patch_->modules())
+    {
+        // find ModuleItem
+        auto mitem = findModuleItem_(m);
+
+        if (!mitem)
+        {   // not there? create one
+            mitem = createModuleItem_(m);
+        }
+
+        // update TODO
+    }
+
+    // remove all ModuleItems that are not needed
+    for (auto mi = moduleitems_.begin(); mi!=moduleitems_.end(); ++mi)
+    {
+        bool present = false;
+
+        for (auto m : patch_->modules())
+            if (m == (*mi)->module())
+                { present = true; break; }
+
+        if (!present)
+        {
+            // remove from everywhere
+            pview_->scene()->removeItem(*mi);
+            moduleitems_.erase(*mi);
+            delete *mi;
+        }
+    }
+
+    // update CableItem for each Connection
+    for (auto c : patch_->connections())
+    {
+        // find ModuleItem
+        auto citem = findCableItem_(c);
+
+        if (!citem)
+        {   // not there? create one
+            citem = createCableItem_(c);
+        }
+    }
+
+    // remove all CableItems that are not needed
+    for (auto ci = cableitems_.begin(); ci!=cableitems_.end(); ++ci)
+    {
+        bool present = false;
+
+        for (auto c : patch_->connections())
+            if (c == (*ci)->connection())
+                { present = true; break; }
+
+        if (!present)
+        {
+            // remove from everywhere
+            pview_->scene()->removeItem(*ci);
+            cableitems_.erase(*ci);
+            delete *ci;
+        }
+    }
+
+    updateCables();
 }
 
 void PatchView::updateCables()
@@ -134,6 +202,90 @@ void PatchView::updateCables()
 }
 
 
+// ---------------------- module items --------------------------
+
+ModuleItem * PatchView::createModuleItem_(CSMOD::Module * mod)
+{
+    CSMOD_DEBUGF("PatchView::createModuleItem(" << mod << ")");
+
+    // create
+    auto mitem = new ModuleItem(mod, pview_);
+
+    // add to graphic scene
+    pview_->scene()->addItem(mitem);
+    // position
+    mitem->setPos(10 + moduleitems_.size()*120, 10);
+    // add to quick access list
+    moduleitems_.insert(mitem);
+
+    return mitem;
+}
+
+ModuleItem * PatchView::findModuleItem_(CSMOD::Module * mod)
+{
+    for (auto m : moduleitems_)
+    {
+        if (m->module() == mod) return m;
+    }
+    return 0;
+}
+
+
+// ---------------------- connector items --------------------------
+
+ConnectorItem * PatchView::findConnectorItem_(CSMOD::Connector * con)
+{
+    // find the module for this Connector
+    ModuleItem * mi = findModuleItem_(con->module());
+    if (!mi) return 0;
+    // find the ConnectorItem
+    for (auto i : mi->childItems())
+    if (auto ci = dynamic_cast<ConnectorItem*>(i))
+    {
+        if (ci->connector() == con) return ci;
+    }
+    return 0;
+}
+
+
+// -------------- connection items -----------------
+
+CableItem * PatchView::findCableItem_(CSMOD::Connection * con)
+{
+    for (auto c : cableitems_)
+    {
+        if (c->connection() == con) return c;
+    }
+    return 0;
+
+}
+
+/** create and install a CableItem for the Connection */
+CableItem * PatchView::createCableItem_(CSMOD::Connection * con)
+{
+    CSMOD_DEBUGF("PatchView::createConnectionItem(" << con << ")");
+
+    auto c1 = findConnectorItem_(con->connectorFrom()),
+         c2 = findConnectorItem_(con->connectorTo());
+    if (!c1 || !c2)
+    {
+        CSMOD_RT_ERROR("PatchView::createConnectionItem(" << con << ") "
+                       "called, but ConnectorItems are missing.");
+        return 0;
+    }
+
+    // create
+    auto citem = new CableItem(con, c1, c2);
+
+    // add to graphic scene
+    pview_->scene()->addItem(citem);
+    // set position
+    citem->updatePos();
+    // add to quick access list
+    cableitems_.insert(citem);
+
+    return citem;
+}
 
 
 /*
@@ -145,7 +297,7 @@ void PatchView::paintEvent(QPaintEvent * event)
     p.setBrush(QBrush(QColor(200,200,200)));
     p.drawLine(QLineF(0,0,width(),height()));
 }
-*/
+
 
 void PatchView::mousePressEvent(QMouseEvent * e)
 {
@@ -162,3 +314,4 @@ void PatchView::mouseReleaseEvent(QMouseEvent * e)
 {
     QFrame::mouseReleaseEvent(e);
 }
+*/

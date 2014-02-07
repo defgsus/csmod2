@@ -33,6 +33,7 @@ public:
     explicit ModuleItem(CSMOD::Module * module,
                         PatchGraphicsView * view, QGraphicsItem *parent = 0);
 
+    CSMOD::Module * module() const { return module_; }
     PatchGraphicsView * view() const { return view_; }
 
     void markConnectorsThatMatch(CSMOD::Connector * con);

@@ -113,7 +113,7 @@ void ModuleItem::paint(QPainter * p, const
                        QStyleOptionGraphicsItem * /*option*/,
                        QWidget * /*widget*/)
 {
-    p->setBrush(QColor(10 + hasFocus() * 180,
+    p->setBrush(QColor(10 + hasFocus() * 40,
                        50 + hasCursor() * 50,
                        10 + isSelected() * 100
                        ));

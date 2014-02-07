@@ -26,11 +26,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD { class Connection; }
 
 class ModuleItem;
+class ConnectorItem;
 
 class CableItem : public QGraphicsLineItem
 {
 public:
-    explicit CableItem(CSMOD::Connection * con, QGraphicsItem * parent = 0);
+    explicit CableItem(CSMOD::Connection * con,
+                       ConnectorItem * ci1, ConnectorItem * ci2,
+                       QGraphicsItem * parent = 0);
 
     CSMOD::Connection * connection() const { return con_; }
 
@@ -39,6 +42,7 @@ public:
 
 protected:
     CSMOD::Connection * con_;
+    ConnectorItem * citem1_, * citem2_;
 };
 
 #endif // CSMOD_CABLEITEM_H

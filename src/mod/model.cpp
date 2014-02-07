@@ -96,6 +96,7 @@ void Model::updateViews_()
     for (auto v : views_)
     {
         v->updateFromPatch();
+        //v->updateCables();
     }
 }
 

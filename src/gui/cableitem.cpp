@@ -22,12 +22,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "log.h"
 #include "mod/connection.h"
+#include "connectoritem.h"
 
-CableItem::CableItem(CSMOD::Connection * con, QGraphicsItem * parent)
+CableItem::CableItem(CSMOD::Connection * con,
+                     ConnectorItem * ci1, ConnectorItem * ci2,
+                     QGraphicsItem * parent)
     :   QGraphicsLineItem(parent),
-        con_             (con)
+        con_             (con),
+        citem1_          (ci1),
+        citem2_          (ci2)
 {
-    CSMOD_DEBUGF("CableItem::CableItem(" << con << ", " << parent);
+    CSMOD_DEBUGF("CableItem::CableItem(" << con << ", " << ci1 << ", " << ci2 << ", " << parent << ")");
 
     setFlags(
         //QGraphicsItem::ItemIsMovable
@@ -44,5 +49,12 @@ CableItem::CableItem(CSMOD::Connection * con, QGraphicsItem * parent)
 
 void CableItem::updatePos()
 {
-    if (!con_) return;
+    CSMOD_DEBUGF("CableItem::updatePos()");
+
+    if (!con_ || !citem1_ || !citem2_) return;
+
+    setLine(QLineF(
+                citem1_->sceneConnectPoint(),
+                citem2_->sceneConnectPoint()
+                ));
 }

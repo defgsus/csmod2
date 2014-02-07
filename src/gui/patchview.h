@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef PATCHVIEW_H
 #define PATCHVIEW_H
 
+#include <set>
 #include <QFrame>
 
 namespace CSMOD {
@@ -33,6 +34,7 @@ class Model;
 
 class PatchGraphicsView;
 class ModuleItem;
+class ConnectorItem;
 class CableItem;
 
 
@@ -62,10 +64,35 @@ signals:
 public slots:
 
 protected:
+    // ---------------- module items -------------------
+
+    /** return the ModuleItem for the Module, or NULL */
+    ModuleItem * findModuleItem_(CSMOD::Module * mod);
+
+    /** create and install a ModuleItem for the module */
+    ModuleItem * createModuleItem_(CSMOD::Module * mod);
+
+    // ------------- connector items -------------------
+
+    /** return the ConnectorItem for the Connector, or NULL */
+    ConnectorItem * findConnectorItem_(CSMOD::Connector * con);
+
+    // -------------- connection items -----------------
+
+    /** Returns the installed CableItem, or NULL */
+    CableItem * findCableItem_(CSMOD::Connection * con);
+
+    /** create and install a CableItem for the Connection.
+        @note The referred ModuleItem must exist already,
+        if not, NULL will be returned. */
+    CableItem * createCableItem_(CSMOD::Connection * con);
+
+    // ----------------- event -------------------------
+    /*
     virtual void mousePressEvent(QMouseEvent *);
     virtual void mouseMoveEvent(QMouseEvent *);
     virtual void mouseReleaseEvent(QMouseEvent *);
-
+    */
     //virtual void paintEvent(QPaintEvent *);
 
     // __________ PROTECTED MEMBER __________________
@@ -74,8 +101,8 @@ protected:
     CSMOD::Patch * patch_;
     PatchGraphicsView * pview_;
 
-    std::vector<ModuleItem*> moduleitems_;
-    std::vector<CableItem*> cableitems_;
+    std::set<ModuleItem*> moduleitems_;
+    std::set<CableItem*> cableitems_;
 };
 
 #endif // PATCHVIEW_H
