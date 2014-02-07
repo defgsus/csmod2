@@ -18,30 +18,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef PATCHVIEW_H
-#define PATCHVIEW_H
+#ifndef MODULEITEM_H
+#define MODULEITEM_H
 
-#include <QFrame>
+#include <QGraphicsItem>
 
-/** direct view into a patch */
-class PatchView : public QFrame
+class ModuleItem : public QGraphicsRectItem
 {
-    Q_OBJECT
 public:
-    explicit PatchView(QWidget *parent = 0);
+    explicit ModuleItem(QGraphicsItem *parent = 0);
 
-    virtual QSize sizeHint() const;
 signals:
 
 public slots:
 
 protected:
-    virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseMoveEvent(QMouseEvent *);
-    virtual void mouseReleaseEvent(QMouseEvent *);
-
 
     //virtual void paintEvent(QPaintEvent *);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    /*
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
+    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+    */
+    bool focus_, sel_;
 };
 
-#endif // PATCHVIEW_H
+#endif // MODULEITEM_H

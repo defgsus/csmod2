@@ -24,9 +24,11 @@ SOURCES += \
     main.cpp \
     gui/mainwindow.cpp \
     gui/patchview.cpp \
-    gui/module.cpp
+    gui/moduleitem.cpp \
+    gui/patchgraphicsview.cpp
 
 HEADERS += \
     gui/mainwindow.h \
     gui/patchview.h \
-    gui/module.h
+    gui/moduleitem.h \
+    gui/patchgraphicsview.h

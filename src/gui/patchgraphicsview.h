@@ -18,34 +18,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef MODULE_H
-#define MODULE_H
+#ifndef PATCHGRAPHICSVIEW_H
+#define PATCHGRAPHICSVIEW_H
 
-#include <QWidget>
+#include <QGraphicsView>
 
-class Module : public QWidget
+class QGraphicsScene;
+
+class PatchGraphicsView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit Module(QWidget *parent = 0);
+    explicit PatchGraphicsView(QGraphicsScene * scene, QWidget *parent = 0);
 
 signals:
 
 public slots:
 
 protected:
-    virtual void paintEvent(QPaintEvent *);
 
-    virtual void mousePressEvent(QMouseEvent *);
-    virtual void mouseMoveEvent(QMouseEvent *);
-    virtual void mouseReleaseEvent(QMouseEvent *);
+    enum Action
+    {
+        A_NOTHING,
+        A_ZOOM
+    };
 
-    virtual void enterEvent(QEvent *);
-    virtual void leaveEvent(QEvent *);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
 
-    bool focus_, sel_;
-    int lastx_, lasty_,
-        lastmx_, lastmy_;
+    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
+
+    Action action_;
+    QPoint lastm_;
+    QTransform lastt_;
 };
 
-#endif // MODULE_H
+#endif // PATCHGRAPHICSVIEW_H
