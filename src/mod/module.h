@@ -40,7 +40,7 @@ class Module
 
     public:
 
-    Module(const std::string& className);
+    Module(const std::string& idName, const std::string& className);
 
     virtual ~Module();
 

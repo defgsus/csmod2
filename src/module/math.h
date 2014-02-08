@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef MATH_H
-#define MATH_H
+#ifndef CSMOD_MODULE_MATH_H
+#define CSMOD_MODULE_MATH_H
 
 #include "mod/module.h"
 
@@ -51,4 +51,4 @@ protected:
 } // namespace MODULE
 } // namespace CSMOD
 
-#endif // MATH_H
+#endif // CSMOD_MODULE_MATH_H

@@ -24,7 +24,7 @@ namespace CSMOD {
 namespace MODULE {
 
 Math::Math(Operation op)
-    : Module("TestModule"),
+    : Module("Math", "Math"),
       op_   (op)
 {
 
