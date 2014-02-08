@@ -23,7 +23,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <cinttypes>
 #include <string>
-//#include <QString>
+#include <QString>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 namespace CSMOD {
 
@@ -34,35 +36,74 @@ class Io
 public:
 
     Io();
-    virtual ~Io();
+    ~Io();
+
+    // --------------- io ---------------------------
+
+    bool startWriting();
+    bool stopWriting();
+    bool writeable();
+
+    bool startReading();
+    bool stopReading();
+    bool readable();
 
     // ------------------ sections ------------------
 
-    /** Create a new (sub-)section. */
-    virtual void newSection(const std::string& name) = 0;
+    /** Create a new (sub-)section. WRITE */
+    bool newSection(const std::string& name);
 
-    /** Returns if the current section matches @p name. */
-    virtual bool isSection(const std::string& name) const = 0;
+    /** Ends the current sub-section and goes to containing section. WRITE */
+    bool endSection();
 
-    /** Returns name of the current section. */
-    virtual const std::string& section(const std::string& name) const = 0;
+    /** Returns if the current section matches @p name. READ/WRITE */
+    bool isSection(const std::string& name) const;
 
-    /** Ends the current sub-section and goes to top section. */
-    virtual void endSection() = 0;
+    /** Returns name of the current section. READ/WRITE */
+    const std::string& section() const;
+
+    /** skip current section. READ */
+    bool nextSection();
 
     // ----------------- data write -----------------
 
-    virtual Io& addValue(const std::string& key, int) = 0;
+    bool write(const std::string& key, const std::string& v);
+    bool write(const std::string& key, int v);
+    bool write(const std::string& key, unsigned int v);
+    bool write(const std::string& key, long int v);
+    bool write(const std::string& key, long unsigned int v);
+    bool write(const std::string& key, float);
+    bool write(const std::string& key, double);
 
     // ----------------- data read ------------------
 
+    bool read(const std::string& key, std::string& v, const std::string& def = "") const;
+    bool read(const std::string& key, int& v, int def = 0) const;
+    bool read(const std::string& key, unsigned int& v, unsigned int def = 0) const;
+    bool read(const std::string& key, long int& v, long int def = 0) const;
+    bool read(const std::string& key, long unsigned int& v, long unsigned int def = 0) const;
+    bool read(const std::string& key, float& v, float def = 0) const;
+    bool read(const std::string& key, double& v, double def = 0) const;
+
+    int readInt(const std::string& key, int def = 0) const { int v; read(key, v, def); return v; }
+    int readUInt(const std::string& key, unsigned int def = 0) const { unsigned int v; read(key, v, def); return v; }
+    int readLInt(const std::string& key, long int def = 0) const { long int v; read(key, v, def); return v; }
+    int readLUInt(const std::string& key, long unsigned int def = 0) const { long unsigned int v; read(key, v, def); return v; }
+    int readFloat(const std::string& key, float def = 0) const { float v; read(key, v, def); return v; }
+    int readDouble(const std::string& key, double def = 0) const { double v; read(key, v, def); return v; }
 
     // _______________ PRIVATE AREA _________________
 
+private:
+    std::string cur_section_;
+
+    QXmlStreamWriter * xmlw_;
+    QXmlStreamReader * xmlr_;
+    QString data_;
 };
 
 
-
+void testIo();
 
 } // namespace CSMOD
 

@@ -20,13 +20,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QApplication>
 
-#include "mod/modulestock.h"
 #include "gui/mainwindow.h"
 
+//#include "mod/modulestock.h"
 //#include "tool/stringdigit.h"
+#include "tool/io.h"
 
 int main(int argc, char *argv[])
 {
+    CSMOD::testIo(); return 0;
     /*
     std::string s("bla"), s2(s);
     CSMOD::increase_number(s2, 0);
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    CSMOD::ModuleStock::instance().addDll("/home/defgsus/prog/qt_project/build-testbullet-Desktop_Qt_5_1_1_GCC_64bit-Debug/math.o");
+    //CSMOD::ModuleStock::instance().addDll("/home/defgsus/prog/qt_project/build-testbullet-Desktop_Qt_5_1_1_GCC_64bit-Debug/math.o");
 
     MainWindow w;
     w.show();
