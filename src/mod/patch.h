@@ -55,13 +55,17 @@ public:
     // --------- modules -----------------
 
     /** Returns Module by id, or NULL */
-    Module * getModule(const std::string& idname);
+    Module * findModule(const std::string& idname);
+
+    /** Sees if that instance is already there */
+    bool hasModule(const Module * m);
 
     const Modules& modules() const { return modules_; }
 
     /** Adds the module and takes ownership.
         If false is returned, there was something wrong
-        and the Module is not added. */
+        and the Module was not added.
+        The Module's idName will be made globally unique. */
     bool addModule(Module * module);
 
     // ---------- connections ------------

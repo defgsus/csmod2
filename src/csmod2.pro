@@ -34,7 +34,8 @@ SOURCES += \
     gui/connectoritem.cpp \
     mod/model.cpp \
     mod/modulestock.cpp \
-    gui/modulestockmenu.cpp
+    gui/modulestockmenu.cpp \
+    tool/stringmanip.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -51,7 +52,8 @@ HEADERS += \
     log.h \
     mod/model.h \
     mod/modulestock.h \
-    gui/modulestockmenu.h
+    gui/modulestockmenu.h \
+    tool/stringmanip.h
 
 ######### MODULES ########
 

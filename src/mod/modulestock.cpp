@@ -48,39 +48,39 @@ ModuleStock & ModuleStock::instance()
     return *instance_;
 }
 
-Module * ModuleStock::getModule(const std::string& idName)
+Module * ModuleStock::getModule(const std::string& className)
 {
-    CSMOD_DEBUGF("ModuleStock::getModule(\"" << idName << "\")");
+    CSMOD_DEBUGF("ModuleStock::getModule(\"" << className << "\")");
 
-    auto i = modules_.find(idName);
+    auto i = modules_.find(className);
     if (i == modules_.end())
     {
-        CSMOD_RT_ERROR("request of unknown module '" << idName << "'");
+        CSMOD_RT_ERROR("request of unknown module '" << className << "'");
         return 0;
     }
     return i->second->cloneClass();
 }
 
-const Module * ModuleStock::inspectModule(const std::string& idName) const
+const Module * ModuleStock::inspectModule(const std::string& className) const
 {
-    CSMOD_DEBUGF("ModuleStock::inspectModule(\"" << idName << "\")");
+    CSMOD_DEBUGF("ModuleStock::inspectModule(\"" << className << "\")");
 
-    auto i = modules_.find(idName);
+    auto i = modules_.find(className);
     if (i == modules_.end())
     {
-        CSMOD_RT_ERROR("request of unknown module '" << idName << "'");
+        CSMOD_RT_ERROR("request of unknown module '" << className << "'");
         return 0;
     }
     return i->second;
 }
 
-void ModuleStock::getIdNames(std::vector<std::string>& idNames) const
+void ModuleStock::getClassNames(std::vector<std::string>& classNames) const
 {
-    CSMOD_DEBUGF("ModuleStock::getIdNames(...)");
+    CSMOD_DEBUGF("ModuleStock::getClassNames(...)");
 
     for (auto kv : modules_)
     {
-        idNames.push_back( kv.second->idName() );
+        classNames.push_back( kv.second->className() );
     }
 }
 
@@ -89,13 +89,13 @@ bool ModuleStock::registerModule(Module * mod)
 {
     CSMOD_DEBUGF("ModuleStock::registerModule(" << mod << ")");
 
-    if (modules_.find(mod->idName()) != modules_.end())
+    if (modules_.find(mod->className()) != modules_.end())
     {
         CSMOD_RT_ERROR("module '" << mod << "' already registered.");
         return false;
     }
 
-    modules_.insert(std::make_pair(mod->idName(), mod));
+    modules_.insert(std::make_pair(mod->className(), mod));
 
     return true;
 }

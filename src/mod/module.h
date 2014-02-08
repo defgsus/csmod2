@@ -46,6 +46,14 @@ class Module
 
     public:
 
+    /** Basic constructor of a Module.
+        @p idName is the global unique persistent id of the Module.
+        This is used to serialize patches and should never change
+        for old pathch files to run.
+        @p className is the global unique name of the class, used
+        when loading the patch to determine the class to instantiate.
+        <p>Both parameters get their whitespace or unknown chars
+        replaced by an underscore.</p> */
     Module(const std::string& idName, const std::string& className);
 
     virtual ~Module();
@@ -79,13 +87,10 @@ class Module
 
     // ------------- connectors -----------------------
 
-    /** return number of all connectors */
-    size_t numConnectors() const { return cons_.size(); }
+    /** Returns the Connector match the id, or NULL if not present. */
+    Connector * findConnector(const std::string& idName);
 
-    /** return the specific connector or 0 if out of range */
-    Connector * connector(size_t index) const { return (index<cons_.size())? cons_[index] : 0; }
-
-    /** read access to all Connectors of this module. */
+    /** Read-access to all Connectors of this module. */
     const std::vector<Connector*>& connectors() const { return cons_; }
 
     // -------------- container -----------------------
@@ -101,9 +106,11 @@ class Module
 
     // ------------- connectors -----------------------
 
-    /** adds a new Connector instance.
-        <p>ownership is taken.</p>
-        <p>the given instance is returned by the function.</p> */
+    /** Adds a new Connector instance.
+        <p>Ownership is taken.</p>
+        <p>The given instance is returned by the function.</p>
+        <p>The id's of the connector will be made unique for
+        this module by appending or increasing digits if nescessary.</p> */
     Connector* add_(Connector * c);
 
     // -------------- container -----------------------

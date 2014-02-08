@@ -82,14 +82,14 @@ public:
     size_t numModules() const { return modules_.size(); }
 
     /** Returns a fresh instance, or NULL if not found. */
-    Module * getModule(const std::string& idName);
+    Module * getModule(const std::string& className);
 
     /** Returns a pointer to the module instance without
         making a copy, or NULL if not found. */
-    const Module * inspectModule(const std::string& idName) const;
+    const Module * inspectModule(const std::string& className) const;
 
-    /** pushes all idNames on the vector. */
-    void getIdNames(std::vector<std::string>& idNames) const;
+    /** pushes all ClassNames on the vector. */
+    void getClassNames(std::vector<std::string>& classNames) const;
 
     // ---------- register modules at runtime --
 

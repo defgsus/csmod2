@@ -100,7 +100,7 @@ void ConnectorItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
     if (e->button() == Qt::LeftButton)
     {
         CSMOD_PATCH_INFO("Connector: " << moduleItem_->module()->name() << "." << con_->name()
-                         << " (" << moduleItem_->module()->idName() << "." << con_->idname() << ")");
+                         << " [" << moduleItem_->module()->idName() << "." << con_->idName() << "]");
 
         is_con_ = true;
         view_->startConnect(this);

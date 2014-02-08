@@ -34,6 +34,9 @@ class Module;
 
 class Connector
 {
+    // needed to set idName_
+    friend class Module;
+
     public:
 
     /** direction of Connectors */
@@ -44,10 +47,10 @@ class Connector
     };
 
     Connector(Module * module, Direction dir,
-              const std::string& idname, const std::string& name)
+              const std::string& idName, const std::string& name)
         :	module_	(module),
             dir_    (dir),
-            idname_	(idname),
+            idName_	(idName),
             name_	(name)
     { }
 
@@ -58,7 +61,7 @@ class Connector
     /** direction (input or output) */
     Direction dir() const { return dir_; }
     /** persistent global id */
-    const std::string& idname() const { return idname_; }
+    const std::string& idName() const { return idName_; }
     /** humand-readable name */
     const std::string& name() const { return name_; }
 
@@ -79,7 +82,7 @@ class Connector
 
     std::string
     /** persistent name */
-        idname_,
+        idName_,
     /** user defined name */
         name_;
 };

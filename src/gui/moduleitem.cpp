@@ -76,9 +76,9 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
     int width = 100;
 
     int num_in = 0, num_out = 0;
-    for (size_t i=0; i<module_->numConnectors(); ++i)
+    for (size_t i=0; i<module_->connectors().size(); ++i)
     {
-        auto c = module_->connector(i);
+        auto c = module_->connectors()[i];
         auto ci = new ConnectorItem(this, c);
 
         if (c->dir() == CSMOD::Connector::IN)
@@ -144,7 +144,8 @@ void ModuleItem::mousePressEvent(QGraphicsSceneMouseEvent * e)
     if (e->button() == Qt::LeftButton)
     {
         CSMOD_PATCH_INFO(
-            "Module: " << module()->name() << "(" << module()->idName() << ")");
+            "Module: " << module()->name() << " [" << module()->idName() << "]");
+
         action_ = A_DRAGPOS;
         e->accept();
         return;

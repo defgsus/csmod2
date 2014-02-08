@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "module.h"
 
+#include "log.h"
+#include "tool/stringmanip.h"
+
 namespace CSMOD {
 
 Module::Module(const std::string& idName, const std::string& className)
@@ -28,7 +31,9 @@ Module::Module(const std::string& idName, const std::string& className)
         idName_   (idName),
         name_     (className)
 {
-
+    // make sure the strings are right
+    checkIdName(className_);
+    checkIdName(idName_);
 }
 
 Module::~Module()
@@ -39,9 +44,30 @@ Module::~Module()
 
 // ------------------- connectors ---------------------
 
+Connector * Module::findConnector(const std::string& idName)
+{
+    for (auto c : cons_)
+        if (idName == c->idName())
+            return c;
+    return 0;
+}
+
 Connector* Module::add_(Connector * c)
 {
+    // check for duplicate id
+    if (findConnector(c->idName()))
+    {
+        std::string id(c->idName());
+        do
+        {   increase_number(id,1);
+
+        } while (findConnector(id));
+
+        c->idName_ = id;
+    }
+
     cons_.push_back(c);
+
     return c;
 }
 

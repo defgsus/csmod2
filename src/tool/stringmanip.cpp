@@ -18,43 +18,53 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "modulestockmenu.h"
+#include "stringmanip.h"
 
-#include "log.h"
-#include "mod/module.h"
-#include "mod/modulestock.h"
+#include <cctype>
+#include <iostream>
 
-ModuleStockMenu::ModuleStockMenu(QWidget *parent) :
-    QMenu(parent)
+namespace CSMOD {
+
+
+void increase_number(std::string& str, int init)
 {
-    CSMOD_DEBUGF("ModuleStockMenu::ModuleStockMenu(" << parent << ")");
+    if (str.empty()) return;
 
-    updateMenu();
-}
+    // find last digit
+    size_t end = str.length()-1;
+    while (end && !std::isdigit(str[end])) --end;
 
-void ModuleStockMenu::updateMenu()
-{
-    CSMOD_DEBUGF("ModuleStockMenu::updateMenu()");
-
-    clear();
-
-    // get all module names
-    std::vector<std::string> ids;
-    CSMOD::ModuleStock::instance().getClassNames(ids);
-
-    for (auto id : ids)
+    // no number found
+    if (!std::isdigit(str[end]))
     {
-        // get the module class
-        auto mod = CSMOD::ModuleStock::instance().inspectModule(id);
+        if (init<0) return;
 
-        // create an action for each
-        auto act = new QAction(this);
-        act->setText(QString::fromStdString(mod->name()));
-        connect(act, &QAction::triggered, [=](bool)
-        {
-            moduleSelected(mod->className());
-        });
-        addAction(act);
+        // add the init digit
+        str += to_string(init);
+        return;
     }
+
+    // find start of number
+    size_t start = end;
+    while (start>1 && std::isdigit(str[start-1])) --start;
+
+    // extract integer
+    int value = from_string<int>(str.substr(start, end-start+1));
+
+    value += 1;
+
+    // replace number
+    str.replace(start, end-start+1, to_string(value));
 }
 
+
+
+void checkIdName(std::string& str)
+{
+    for (auto i = str.begin(); i!=str.end(); ++i)
+        if (*i <= ' ' || (unsigned char)*i >= 128)
+            *i = '_';
+}
+
+
+} // namespace CSMOD

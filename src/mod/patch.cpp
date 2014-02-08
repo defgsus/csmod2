@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connector.h"
 #include "connection.h"
 #include "module.h"
+#include "tool/stringmanip.h"
 
 namespace CSMOD {
 
@@ -44,7 +45,17 @@ Patch::~Patch()
 
 // -------------------- modules ------------------------
 
-Module * Patch::getModule(const std::string& idname)
+bool Patch::hasModule(const Module * mod)
+{
+    CSMOD_DEBUGF("Patch::hasModule(" << mod << ")");
+
+    for (auto m : modules_)
+        if (mod == m)
+            return true;
+    return false;
+}
+
+Module * Patch::findModule(const std::string& idname)
 {
     CSMOD_DEBUGF("Patch::getModule(" << idname << ")");
 
@@ -58,8 +69,22 @@ bool Patch::addModule(Module * module)
 {
     CSMOD_DEBUGF("Patch::addModule(" << module << ")");
 
+    // check presense
+    if (hasModule(module))
+    {
+        CSMOD_RT_ERROR("attempt to add module '" << module->name() << "' again.");
+        return false;
+    }
+
+    // adjust idName
+    while (findModule(module->idName_))
+        increase_number(module->idName_, 1);
+
     modules_.push_back(module);
+
+    // assign patch to module
     module->patch_ = this;
+
     return true;
 }
 
