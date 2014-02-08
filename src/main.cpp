@@ -18,12 +18,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "gui/mainwindow.h"
 #include <QApplication>
+
+#include "mod/modulestock.h"
+#include "gui/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    CSMOD::ModuleStock::instance().addDll("/home/defgsus/prog/qt_project/build-testbullet-Desktop_Qt_5_1_1_GCC_64bit-Debug/math.o");
 
     MainWindow w;
     w.show();

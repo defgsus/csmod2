@@ -27,17 +27,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "log.h"
 #include "mod/connector.h"
+#include "mod/module.h"
 
 #include "moduleitem.h"
 #include "patchgraphicsview.h"
 
 ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
     :   QGraphicsRectItem(parent),
-        moduleItem_  (parent),
-        con_         (con),
-        view_   (parent->view()),
-        is_con_ (false),
-        matches_    (false)
+        moduleItem_     (parent),
+        con_            (con),
+        view_           (parent->view()),
+        is_con_         (false),
+        matches_        (false)
 {
     CSMOD_DEBUGF("ConnectorItem::ConnectorItem(" << parent << ", " << con << ")");
 
@@ -51,6 +52,10 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
     setRect(0,0, 10, 10);
 }
 
+void ConnectorItem::setInfo(const std::string& info)
+{
+    view_->setInfo(info);
+}
 
 QPointF ConnectorItem::sceneConnectPoint() const
 {
@@ -94,6 +99,9 @@ void ConnectorItem::mousePressEvent(QGraphicsSceneMouseEvent *e)
     // start connecting
     if (e->button() == Qt::LeftButton)
     {
+        CSMOD_PATCH_INFO("Connector: " << moduleItem_->module()->name() << "." << con_->name()
+                         << " (" << moduleItem_->module()->idName() << "." << con_->idname() << ")");
+
         is_con_ = true;
         view_->startConnect(this);
         e->accept();

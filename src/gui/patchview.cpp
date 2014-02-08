@@ -60,13 +60,18 @@ PatchView::PatchView(QWidget *parent) :
     pal.setColor(QPalette::Base, QColor(40,40,40));
     setPalette(pal);
 */
+    // layout
     auto l0 = new QVBoxLayout(this);
     l0->setContentsMargins(lineWidth(), lineWidth(),
                            lineWidth(), lineWidth());
 
+    // toolbar
     auto tb = new QToolBar(this);
     l0->addWidget(tb);
 
+    tb->addWidget(infoLabel_ = new QLabel("info", tb));
+
+    // actual patch view
     pview_ = new PatchGraphicsView(this, this);
     l0->addWidget(pview_);
 
@@ -76,6 +81,13 @@ QSize PatchView::sizeHint() const
 {
     return QSize(800,600);
 }
+
+
+void PatchView::setInfo(const std::string& str)
+{
+    infoLabel_->setText(QString::fromStdString(str));
+}
+
 
 
 void PatchView::setPatch(CSMOD::Patch * patch)
@@ -283,7 +295,7 @@ CableItem * PatchView::createCableItem_(CSMOD::Connection * con)
     }
 
     // create
-    auto citem = new CableItem(con, c1, c2);
+    auto citem = new CableItem(con, c1, c2, pview_);
 
     // add to graphic scene
     pview_->scene()->addItem(citem);

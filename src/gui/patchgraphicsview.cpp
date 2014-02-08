@@ -29,9 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "log.h"
 #include "mod/connector.h"
+#include "mod/module.h"
 #include "mod/model.h"
 #include "connectoritem.h"
 #include "moduleitem.h"
+#include "patchview.h"
 
 PatchGraphicsView::PatchGraphicsView(PatchView * view, QWidget * parent) :
     QGraphicsView(new QGraphicsScene(parent), parent),
@@ -50,6 +52,11 @@ PatchGraphicsView::PatchGraphicsView(PatchView * view, QWidget * parent) :
 PatchGraphicsView::~PatchGraphicsView()
 {
     CSMOD_DEBUGF("PatchGraphicsView::~PatchGraphicsView()");
+}
+
+void PatchGraphicsView::setInfo(const std::string& info)
+{
+    view_->setInfo(info);
 }
 
 void PatchGraphicsView::setPatch(CSMOD::Patch * patch)
@@ -118,6 +125,20 @@ void PatchGraphicsView::moveConnect(const QPointF &pos)
     }
     else
         con_line_->setPen(QPen(QColor(100,255,100)));
+
+    // info label
+    if (con_to_)
+    {
+        CSMOD_PATCH_INFO(
+            con_from_->connector()->module()->name() << "." << con_from_->connector()->name() << " -> " <<
+            con_to_->connector()->module()->name() << "." << con_to_->connector()->name()
+            );
+    }
+    else
+    {
+        CSMOD_PATCH_INFO(
+            con_from_->connector()->module()->name() << "." << con_from_->connector()->name() << " -> ");
+    }
 
     con_line_->setVisible(true);
 
@@ -225,6 +246,9 @@ void PatchGraphicsView::mousePressEvent(QMouseEvent * e)
 {
     CSMOD_DEBUGE("PatchGraphicsViewer::mousePressEvent("
                  << e->x() << ", " << e->y() << ", " << e->button() << ")");
+
+    QPointF sp = mapToScene(e->x(), e->y());
+    CSMOD_PATCH_INFO((int)sp.x() << ", " << (int)sp.y());
 
     // zoom
     if (e->button() == Qt::RightButton

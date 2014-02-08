@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/patch.h"
 #include "mod/module.h"
 #include "mod/model.h"
-#include "module/math.h"
+#include "mod/modulestock.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -39,8 +39,13 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(patchview_);
 
     auto p = new CSMOD::Patch();
+
     for (int i=0; i<40; ++i)
-        p->addModule(new CSMOD::MODULE::Math);
+    {
+        CSMOD::Module * m = CSMOD::ModuleStock::instance().getModule("Math");
+        if (!m) exit(-1);
+        p->addModule( m );
+    }
 
     model_->setPatch(p);
     model_->addPatchView(patchview_);

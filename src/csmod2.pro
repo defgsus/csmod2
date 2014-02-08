@@ -33,7 +33,7 @@ SOURCES += \
     mod/patch.cpp \
     gui/connectoritem.cpp \
     mod/model.cpp \
-    module/math.cpp
+    mod/modulestock.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -49,4 +49,27 @@ HEADERS += \
     gui/connectoritem.h \
     log.h \
     mod/model.h \
+    mod/modulestock.h
+
+######### MODULES ########
+
+MODULE_SOURCES += \
+    module/math.cpp
+
+MODULE_HEADERS += \
     module/math.h
+
+#OTHER_FILES += $$MODULE_SOURCES $$MODULE_HEADERS
+SOURCES += $$MODULE_SOURCES
+HEADERS += $$MODULE_HEADERS
+
+###### module compiler ######
+
+modules.input = MODULE_SOURCES
+modules.output = ${QMAKE_FILE_BASE}.o
+modules.commands = $$QMAKE_CXX $$QMAKE_CXXFLAGS $$LIBS \
+                    $$INCLUDEPATH $$QMAKE_LIBS \
+                    -I/home/defgsus/prog/qt_project/csmod2/src \
+                    -o ${QMAKE_FILE_BASE} ${QMAKE_FILE_NAME}
+
+#QMAKE_EXTRA_COMPILERS += modules

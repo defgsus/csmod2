@@ -43,8 +43,8 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
 
     setFlags(
 //        QGraphicsItem::ItemIsMovable
-         //QGraphicsItem::ItemIsSelectable
-          QGraphicsItem::ItemIsFocusable
+           QGraphicsItem::ItemIsSelectable
+         | QGraphicsItem::ItemIsFocusable
         //| QGraphicsItem::ItemClipsToShape
         //| QGraphicsItem::ItemClipsChildrenToShape
         //| QGraphicsItem::ItemSendsGeometryChanges
@@ -58,11 +58,16 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
     */
 }
 
-
+void ModuleItem::setInfo(const std::string& info)
+{
+    view_->setInfo(info);
+}
 
 
 void ModuleItem::updateFromModule_(CSMOD::Module * module)
 {
+    CSMOD_DEBUGF("ModuleItem::updateFromModule_(" << module << ")");
+
     deleteChildItems_();
     module_ = module;
 
@@ -122,10 +127,9 @@ void ModuleItem::paint(QPainter * p, const
                        QStyleOptionGraphicsItem * /*option*/,
                        QWidget * /*widget*/)
 {
-    p->setBrush(QColor(30 + hasFocus() * 10  ,
-                       50 + hasFocus() * 20,
-                       30 + hasFocus() * 10
-                       ));
+    int f = hasFocus() || isSelected();
+    p->setBrush(QColor(30,50,30).lighter(100+f * 50));
+
     p->drawRect(rect());
 }
 
@@ -139,6 +143,8 @@ void ModuleItem::mousePressEvent(QGraphicsSceneMouseEvent * e)
 
     if (e->button() == Qt::LeftButton)
     {
+        CSMOD_PATCH_INFO(
+            "Module: " << module()->name() << "(" << module()->idName() << ")");
         action_ = A_DRAGPOS;
         e->accept();
         return;

@@ -33,6 +33,8 @@ class ConnectorItem : public QGraphicsRectItem
 public:
     explicit ConnectorItem(ModuleItem * parent, CSMOD::Connector * con);
 
+    void setInfo(const std::string& info);
+
     CSMOD::Connector * connector() const { return con_; }
 
     /** return point for connection in scene coords */

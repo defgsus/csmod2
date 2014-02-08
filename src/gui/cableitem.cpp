@@ -26,12 +26,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "log.h"
 #include "mod/connection.h"
 #include "connectoritem.h"
+#include "patchgraphicsview.h"
 
 
 CableItem::CableItem(CSMOD::Connection * con,
                      ConnectorItem * ci1, ConnectorItem * ci2,
+                     PatchGraphicsView * view,
                      QGraphicsItem * parent)
     :   QGraphicsLineItem(parent),
+        view_            (view),
         con_             (con),
         citem1_          (ci1),
         citem2_          (ci2),
@@ -50,6 +53,10 @@ CableItem::CableItem(CSMOD::Connection * con,
 
 }
 
+void CableItem::setInfo(const std::string& info)
+{
+    view_->setInfo(info);
+}
 
 void CableItem::updatePos()
 {

@@ -42,12 +42,12 @@ public:
     CSMOD::Module * module() const { return module_; }
     PatchGraphicsView * view() const { return view_; }
 
+    void setInfo(const std::string& info);
+
     // -------- selection / highlighting ---------------
 
     void markConnectorsThatMatch(CSMOD::Connector * con);
 
-    /** select this module */
-    void select();
 
 signals:
 

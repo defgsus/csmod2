@@ -27,10 +27,15 @@ class PatchView;
 
 namespace CSMOD {
 
+
+
+class Model;
 class Patch;
 class Module;
 class Connector;
 class Connection;
+
+
 
 /** @brief class for threadsafe editing */
 class Model

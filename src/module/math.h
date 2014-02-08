@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_MODULE_MATH_H
 
 #include "mod/module.h"
+#include "mod/modulestock.h"
 
 namespace CSMOD {
 namespace MODULE {
@@ -48,7 +49,13 @@ protected:
     ValueConnector * output_;
 };
 
+CSMOD_REGISTER_MODULE(Math)
+
 } // namespace MODULE
 } // namespace CSMOD
+
+
+
+int numModules() { return 23; }
 
 #endif // CSMOD_MODULE_MATH_H

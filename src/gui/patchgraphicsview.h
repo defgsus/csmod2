@@ -21,7 +21,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef PATCHGRAPHICSVIEW_H
 #define PATCHGRAPHICSVIEW_H
 
+#include <sstream>
+
 #include <QGraphicsView>
+
+
+#ifndef CSMOD_PATCH_INFO
+#define CSMOD_PATCH_INFO(arg__) \
+{   \
+    std::stringstream s__; s__ << arg__; \
+    setInfo(s__.str()); \
+}
+#endif
 
 namespace CSMOD {
 class Patch;
@@ -46,6 +57,8 @@ public:
     void setModel(CSMOD::Model * model);
 
     PatchView * patchView() const { return view_; }
+
+    void setInfo(const std::string& info);
 
     // -------- for dragging cables -----------
 

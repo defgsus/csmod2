@@ -22,7 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define PATCHVIEW_H
 
 #include <set>
+#include <sstream>
+
 #include <QFrame>
+#include <QLabel>
+
+// --- forwards ---
 
 namespace CSMOD {
 class Module;
@@ -38,7 +43,16 @@ class ConnectorItem;
 class CableItem;
 
 
-/** direct view into a patch */
+#ifndef CSMOD_PATCH_INFO
+#define CSMOD_PATCH_INFO(arg__) \
+{   \
+    std::stringstream s__; s__ << arg__; \
+    setInfo(s__.str()); \
+}
+#endif
+
+
+/** @brief direct view into a patch */
 class PatchView : public QFrame
 {
     Q_OBJECT
@@ -47,11 +61,11 @@ public:
 
     QSize sizeHint() const;
 
+    void setModel(CSMOD::Model * model);
+
     /** Assigns a patch for editing/viewing.
         Set to NULL to deconnect. */
     void setPatch(CSMOD::Patch * patch);
-
-    void setModel(CSMOD::Model * model);
 
     /** update changes in patch */
     void updateFromPatch();
@@ -60,6 +74,9 @@ public:
     void updateCables();
     /** update all cables connected to this module */
     void updateCables(CSMOD::Module * mod);
+
+    /** reset the info string in the toolbar */
+    void setInfo(const std::string& info);
 
 signals:
 
@@ -105,6 +122,10 @@ protected:
 
     std::set<ModuleItem*> moduleitems_;
     std::set<CableItem*> cableitems_;
+
+    std::stringstream infostream_;
+
+    QLabel * infoLabel_;
 };
 
 #endif // PATCHVIEW_H

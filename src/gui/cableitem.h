@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD { class Connection; }
 
+class PatchGraphicsView;
 class ModuleItem;
 class ConnectorItem;
 
@@ -34,7 +35,10 @@ class CableItem : public QGraphicsLineItem
 public:
     explicit CableItem(CSMOD::Connection * con,
                        ConnectorItem * ci1, ConnectorItem * ci2,
+                       PatchGraphicsView * view,
                        QGraphicsItem * parent = 0);
+
+    void setInfo(const std::string& info);
 
     CSMOD::Connection * connection() const { return con_; }
 
@@ -53,7 +57,7 @@ protected:
 
     // ------------------- events ------------------------
 
-
+    PatchGraphicsView * view_;
     CSMOD::Connection * con_;
     ConnectorItem * citem1_, * citem2_;
     QColor color_;
