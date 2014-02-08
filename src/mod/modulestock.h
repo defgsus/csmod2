@@ -49,7 +49,21 @@ namespace CSMOD {
 
 class Module;
 
-/** @brief class containing all possible modules */
+/** @brief class containing all possible modules.
+
+    <p>This is a singleton class, all requests go to the
+    same instance.</p>
+
+    <p>The Modules, either loaded from a shared lib or
+    registered with CSMOD_REGISTER_MODULE, are each constructed
+    and wait in the stock for requests to copy themselves.
+    This is not the most memory-efficient way, but makes compiled-in
+    Modules easy to register.</p>
+
+    <p>Modules from a shared library can possibly be constructed
+    as needed. They only need to expose their idName prior to
+    construction.</p>
+*/
 class ModuleStock
 {
     // ------------------ ctor ----------------
@@ -64,13 +78,23 @@ public:
 
     // ----------- module getter --------------
 
-    /** return a fresh instance, or NULL */
+    /** Returns the number of registered modules. */
+    size_t numModules() const { return modules_.size(); }
+
+    /** Returns a fresh instance, or NULL if not found. */
     Module * getModule(const std::string& idName);
+
+    /** Returns a pointer to the module instance without
+        making a copy, or NULL if not found. */
+    const Module * inspectModule(const std::string& idName) const;
+
+    /** pushes all idNames on the vector. */
+    void getIdNames(std::vector<std::string>& idNames) const;
+
+    // ---------- register modules at runtime --
 
     /** add a dll to the stock */
     bool addDll(const std::string& filename);
-
-    // ---------- register modules at runtime --
 
     /** Registers a Module. Ownership is taken.
         <p>return-value signifies success. although it's not irrelevant
@@ -78,8 +102,15 @@ public:
     bool registerModule(Module * mod);
 
 private:
+
+    /** singleton instance of this class. */
     static ModuleStock * instance_;
+
+    /** currently: handles returned by dlopen().
+       This will probably change for crossplatform use. */
     std::vector<void*> dlls_;
+
+    /** List of all constructed modules, ready to copy themselves. */
     std::map<std::string, Module*> modules_;
 };
 

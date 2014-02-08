@@ -25,22 +25,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QPainter>
 #include <QPalette>
 #include <QScrollArea>
-#include <QPushButton>
 #include <QLayout>
-#include <QGroupBox>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QToolBar>
-
+#include <QPushButton>
+#include <QAction>
 
 #include "log.h"
 #include "mod/module.h"
 #include "mod/connection.h"
 #include "mod/patch.h"
+#include "mod/model.h"
 #include "connectoritem.h"
 #include "moduleitem.h"
 #include "cableitem.h"
 #include "patchgraphicsview.h"
+#include "modulestockmenu.h"
+
 
 PatchView::PatchView(QWidget *parent) :
     QFrame(parent),
@@ -60,20 +62,41 @@ PatchView::PatchView(QWidget *parent) :
     pal.setColor(QPalette::Base, QColor(40,40,40));
     setPalette(pal);
 */
+    // setup stockmenu
+    stockmenu_ = new ModuleStockMenu(this);
+    connect(stockmenu_, &ModuleStockMenu::moduleSelected,
+            [=](const std::string& idName)
+    {
+        model_->createModule(patch_, idName);
+    });
+
     // layout
     auto l0 = new QVBoxLayout(this);
     l0->setContentsMargins(lineWidth(), lineWidth(),
                            lineWidth(), lineWidth());
 
-    // toolbar
-    auto tb = new QToolBar(this);
-    l0->addWidget(tb);
+        // --- toolbar ---
+        auto tb = new QToolBar(this);
+        l0->addWidget(tb);
 
-    tb->addWidget(infoLabel_ = new QLabel("info", tb));
+            // stockmenu button
+            auto b = new QPushButton();
+            tb->addWidget( b );
+            b->setText("+");
+            b->setFixedWidth(tb->height()-4);
+            connect(b, &QPushButton::clicked, [=]()
+            {
+                stockmenu_->popup(b->mapToGlobal(b->pos()));
+            });
 
-    // actual patch view
-    pview_ = new PatchGraphicsView(this, this);
-    l0->addWidget(pview_);
+            tb->addSeparator();
+
+            // info label
+            tb->addWidget(infoLabel_ = new QLabel("info", tb));
+
+        // actual patch view
+        pview_ = new PatchGraphicsView(this, this);
+        l0->addWidget(pview_);
 
 }
 
@@ -220,6 +243,10 @@ void PatchView::updateCables(CSMOD::Module * mod)
         ci->updatePos();
     }
 }
+
+// ---------------------- modules -------------------------------
+
+
 
 // ---------------------- module items --------------------------
 

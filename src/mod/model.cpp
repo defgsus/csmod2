@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connector.h"
 #include "module.h"
 #include "patch.h"
+#include "modulestock.h"
 
 #include "gui/patchview.h"
 
@@ -57,7 +58,29 @@ void Model::addPatchView(PatchView * view)
     views_.push_back(view);
 }
 
+
+
+
 // -------- module handling -----------
+
+bool Model::createModule(Patch * patch, const std::string& idName)
+{
+    CSMOD_DEBUGF("Model::createModule(" << patch << ", \"" << idName << "\")");
+
+    // get new instance
+    auto m = ModuleStock::instance().getModule(idName);
+    if (!m) return false;
+
+    // add to patch
+    if (!patch->addModule(m))
+    {
+        delete m;
+        return false;
+    }
+
+    updateViews_();
+    return true;
+}
 
 
 // -------- connection handling -------
@@ -84,6 +107,10 @@ bool Model::disconnect(Connection * con)
     updateViews_();
     return true;
 }
+
+
+
+
 
 
 

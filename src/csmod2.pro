@@ -33,7 +33,8 @@ SOURCES += \
     mod/patch.cpp \
     gui/connectoritem.cpp \
     mod/model.cpp \
-    mod/modulestock.cpp
+    mod/modulestock.cpp \
+    gui/modulestockmenu.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS += \
     gui/connectoritem.h \
     log.h \
     mod/model.h \
-    mod/modulestock.h
+    mod/modulestock.h \
+    gui/modulestockmenu.h
 
 ######### MODULES ########
 

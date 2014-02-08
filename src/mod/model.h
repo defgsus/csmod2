@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef CSMOD_MOD_MODEL_H
 #define CSMOD_MOD_MODEL_H
 
+#include <string>
 #include <vector>
 
 class PatchView;
@@ -37,7 +38,17 @@ class Connection;
 
 
 
-/** @brief class for threadsafe editing */
+/** @brief class for threadsafe editing.
+
+    <p>The idea is as following. Model can be asked from
+    anywhere to make changes to a Patch and will automatically
+    signal the GUI/PatchView of these changes.</p>
+
+    <p>That means, that even Patch should ask Model to make
+    changes (If Patch needs to, anyway).</p>
+
+    <p>It's also planned to record the undo history here.</p>
+*/
 class Model
 {
 public:
@@ -53,7 +64,12 @@ public:
 
     void addPatchView(PatchView * view);
 
+    // -|-|-|-|-|-|-|- EDIT INTERFACE -|-|-|-|-|-|-|-
+
     // -------- module handling -----------
+
+    /** Creates a Module in the specified patch. */
+    bool createModule(Patch * patch, const std::string& idName);
 
     // -------- connection handling -------
 

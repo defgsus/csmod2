@@ -18,43 +18,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "mainwindow.h"
+#include "modulestockmenu.h"
 
-#include <QLayout>
-#include <QStatusBar>
-#include <QPushButton>
-
-#include "patchview.h"
-#include "mod/patch.h"
+#include "log.h"
 #include "mod/module.h"
-#include "mod/model.h"
 #include "mod/modulestock.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+ModuleStockMenu::ModuleStockMenu(QWidget *parent) :
+    QMenu(parent)
 {
-    model_ =     new CSMOD::Model();
-    patchview_ = new PatchView();
+    CSMOD_DEBUGF("ModuleStockMenu::ModuleStockMenu(" << parent << ")");
 
-    setCentralWidget(patchview_);
+    updateMenu();
+}
 
-    auto p = new CSMOD::Patch();
-    /*
-    for (int i=0; i<40; ++i)
+void ModuleStockMenu::updateMenu()
+{
+    CSMOD_DEBUGF("ModuleStockMenu::updateMenu()");
+
+    clear();
+
+    // get all module names
+    std::vector<std::string> ids;
+    CSMOD::ModuleStock::instance().getIdNames(ids);
+
+    for (auto id : ids)
     {
-        CSMOD::Module * m = CSMOD::ModuleStock::instance().getModule("Math");
-        if (!m) exit(-1);
-        p->addModule( m );
+        // get the module class
+        auto mod = CSMOD::ModuleStock::instance().inspectModule(id);
+
+        // create an action for each
+        auto act = new QAction(this);
+        act->setText(QString::fromStdString(mod->name()));
+        connect(act, &QAction::triggered, [=](bool)
+        {
+            std::cout << mod->idName() << std::endl;
+            moduleSelected(mod->idName());
+        });
+        addAction(act);
     }
-    */
-    model_->setPatch(p);
-    model_->addPatchView(patchview_);
-    patchview_->setModel(model_);
-
-    patchview_->setPatch(p);
 }
 
-MainWindow::~MainWindow()
-{
-
-}

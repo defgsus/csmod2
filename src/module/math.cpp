@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 namespace MODULE {
 
-Math::Math(Operation op)
-    : Module("Math", "Math"),
+MathOperator::MathOperator(Operation op)
+    : Module("Math Operator", "Math Operator"),
       op_   (op)
 {
 
@@ -36,6 +36,26 @@ Math::Math(Operation op)
    }
 
    add_( output_ = new ValueConnector(this, Connector::OUT, "out", "out") );
+}
+
+MathUnary::MathUnary(Operation op)
+    : Module("Math Unary", "Math Unary"),
+      op_   (op)
+{
+
+   for (int i=0; i<4; ++i)
+   {
+       auto in = new ValueConnector(this, Connector::IN,  "in", "in");
+       inputs_.push_back( in );
+       add_( in );
+   }
+
+   for (int i=0; i<4; ++i)
+   {
+       auto out = new ValueConnector(this, Connector::OUT,  "out", "out");
+       inputs_.push_back( out );
+       add_( out );
+   }
 }
 
 } // namespace MODULE

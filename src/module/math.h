@@ -27,7 +27,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 namespace MODULE {
 
-class Math : public Module
+/* NOTE: Don't take this serious.
+ * Currently i'm playing around with Modules to see
+ * what patterns work best. */
+
+class MathOperator : public Module
 {
 public:
     enum Operation
@@ -38,9 +42,9 @@ public:
         O_DIV
     };
 
-    Math(Operation op = O_ADD);
+    MathOperator(Operation op = O_ADD);
 
-    virtual Math * cloneClass() const { return new Math(op_); }
+    virtual MathOperator * cloneClass() const { return new MathOperator(op_); }
 
 protected:
     Operation op_;
@@ -49,7 +53,31 @@ protected:
     ValueConnector * output_;
 };
 
-CSMOD_REGISTER_MODULE(Math)
+
+class MathUnary : public Module
+{
+public:
+    enum Operation
+    {
+        O_SIN,
+        O_COS,
+        O_ABS,
+        O_NEG
+    };
+
+    MathUnary(Operation op = O_SIN);
+
+    virtual MathUnary * cloneClass() const { return new MathUnary(op_); }
+
+protected:
+    Operation op_;
+
+    std::vector<ValueConnector*>
+        inputs_, outputs_;
+};
+
+CSMOD_REGISTER_MODULE(MathOperator)
+CSMOD_REGISTER_MODULE(MathUnary)
 
 } // namespace MODULE
 } // namespace CSMOD

@@ -41,7 +41,7 @@ class PatchGraphicsView;
 class ModuleItem;
 class ConnectorItem;
 class CableItem;
-
+class ModuleStockMenu;
 
 #ifndef CSMOD_PATCH_INFO
 #define CSMOD_PATCH_INFO(arg__) \
@@ -125,6 +125,7 @@ protected:
 
     std::stringstream infostream_;
 
+    ModuleStockMenu * stockmenu_;
     QLabel * infoLabel_;
 };
 

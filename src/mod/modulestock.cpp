@@ -51,6 +51,7 @@ ModuleStock & ModuleStock::instance()
 Module * ModuleStock::getModule(const std::string& idName)
 {
     CSMOD_DEBUGF("ModuleStock::getModule(\"" << idName << "\")");
+
     auto i = modules_.find(idName);
     if (i == modules_.end())
     {
@@ -58,6 +59,29 @@ Module * ModuleStock::getModule(const std::string& idName)
         return 0;
     }
     return i->second->cloneClass();
+}
+
+const Module * ModuleStock::inspectModule(const std::string& idName) const
+{
+    CSMOD_DEBUGF("ModuleStock::inspectModule(\"" << idName << "\")");
+
+    auto i = modules_.find(idName);
+    if (i == modules_.end())
+    {
+        CSMOD_RT_ERROR("request of unknown module '" << idName << "'");
+        return 0;
+    }
+    return i->second;
+}
+
+void ModuleStock::getIdNames(std::vector<std::string>& idNames) const
+{
+    CSMOD_DEBUGF("ModuleStock::getIdNames(...)");
+
+    for (auto kv : modules_)
+    {
+        idNames.push_back( kv.second->idName() );
+    }
 }
 
 
