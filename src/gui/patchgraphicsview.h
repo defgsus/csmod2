@@ -43,7 +43,11 @@ class Model;
 class PatchView;
 class ConnectorItem;
 
+/** @brief direct view of a patch and it's modules and connections.
 
+    <p>This class mostly handles the drawing and user events.
+    The edit logic is in PatchView.</p>
+*/
 class PatchGraphicsView : public QGraphicsView
 {
     Q_OBJECT

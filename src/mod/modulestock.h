@@ -25,10 +25,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <vector>
 #include <map>
 
+/** Macro for registering a Module at runtime.
+    <p>Place this somewhere after your class definition:</p>
+    @code
+    class SuperDuper : public Module
+    {
+        ...
+    };
 
-#define CSMOD_REGISTER_MODULE( className__ ) \
-    bool success_registering_##className__ = \
-        ::CSMOD::ModuleStock::instance().registerModule( new className__ ); \
+    CSMOD_REGISTER_MODULE(SuperDuper)
+    @endcode
+    @note The id in Module::idName() is set from
+    the constructor of your derived class. It must be
+    <b>globally unique</b>, since no two Modules with
+    the same id can be registered!
+*/
+#define CSMOD_REGISTER_MODULE( Class__ ) \
+    bool success_registering_##Class__ = \
+        ::CSMOD::ModuleStock::instance().registerModule( new Class__ ); \
+
 
 namespace CSMOD {
 
