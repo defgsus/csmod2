@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsItem>
 
-namespace CSMOD { class Module; class Connector; }
+namespace CSMOD { class Module; class Connector; class Io; }
 
 class PatchGraphicsView;
 
@@ -38,6 +38,11 @@ class ModuleItem : public QGraphicsRectItem
 public:
     explicit ModuleItem(CSMOD::Module * module,
                         PatchGraphicsView * view, QGraphicsItem *parent = 0);
+
+    // ------------------- IO --------------------------
+
+    bool store(CSMOD::Io * io);
+    bool restore(CSMOD::Io * io);
 
     CSMOD::Module * module() const { return module_; }
     PatchGraphicsView * view() const { return view_; }

@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "io.h"
 
 #include <QDebug>
+#include <QXmlStreamWriter>
+#include <QXmlStreamReader>
 
 #include "log.h"
 
@@ -29,7 +31,8 @@ namespace CSMOD {
 
 Io::Io()
     :   xmlw_   (0),
-        xmlr_   (0)
+        xmlr_   (0),
+        data_   (new QString)
 {
     CSMOD_DEBUGF("Io::Io()");
 }
@@ -39,6 +42,7 @@ Io::~Io()
     CSMOD_DEBUGF("Io::~Io()");
     if (xmlw_) delete xmlw_;
     if (xmlr_) delete xmlr_;
+    if (data_) delete data_;
 }
 
 
@@ -48,9 +52,9 @@ bool Io::startWriting()
 {
     CSMOD_DEBUGF("Io::startWriting()");
 
-    data_.clear();
+    data_->clear();
     if (xmlw_) delete xmlw_;
-    xmlw_ = new QXmlStreamWriter(&data_);
+    xmlw_ = new QXmlStreamWriter(data_);
     xmlw_->setAutoFormatting(true);
     xmlw_->writeStartDocument();
     return newSection("csmod-io");
@@ -81,7 +85,7 @@ bool Io::startReading()
     CSMOD_DEBUGF("Io::startReading()");
 
     if (xmlr_) delete xmlr_;
-    xmlr_ = new QXmlStreamReader(data_);
+    xmlr_ = new QXmlStreamReader(*data_);
     if (!(xmlr_->readNextStartElement() &&
           xmlr_->name() == "csmod-io"))
         return false;

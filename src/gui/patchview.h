@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 // --- forwards ---
 
 namespace CSMOD {
+class Io;
 class Module;
 class Connection;
 class Connector;
@@ -78,6 +79,11 @@ public:
     /** reset the info string in the toolbar */
     void setInfo(const std::string& info);
 
+    // ------------------ IO -------------------
+
+    bool store(CSMOD::Io * io);
+    bool restore(CSMOD::Io * io);
+
 signals:
 
 public slots:
@@ -87,6 +93,9 @@ protected:
 
     /** return the ModuleItem for the Module, or NULL */
     ModuleItem * findModuleItem_(CSMOD::Module * mod);
+
+    /** return the ModuleItem for the Module with the idName, or NULL */
+    ModuleItem * findModuleItem_(const std::string& idName);
 
     /** create and install a ModuleItem for the module */
     ModuleItem * createModuleItem_(CSMOD::Module * mod);

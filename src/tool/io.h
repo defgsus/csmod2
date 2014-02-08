@@ -21,16 +21,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef CSMOD_TOOL_IO_H
 #define CSMOD_TOOL_IO_H
 
-#include <cinttypes>
 #include <string>
-#include <QString>
-#include <QXmlStreamWriter>
-#include <QXmlStreamReader>
+
+class QString;
+class QXmlStreamWriter;
+class QXmlStreamReader;
 
 namespace CSMOD {
 
 
-/** @brief serializer and deserializer - abstract */
+/** @brief serializer and deserializer
+    <p>The backend is QXmlStream, so this is actually
+    a convenience wrapper around it.</p>
+*/
 class Io
 {
 public:
@@ -85,12 +88,13 @@ public:
     bool read(const std::string& key, float& v, float def = 0) const;
     bool read(const std::string& key, double& v, double def = 0) const;
 
+    std::string readString(const std::string& key, const std::string& def = "") const { std::string v; read(key, v, def); return v; }
     int readInt(const std::string& key, int def = 0) const { int v; read(key, v, def); return v; }
-    int readUInt(const std::string& key, unsigned int def = 0) const { unsigned int v; read(key, v, def); return v; }
-    int readLInt(const std::string& key, long int def = 0) const { long int v; read(key, v, def); return v; }
-    int readLUInt(const std::string& key, long unsigned int def = 0) const { long unsigned int v; read(key, v, def); return v; }
-    int readFloat(const std::string& key, float def = 0) const { float v; read(key, v, def); return v; }
-    int readDouble(const std::string& key, double def = 0) const { double v; read(key, v, def); return v; }
+    unsigned int readUInt(const std::string& key, unsigned int def = 0) const { unsigned int v; read(key, v, def); return v; }
+    long int readLInt(const std::string& key, long int def = 0) const { long int v; read(key, v, def); return v; }
+    long unsigned int readLUInt(const std::string& key, long unsigned int def = 0) const { long unsigned int v; read(key, v, def); return v; }
+    float readFloat(const std::string& key, float def = 0) const { float v; read(key, v, def); return v; }
+    double readDouble(const std::string& key, double def = 0) const { double v; read(key, v, def); return v; }
 
     // _______________ PRIVATE AREA _________________
 
@@ -99,7 +103,7 @@ private:
 
     QXmlStreamWriter * xmlw_;
     QXmlStreamReader * xmlr_;
-    QString data_;
+    QString * data_;
 };
 
 

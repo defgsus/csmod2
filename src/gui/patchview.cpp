@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QAction>
 
 #include "log.h"
+#include "tool/io.h"
 #include "mod/module.h"
 #include "mod/connection.h"
 #include "mod/patch.h"
@@ -105,11 +106,59 @@ QSize PatchView::sizeHint() const
     return QSize(800,600);
 }
 
-
 void PatchView::setInfo(const std::string& str)
 {
     infoLabel_->setText(QString::fromStdString(str));
 }
+
+
+// ------------------ IO -------------------
+
+bool PatchView::store(CSMOD::Io * io)
+{
+    if (!io->newSection("patchview")) return false;
+    io->write("version", 1);
+
+    // stream all moduleitems
+    io->write("moditems", moduleitems_.size());
+    for (auto i=moduleitems_.begin(); i!=moduleitems_.end(); ++i)
+    {
+        io->newSection("moditem");
+        (*i)->store(io);
+        io->endSection();
+    }
+
+    return io->endSection();
+}
+
+bool PatchView::restore(CSMOD::Io * io)
+{
+    int ver = io->readInt("version", 0);
+    if (ver > 1)
+    {
+        CSMOD_RT_ERROR("unknown patchview version " << ver << ")");
+        return false;
+    }
+
+    size_t num;
+    if (!io->read("moditems",num)) return false;
+    for (size_t i=0; i<num; ++i)
+    {
+        if (!(io->nextSection() &&
+              io->section() == "moditem"))
+        {
+            CSMOD_RT_ERROR("expected moditem");
+            return false;
+        }
+        // get the ModuleItem meant by current section
+        auto mi = findModuleItem_(io->readString("id"));
+        if (!mi) continue;
+        mi->restore(io);
+    }
+    return true;
+}
+
+
 
 
 
@@ -276,6 +325,14 @@ ModuleItem * PatchView::findModuleItem_(CSMOD::Module * mod)
     return 0;
 }
 
+ModuleItem * PatchView::findModuleItem_(const std::string& idName)
+{
+    for (auto m : moduleitems_)
+    {
+        if (m->module()->idName() == idName) return m;
+    }
+    return 0;
+}
 
 // ---------------------- connector items --------------------------
 

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QGraphicsSceneMouseEvent>
 
 #include "log.h"
+#include "tool/io.h"
 #include "mod/module.h"
 #include "mod/connector.h"
 #include "connectoritem.h"
@@ -57,6 +58,38 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
     it->setText("hello");
     */
 }
+
+// ------------------- IO --------------------------
+
+bool ModuleItem::store(CSMOD::Io * io)
+{
+    if (!io->write("version", 1)) return false;
+    io->write("id", module_->idName());
+    io->write("x", pos().x());
+    io->write("y", pos().y());
+    io->write("w", rect().width());
+    io->write("h", rect().height());
+    return true;
+}
+
+bool ModuleItem::restore(CSMOD::Io * io)
+{
+    int ver = io->readInt("version", 0);
+    if (ver > 1)
+    {
+        CSMOD_RT_ERROR("unknown moduleitem version " << ver << ")");
+        return false;
+    }
+
+    qreal x,y,w,h;
+    if (io->read("x", x) && io->read("y", y)
+     && io->read("w", w) && io->read("h", h))
+    {
+        setRect(x,y,w,h);
+    }
+    return true;
+}
+
 
 void ModuleItem::setInfo(const std::string& info)
 {
