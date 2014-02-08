@@ -35,7 +35,9 @@ SOURCES += \
     mod/model.cpp \
     mod/modulestock.cpp \
     gui/modulestockmenu.cpp \
-    tool/stringmanip.cpp
+    tool/stringmanip.cpp \
+    tool/io.cpp \
+    tool/iobinary.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -53,7 +55,9 @@ HEADERS += \
     mod/model.h \
     mod/modulestock.h \
     gui/modulestockmenu.h \
-    tool/stringmanip.h
+    tool/stringmanip.h \
+    tool/io.h \
+    tool/iobinary.h
 
 ######### MODULES ########
 
