@@ -25,21 +25,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 // ------------------------ debugging ---------------------------
 
+#if !defined(NDEBUG) && (1)
 #define CSMOD_DEBUG(arg__) { std::cerr << arg__ << std::endl; }
+#else
+#define CSMOD_DEBUG(unused__) { }
+#endif
 
-#if (1)
+#if !defined(NDEBUG) && (1)
 #define CSMOD_DEBUGF(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGF(unused__) { }
 #endif
 
-#if (1)
+#if !defined(NDEBUG) && (1)
 #define CSMOD_DEBUGIO(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGIO(unused__) { }
 #endif
 
-#if (0)
+#if !defined(NDEBUG) && (0)
 #define CSMOD_DEBUGE(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGE(unused__) { }

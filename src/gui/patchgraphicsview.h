@@ -68,7 +68,7 @@ public:
 
     void startConnect(ConnectorItem * con);
     void moveConnect(const QPointF & scene_pos);
-    void endConnect(const QPointF & scene_pos);
+    void endConnect();
 
     void markConnectorsThatMatch(CSMOD::Connector * con);
 

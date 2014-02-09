@@ -149,9 +149,9 @@ void PatchGraphicsView::moveConnect(const QPointF &pos)
 
 }
 
-void PatchGraphicsView::endConnect(const QPointF &pos)
+void PatchGraphicsView::endConnect()
 {
-    CSMOD_DEBUGF("PatchGraphicsView::endConnect(" << pos.x() << ", " << pos.y() << ")");
+    CSMOD_DEBUGF("PatchGraphicsView::endConnect()");// << pos.x() << ", " << pos.y() << ")");
 
     // check if on connector
     if (con_to_)

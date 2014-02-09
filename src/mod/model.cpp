@@ -78,22 +78,33 @@ bool Model::loadPatch(const std::string& filename)
     CSMOD_CHECKIO(io.load(filename), "could not load xml");
     CSMOD_CHECKIO(io.startReading(), "could not initialize io");
 
+    bool patch_loaded = false;
+
+    PatchView * view = 0;
+    if (!views_.empty()) view = views_[0];
+
     // read patch
-    CSMOD_CHECKIO(io.nextSection() && io.isSection("patch"), "unexpected end of file");
-    CSMOD_CHECKIO(patch_->restore(&io), "could not load patch");
-    CSMOD_DEBUGF(": " << io.section());
-    //io.leaveSection();
-
-    // create the ModuleItems and all that stuff
-    updateViews_();
-
-    for (auto v : views_)
+    while (io.nextSection())
     {
-        CSMOD_CHECKIO(io.nextSection() && io.isSection("patchview"),
-                      "expected patchview, got " << io.section());
-        CSMOD_CHECKIO(v->restore(&io), "could not load view data");
+        if (io.isSection("patch"))
+        {
+            CSMOD_CHECKIO(patch_->restore(&io), "could not load patch");
+            patch_loaded = true;
 
-        v->updateCables();
+            // create the ModuleItems and all that stuff
+            updateViews_();
+        }
+
+        else
+        if (io.isSection("patchview"))
+        {
+            if (view)
+            {
+                CSMOD_CHECKIO(patch_loaded, "patchview data without patch data");
+                CSMOD_CHECKIO(view->restore(&io), "could not load view data");
+                view->updateCables();
+            }
+        }
     }
 
     CSMOD_CHECKIO(io.stopReading(), "could not finalize io");

@@ -136,7 +136,7 @@ void ConnectorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
     CSMOD_DEBUGE("ConnectorItem::mouseReleaseEvent(" << e->pos().x() << ", " << e->pos().y() << ")");
 
     if (is_con_)
-        view_->endConnect(e->scenePos());
+        view_->endConnect();
     is_con_ = false;
 
     QGraphicsRectItem::mouseReleaseEvent(e);

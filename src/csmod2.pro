@@ -17,6 +17,7 @@ TEMPLATE = app
 ######### FLAGS ########
 
 QMAKE_CXXFLAGS = --std=c++0x
+QMAKE_CXXFLAGS_RELEASE = -DNDEBUG
 
 ######## FILES #########
 
