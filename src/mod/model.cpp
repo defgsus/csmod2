@@ -46,7 +46,7 @@ Model::~Model()
 // --------------- io -----------------
 
 #define CSMOD_CHECKIO(command__, errortext__) \
-    if (!command__) { CSMOD_IO_ERROR(errortext__); return false; }
+    if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; }
 
 bool Model::savePatch(const std::string& filename)
 {
@@ -76,22 +76,32 @@ bool Model::loadPatch(const std::string& filename)
 
     CSMOD::Io io;
     CSMOD_CHECKIO(io.load(filename), "could not load xml");
-
     CSMOD_CHECKIO(io.startReading(), "could not initialize io");
 
+    // read patch
+    CSMOD_CHECKIO(io.nextSection() && io.isSection("patch"), "unexpected end of file");
     CSMOD_CHECKIO(patch_->restore(&io), "could not load patch");
+    CSMOD_DEBUGF(": " << io.section());
+    io.leaveSection();
 
+    // create the ModuleItems and all that stuff
     updateViews_();
 
     for (auto v : views_)
     {
+        CSMOD_CHECKIO(io.nextSection() && io.isSection("patchview"),
+                      "expected patchview, got " << io.section());
         CSMOD_CHECKIO(v->restore(&io), "could not load view data");
+
+        v->updateCables();
     }
 
     CSMOD_CHECKIO(io.stopReading(), "could not finalize io");
 
     return true;
 }
+
+#undef CSMOD_CHECKIO
 
 
 // ------------- containers -----------

@@ -49,11 +49,14 @@ Module::~Module()
 
 // ------------------ IO -------------------
 
+#define CSMOD_CHECKIO(command__, errortext__) \
+    if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; }
+
 bool Module::store(CSMOD::Io * io)
 {
     CSMOD_DEBUGF("Module::store(" << io << ")");
 
-    if (!io->write("ver", 1)) return false;
+    CSMOD_CHECKIO(io->write("ver", 1), "could not write module version");
     io->write("class", className_);
     io->write("id", idName_);
     io->write("name", name_);
@@ -66,16 +69,16 @@ bool Module::restore(CSMOD::Io * io)
     CSMOD_DEBUGF("Module::restore(" << io << ")");
 
     int ver;
-    if (!io->read("ver", ver)) return false;
-    if (ver > 1)
-    {
-        CSMOD_IO_ERROR("unknown module version " << ver);
-        return false;
-    }
+    CSMOD_CHECKIO(io->read("ver", ver), "could not read module version");
+    CSMOD_CHECKIO(ver <= 1, "unknown module version " << ver);
+
+    CSMOD_CHECKIO(io->read("id", idName_), "could not read module id");
+    CSMOD_CHECKIO(io->read("name", name_), "could not read module name");
 
     return true;
 }
 
+#undef CSMOD_CHECKIO
 
 // ------------------- connectors ---------------------
 

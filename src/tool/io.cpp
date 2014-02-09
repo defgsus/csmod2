@@ -147,6 +147,7 @@ bool Io::newSection(const std::string& name)
 {
     if (!xmlw_) return false;
     xmlw_->writeStartElement(QString::fromStdString(name));
+    section_stack_.push_back(cur_section_);
     cur_section_ = name;
     return true;
 }
@@ -155,8 +156,13 @@ bool Io::endSection()
 {
     if (!xmlw_) return false;
     xmlw_->writeEndElement();
-    // XXX TODO get section from stack.
-    // cur_section_ = ;
+    // get previous section
+    if (!section_stack_.empty())
+    {
+        cur_section_ = section_stack_.back();
+        section_stack_.pop_back();
+    }
+    else cur_section_ = "";
     return true;
 }
 
@@ -174,8 +180,15 @@ bool Io::nextSection()
 {
     if (!xmlr_) return false;
     cur_section_ = "";
+    //qDebug() << ":: " << xmlr_->name().toString() << "\n";
     if (!xmlr_->readNextStartElement()) return false;
     cur_section_ = xmlr_->name().toString().toStdString();
+    return true;
+}
+
+bool Io::leaveSection()
+{
+    xmlr_->skipCurrentElement();
     return true;
 }
 

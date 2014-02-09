@@ -85,7 +85,9 @@ bool ModuleItem::restore(CSMOD::Io * io)
     if (io->read("x", x) && io->read("y", y)
      && io->read("w", w) && io->read("h", h))
     {
-        setRect(x,y,w,h);
+        setPos(x,y);
+        // XXX setRect does not update the child items!!
+        //setRect(x,y,w,h);
     }
     return true;
 }

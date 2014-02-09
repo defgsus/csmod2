@@ -114,9 +114,14 @@ void PatchView::setInfo(const std::string& str)
 
 // ------------------ IO -------------------
 
+#define CSMOD_CHECKIO(command__, errortext__) \
+    if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; }
+
 bool PatchView::store(CSMOD::Io * io)
 {
-    if (!io->newSection("patchview")) return false;
+    CSMOD_DEBUGF("PatchView::store(" << io << ")");
+
+    CSMOD_CHECKIO(io->newSection("patchview"), "could not create patchview section");
     io->write("ver", 1);
 
     // stream all moduleitems
@@ -133,33 +138,35 @@ bool PatchView::store(CSMOD::Io * io)
 
 bool PatchView::restore(CSMOD::Io * io)
 {
+    CSMOD_DEBUGF("PatchView::restore(" << io << ")");
+
+    CSMOD_CHECKIO(io->isSection("patchview"), "expected patchview, got " << io->section());
     int ver;
-    if (!io->read("ver", ver)) return false;
-    if (ver > 1)
-    {
-        CSMOD_IO_ERROR("unknown patchview version " << ver);
-        return false;
-    }
+    CSMOD_CHECKIO(io->read("ver", ver), "could not read patchview version");
+    CSMOD_CHECKIO(ver <= 1, "unknown patchview version " << ver);
 
     size_t num;
-    if (!io->read("moditems",num)) return false;
+    CSMOD_CHECKIO(io->read("moditems",num), "expected num moditems");
     for (size_t i=0; i<num; ++i)
     {
-        if (!(io->nextSection() &&
-              io->section() == "moditem"))
-        {
-            CSMOD_IO_ERROR("expected moditem");
-            return false;
-        }
+        CSMOD_CHECKIO(io->nextSection() && io->isSection("moditem"), "expected moditem");
+
         // get the ModuleItem meant by current section
-        auto mi = findModuleItem_(io->readString("id"));
-        if (!mi) continue;
-        mi->restore(io);
+        std::string mid;
+        CSMOD_CHECKIO(io->read("id", mid), "could not find moduleitem id");
+        auto mi = findModuleItem_(mid);
+        if (!mi)
+        {
+            CSMOD_IO_ERROR("skipping unknown module" << mid);
+            continue;
+        }
+        CSMOD_CHECKIO(mi->restore(io), "error reading moduleitem");
+        io->leaveSection();
     }
     return true;
 }
 
-
+#undef CSMOD_CHECKIO
 
 
 

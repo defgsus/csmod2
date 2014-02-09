@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_TOOL_IO_H
 
 #include <string>
+#include <vector>
 
 class QString;
 class QXmlStreamWriter;
@@ -70,8 +71,11 @@ public:
     /** Returns name of the current section. READ/WRITE */
     const std::string& section() const;
 
-    /** skip current section. READ */
+    /** open next sub-section. READ */
     bool nextSection();
+
+    /** leave current (sub-)section. READ */
+    bool leaveSection();
 
     // ----------------- data write -----------------
 
@@ -105,6 +109,7 @@ public:
 
 private:
     std::string cur_section_;
+    std::vector<std::string> section_stack_;
 
     QXmlStreamWriter * xmlw_;
     QXmlStreamReader * xmlr_;

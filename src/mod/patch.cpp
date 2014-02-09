@@ -46,6 +46,10 @@ Patch::~Patch()
         delete m;
 }
 
+
+#define CSMOD_CHECKIO(command__, errortext__) \
+    if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; }
+
 // ------------------ IO -------------------
 
 bool Patch::store(CSMOD::Io * io)
@@ -83,47 +87,42 @@ bool Patch::restore(CSMOD::Io * io)
     CSMOD_DEBUGF("Patch::restore(" << io << ")");
 
     int ver;
-    if (!io->read("ver", ver)) return false;
-    if (ver > 1)
-    {
-        CSMOD_IO_ERROR("unknown patch version " << ver);
-        return false;
-    }
+    CSMOD_CHECKIO(io->read("ver", ver), "could not read patch version");
+    CSMOD_CHECKIO(ver <= 1, "unknown patch version " << ver);
 
-    if (!io->read("id", idName_)) return false;
-    if (!io->read("name", name_)) return false;
+    CSMOD_CHECKIO(io->read("id", idName_), "could not read id");
+    CSMOD_CHECKIO(io->read("name", name_), "could not read name");
 
-    size_t nmods = io->readUInt("mmods"),
-           ncons = io->readUInt("mcons");
+    size_t nmods, ncons;
+    CSMOD_CHECKIO(io->read("nmods", nmods), "could not read 'nmods'");
+    CSMOD_CHECKIO(io->read("ncons", ncons), "could not read 'ncons'");
+
+    CSMOD_DEBUGIO("Patch::restore: " << nmods << " modules, " << ncons << " connections");
 
     for (size_t i=0; i<nmods; ++i)
     {
-        if (!io->nextSection() || !io->isSection("module"))
-        {
-            CSMOD_IO_ERROR("expected module");
-            return false;
-        }
+        CSMOD_CHECKIO(io->nextSection() && io->isSection("module"),
+                      "expected module");
 
-        // create the object
+        // --- create the object ---
+
         auto modclass = io->readString("class");
 
         auto mod = ModuleStock::instance().getModule(modclass);
-        if (!addModule(mod)) return false;
+        CSMOD_CHECKIO(mod, "unknown module class " << mod);
+        CSMOD_CHECKIO(addModule(mod), "could not create module " << modclass);
 
         // load object properties and stuff
-        mod->restore(io);
+        CSMOD_CHECKIO(mod->restore(io), "could not load module " << modclass);
 
-        io->endSection();
+        CSMOD_CHECKIO(io->leaveSection(), "unexpected end of file after module");
     }
 
     // read connections
     for (size_t i=0; i<ncons; ++i)
     {
-        if (!io->nextSection() || !io->isSection("con"))
-        {
-            CSMOD_IO_ERROR("expected connection");
-            return false;
-        }
+        CSMOD_CHECKIO(io->nextSection() && io->isSection("con"),
+                      "expected connection");
 
         // get module/connector id's
         std::string fm, fc, tm, tc;
@@ -142,9 +141,9 @@ bool Patch::restore(CSMOD::Io * io)
         // make the connection
         auto con = connect(c1, c2);
         // read additional data
-        con->restore(io);
+        CSMOD_CHECKIO(con->restore(io), "could not restore connection");
 
-        if (!io->endSection()) return false;
+        CSMOD_CHECKIO(io->leaveSection(), "unexpected end of file");
     }
 
     return true;
