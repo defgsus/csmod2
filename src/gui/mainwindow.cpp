@@ -51,7 +51,9 @@ MainWindow::MainWindow(QWidget *parent)
     // ------- main menu ---------
 
     auto a = menuBar()->addAction("save patch");
-    connect(a, &QAction::triggered, [=]() { model_->savePatch("file.csmod"); });
+    connect(a, &QAction::triggered, [=]() { model_->savePatch("test.csmod"); });
+    a = menuBar()->addAction("load patch");
+    connect(a, &QAction::triggered, [=]() { model_->loadPatch("test.csmod"); });
 
     /*
     auto menu = new QMenu(0);

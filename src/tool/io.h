@@ -41,7 +41,12 @@ public:
     Io();
     ~Io();
 
-    // --------------- io ---------------------------
+    // -------------- file io -----------------------
+
+    bool save(const std::string& filename);
+    bool load(const std::string& filename);
+
+    // --------------- streaming --------------------
 
     bool startWriting();
     bool stopWriting();

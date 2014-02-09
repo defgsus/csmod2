@@ -45,21 +45,53 @@ Model::~Model()
 
 // --------------- io -----------------
 
+#define CSMOD_CHECKIO(command__, errortext__) \
+    if (!command__) { CSMOD_IO_ERROR(errortext__); return false; }
+
 bool Model::savePatch(const std::string& filename)
 {
-    CSMOD::Io io;
-    if (!io.startWriting()) return false;
+    CSMOD_DEBUGF("Model::savePatch(\"" << filename << "\")");
 
-    if (!patch_->store(&io)) return false;
+    CSMOD::Io io;
+    CSMOD_CHECKIO(io.startWriting(), "could not initialize io");
+
+    CSMOD_CHECKIO(patch_->store(&io), "could not store patch");
 
     for (auto v : views_)
     {
-        v->store(&io);
+        CSMOD_CHECKIO(v->store(&io), "could not store view data");
     }
 
-    return io.stopWriting();
+    CSMOD_CHECKIO(io.stopWriting(), "could not finalize io");
+
+    CSMOD_CHECKIO(io.save(filename), "could not store xml");
+
+    return true;
 }
 
+
+bool Model::loadPatch(const std::string& filename)
+{
+    CSMOD_DEBUGF("Model::loadPatch(\"" << filename << "\")");
+
+    CSMOD::Io io;
+    CSMOD_CHECKIO(io.load(filename), "could not load xml");
+
+    CSMOD_CHECKIO(io.startReading(), "could not initialize io");
+
+    CSMOD_CHECKIO(patch_->restore(&io), "could not load patch");
+
+    updateViews_();
+
+    for (auto v : views_)
+    {
+        CSMOD_CHECKIO(v->restore(&io), "could not load view data");
+    }
+
+    CSMOD_CHECKIO(io.stopReading(), "could not finalize io");
+
+    return true;
+}
 
 
 // ------------- containers -----------

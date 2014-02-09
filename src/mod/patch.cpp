@@ -53,7 +53,7 @@ bool Patch::store(CSMOD::Io * io)
     CSMOD_DEBUGF("Patch::store(" << io << ")");
 
     if (!io->newSection("patch")) return false;
-    io->write("version", 1);
+    io->write("ver", 1);
 
     io->write("id", idName_);
     io->write("name", name_);
@@ -71,7 +71,7 @@ bool Patch::store(CSMOD::Io * io)
     for (auto c = cons_.begin(); c != cons_.end(); ++c)
     {
         io->newSection("con");
-        //(*c)->store(io);
+        (*c)->store(io);
         io->endSection();
     }
 
@@ -83,7 +83,7 @@ bool Patch::restore(CSMOD::Io * io)
     CSMOD_DEBUGF("Patch::restore(" << io << ")");
 
     int ver;
-    if (!io->read("version", ver)) return false;
+    if (!io->read("ver", ver)) return false;
     if (ver > 1)
     {
         CSMOD_IO_ERROR("unknown patch version " << ver);
@@ -110,9 +110,41 @@ bool Patch::restore(CSMOD::Io * io)
         auto mod = ModuleStock::instance().getModule(modclass);
         if (!addModule(mod)) return false;
 
+        // load object properties and stuff
         mod->restore(io);
 
         io->endSection();
+    }
+
+    // read connections
+    for (size_t i=0; i<ncons; ++i)
+    {
+        if (!io->nextSection() || !io->isSection("con"))
+        {
+            CSMOD_IO_ERROR("expected connection");
+            return false;
+        }
+
+        // get module/connector id's
+        std::string fm, fc, tm, tc;
+        io->read("fm", fm);
+        io->read("fc", fc);
+        io->read("tm", tm);
+        io->read("tc", tc);
+        auto mod1 = findModule(fm),
+             mod2 = findModule(tm);
+        if (!mod1) { CSMOD_IO_ERROR("unknown module id '" << fm << "' in connection"); continue; }
+        if (!mod2) { CSMOD_IO_ERROR("unknown module id '" << tm << "' in connection"); continue; }
+        auto c1 = mod1->findConnector(fc),
+             c2 = mod2->findConnector(tc);
+        if (!c1) { CSMOD_IO_ERROR("unknown connnector id '" << fm << "." << fc << "' in connection"); continue; }
+        if (!c2) { CSMOD_IO_ERROR("unknown connnector id '" << tm << "." << tc << "' in connection"); continue; }
+        // make the connection
+        auto con = connect(c1, c2);
+        // read additional data
+        con->restore(io);
+
+        if (!io->endSection()) return false;
     }
 
     return true;

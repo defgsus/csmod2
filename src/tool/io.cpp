@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QDebug>
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
+#include <QFile>
 
 #include "log.h"
 
@@ -43,6 +44,41 @@ Io::~Io()
     if (xmlw_) delete xmlw_;
     if (xmlr_) delete xmlr_;
     if (data_) delete data_;
+}
+
+
+// -------------- file io -----------------------
+
+bool Io::save(const std::string& filename)
+{
+    QFile f(QString::fromStdString(filename));
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        CSMOD_IO_ERROR("could not save '" << filename << "'");
+        return false;
+    }
+
+    QTextStream out(&f);
+    out << *data_;
+
+    f.close();
+    return true;
+}
+
+bool Io::load(const std::string& filename)
+{
+    QFile f(QString::fromStdString(filename));
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        CSMOD_IO_ERROR("could not load '" << filename << "'");
+        return false;
+    }
+
+    QTextStream in(&f);
+    *data_ = in.readAll();
+
+    f.close();
+    return true;
 }
 
 

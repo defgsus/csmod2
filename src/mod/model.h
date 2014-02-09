@@ -60,6 +60,7 @@ public:
     // --------------- io -----------------
 
     bool savePatch(const std::string& filename);
+    bool loadPatch(const std::string& filename);
 
     // ------------- containers -----------
 

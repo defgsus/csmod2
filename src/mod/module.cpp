@@ -53,7 +53,7 @@ bool Module::store(CSMOD::Io * io)
 {
     CSMOD_DEBUGF("Module::store(" << io << ")");
 
-    if (!io->write("version", 1)) return false;
+    if (!io->write("ver", 1)) return false;
     io->write("class", className_);
     io->write("id", idName_);
     io->write("name", name_);
@@ -66,7 +66,7 @@ bool Module::restore(CSMOD::Io * io)
     CSMOD_DEBUGF("Module::restore(" << io << ")");
 
     int ver;
-    if (!io->read("version", ver)) return false;
+    if (!io->read("ver", ver)) return false;
     if (ver > 1)
     {
         CSMOD_IO_ERROR("unknown module version " << ver);

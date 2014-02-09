@@ -117,7 +117,7 @@ void PatchView::setInfo(const std::string& str)
 bool PatchView::store(CSMOD::Io * io)
 {
     if (!io->newSection("patchview")) return false;
-    io->write("version", 1);
+    io->write("ver", 1);
 
     // stream all moduleitems
     io->write("moditems", moduleitems_.size());
@@ -134,7 +134,7 @@ bool PatchView::store(CSMOD::Io * io)
 bool PatchView::restore(CSMOD::Io * io)
 {
     int ver;
-    if (!io->read("version", ver)) return false;
+    if (!io->read("ver", ver)) return false;
     if (ver > 1)
     {
         CSMOD_IO_ERROR("unknown patchview version " << ver);
