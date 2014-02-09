@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "model.h"
 
 #include "log.h"
+#include "tool/io.h"
 #include "connector.h"
 #include "module.h"
 #include "patch.h"
@@ -40,6 +41,26 @@ Model::~Model()
 {
     CSMOD_DEBUGF("Model::~Model()");
 }
+
+
+// --------------- io -----------------
+
+bool Model::savePatch(const std::string& filename)
+{
+    CSMOD::Io io;
+    if (!io.startWriting()) return false;
+
+    if (!patch_->store(&io)) return false;
+
+    for (auto v : views_)
+    {
+        v->store(&io);
+    }
+
+    return io.stopWriting();
+}
+
+
 
 // ------------- containers -----------
 

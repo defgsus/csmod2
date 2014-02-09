@@ -77,7 +77,7 @@ bool ModuleItem::restore(CSMOD::Io * io)
     int ver = io->readInt("version", 0);
     if (ver > 1)
     {
-        CSMOD_RT_ERROR("unknown moduleitem version " << ver << ")");
+        CSMOD_IO_ERROR("unknown moduleitem version " << ver);
         return false;
     }
 

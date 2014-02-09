@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "module.h"
 
 #include "log.h"
+#include "tool/io.h"
 #include "tool/stringmanip.h"
 
 namespace CSMOD {
@@ -31,6 +32,8 @@ Module::Module(const std::string& idName, const std::string& className)
         idName_   (idName),
         name_     (className)
 {
+    CSMOD_DEBUGF("Module::Module(\"" << idName << "\", \"" << className << "\")");
+
     // make sure the strings are right
     checkIdName(className_);
     checkIdName(idName_);
@@ -38,7 +41,39 @@ Module::Module(const std::string& idName, const std::string& className)
 
 Module::~Module()
 {
+    CSMOD_DEBUGF("Module::~Module()");
+
     deleteConnectors_();
+}
+
+
+// ------------------ IO -------------------
+
+bool Module::store(CSMOD::Io * io)
+{
+    CSMOD_DEBUGF("Module::store(" << io << ")");
+
+    if (!io->write("version", 1)) return false;
+    io->write("class", className_);
+    io->write("id", idName_);
+    io->write("name", name_);
+
+    return true;
+}
+
+bool Module::restore(CSMOD::Io * io)
+{
+    CSMOD_DEBUGF("Module::restore(" << io << ")");
+
+    int ver;
+    if (!io->read("version", ver)) return false;
+    if (ver > 1)
+    {
+        CSMOD_IO_ERROR("unknown module version " << ver);
+        return false;
+    }
+
+    return true;
 }
 
 

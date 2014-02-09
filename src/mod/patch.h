@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+class Io;
 class Module;
 class Connector;
 class Connection;
@@ -44,6 +45,11 @@ public:
 
     Patch();
     virtual ~Patch();
+
+    // ------------------ IO -------------------
+
+    bool store(CSMOD::Io * io);
+    bool restore(CSMOD::Io * io);
 
     // ------------ info -----------------
 

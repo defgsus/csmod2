@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_DEBUGF(unused__) { }
 #endif
 
-#if (1)
+#if (0)
 #define CSMOD_DEBUGE(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGE(unused__) { }
@@ -42,5 +42,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 // ------------------- error reporting --------------------------
 
 #define CSMOD_RT_ERROR(arg__) { std::cerr << "RT ERROR: " << arg__ << std::endl; }
+#define CSMOD_IO_ERROR(arg__) { std::cerr << "IO ERROR: " << arg__ << std::endl; }
 
 #endif // LOG_H

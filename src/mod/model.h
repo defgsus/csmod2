@@ -57,6 +57,10 @@ public:
     Model();
     ~Model();
 
+    // --------------- io -----------------
+
+    bool savePatch(const std::string& filename);
+
     // ------------- containers -----------
 
     /** set Patch to work on, or disconnect with NULL */

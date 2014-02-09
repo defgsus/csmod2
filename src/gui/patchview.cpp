@@ -133,10 +133,11 @@ bool PatchView::store(CSMOD::Io * io)
 
 bool PatchView::restore(CSMOD::Io * io)
 {
-    int ver = io->readInt("version", 0);
+    int ver;
+    if (!io->read("version", ver)) return false;
     if (ver > 1)
     {
-        CSMOD_RT_ERROR("unknown patchview version " << ver << ")");
+        CSMOD_IO_ERROR("unknown patchview version " << ver);
         return false;
     }
 
@@ -147,7 +148,7 @@ bool PatchView::restore(CSMOD::Io * io)
         if (!(io->nextSection() &&
               io->section() == "moditem"))
         {
-            CSMOD_RT_ERROR("expected moditem");
+            CSMOD_IO_ERROR("expected moditem");
             return false;
         }
         // get the ModuleItem meant by current section

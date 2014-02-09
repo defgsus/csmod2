@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+class Io;
 class Module;
 
 typedef int (*numModulesFunction)();
@@ -62,6 +63,11 @@ class Module
 
     /** return a new fresh instance belonging to the container */
     virtual Module * cloneClass() const = 0;
+
+    // ------------------ IO -------------------
+
+    virtual bool store(CSMOD::Io * io);
+    virtual bool restore(CSMOD::Io * io);
 
     // -------------- info ----------------------------
 

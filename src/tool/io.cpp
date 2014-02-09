@@ -74,7 +74,7 @@ bool Io::stopWriting()
 
     cur_section_ = "";
 
-    qDebug() << data_ << "\n";
+    qDebug() << *data_ << "\n";
     return true;
 }
 

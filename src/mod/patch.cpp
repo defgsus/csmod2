@@ -21,15 +21,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "patch.h"
 
 #include "log.h"
+#include "tool/stringmanip.h"
+#include "tool/io.h"
 #include "connector.h"
 #include "connection.h"
 #include "module.h"
-#include "tool/stringmanip.h"
+#include "modulestock.h"
 
 namespace CSMOD {
 
 
 Patch::Patch()
+    :   idName_ ("patch"),
+        name_   ("patch")
 {
     CSMOD_DEBUGF("Patch::Patch()");
 }
@@ -40,6 +44,78 @@ Patch::~Patch()
 
     for(auto m : modules_)
         delete m;
+}
+
+// ------------------ IO -------------------
+
+bool Patch::store(CSMOD::Io * io)
+{
+    CSMOD_DEBUGF("Patch::store(" << io << ")");
+
+    if (!io->newSection("patch")) return false;
+    io->write("version", 1);
+
+    io->write("id", idName_);
+    io->write("name", name_);
+
+    io->write("nmods", modules_.size());
+    io->write("ncons", cons_.size());
+
+    for (auto m = modules_.begin(); m != modules_.end(); ++m)
+    {
+        io->newSection("module");
+        (*m)->store(io);
+        io->endSection();
+    }
+
+    for (auto c = cons_.begin(); c != cons_.end(); ++c)
+    {
+        io->newSection("con");
+        //(*c)->store(io);
+        io->endSection();
+    }
+
+    return io->endSection();
+}
+
+bool Patch::restore(CSMOD::Io * io)
+{
+    CSMOD_DEBUGF("Patch::restore(" << io << ")");
+
+    int ver;
+    if (!io->read("version", ver)) return false;
+    if (ver > 1)
+    {
+        CSMOD_IO_ERROR("unknown patch version " << ver);
+        return false;
+    }
+
+    if (!io->read("id", idName_)) return false;
+    if (!io->read("name", name_)) return false;
+
+    size_t nmods = io->readUInt("mmods"),
+           ncons = io->readUInt("mcons");
+
+    for (size_t i=0; i<nmods; ++i)
+    {
+        if (!io->nextSection() || !io->isSection("module"))
+        {
+            CSMOD_IO_ERROR("expected module");
+            return false;
+        }
+
+        // create the object
+        auto modclass = io->readString("class");
+
+        auto mod = ModuleStock::instance().getModule(modclass);
+        if (!addModule(mod)) return false;
+
+        mod->restore(io);
+
+        io->endSection();
+    }
+
+    return true;
 }
 
 

@@ -24,11 +24,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 //#include "mod/modulestock.h"
 //#include "tool/stringdigit.h"
-#include "tool/io.h"
+//#include "tool/io.h"
 
 int main(int argc, char *argv[])
 {
-    CSMOD::testIo(); return 0;
+    //CSMOD::testIo(); return 0;
     /*
     std::string s("bla"), s2(s);
     CSMOD::increase_number(s2, 0);
