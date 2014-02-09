@@ -19,6 +19,10 @@ TEMPLATE = app
 QMAKE_CXXFLAGS = --std=c++0x
 QMAKE_CXXFLAGS_RELEASE = -DNDEBUG
 
+####### LIBS ###########
+
+LIBS += -lportaudio
+
 ######## FILES #########
 
 SOURCES += \
@@ -37,7 +41,8 @@ SOURCES += \
     mod/modulestock.cpp \
     gui/modulestockmenu.cpp \
     tool/stringmanip.cpp \
-    tool/io.cpp
+    tool/io.cpp \
+    audio/audiodevices.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -56,7 +61,8 @@ HEADERS += \
     mod/modulestock.h \
     gui/modulestockmenu.h \
     tool/stringmanip.h \
-    tool/io.h
+    tool/io.h \
+    audio/audiodevices.h
 
 ######### MODULES ########
 

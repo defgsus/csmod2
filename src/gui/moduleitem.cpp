@@ -63,7 +63,7 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
 
 bool ModuleItem::store(CSMOD::Io * io)
 {
-    if (!io->write("version", 1)) return false;
+    if (!io->write("ver", 1)) return false;
     io->write("id", module_->idName());
     io->write("x", pos().x());
     io->write("y", pos().y());
@@ -74,7 +74,7 @@ bool ModuleItem::store(CSMOD::Io * io)
 
 bool ModuleItem::restore(CSMOD::Io * io)
 {
-    int ver = io->readInt("version", 0);
+    int ver = io->readInt("ver", 0);
     if (ver > 1)
     {
         CSMOD_IO_ERROR("unknown moduleitem version " << ver);

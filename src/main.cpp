@@ -25,9 +25,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //#include "mod/modulestock.h"
 //#include "tool/stringdigit.h"
 //#include "tool/io.h"
+#include "audio/audiodevices.h"
 
 int main(int argc, char *argv[])
 {
+    CSMOD::testAudioDevices(); return 0;
     //CSMOD::testIo(); return 0;
     /*
     std::string s("bla"), s2(s);
