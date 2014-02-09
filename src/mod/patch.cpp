@@ -62,9 +62,6 @@ bool Patch::store(CSMOD::Io * io)
     io->write("id", idName_);
     io->write("name", name_);
 
-    io->write("nmods", modules_.size());
-    io->write("ncons", cons_.size());
-
     for (auto m = modules_.begin(); m != modules_.end(); ++m)
     {
         io->newSection("module");
@@ -93,57 +90,49 @@ bool Patch::restore(CSMOD::Io * io)
     CSMOD_CHECKIO(io->read("id", idName_), "could not read id");
     CSMOD_CHECKIO(io->read("name", name_), "could not read name");
 
-    size_t nmods, ncons;
-    CSMOD_CHECKIO(io->read("nmods", nmods), "could not read 'nmods'");
-    CSMOD_CHECKIO(io->read("ncons", ncons), "could not read 'ncons'");
-
-    CSMOD_DEBUGIO("Patch::restore: " << nmods << " modules, " << ncons << " connections");
-
-    for (size_t i=0; i<nmods; ++i)
+    // read all modules and connections
+    while (io->nextSection())
     {
-        CSMOD_CHECKIO(io->nextSection() && io->isSection("module"),
-                      "expected module");
+        // modules
+        if (io->isSection("module"))
+        {
 
-        // --- create the object ---
+            // --- create the object ---
 
-        auto modclass = io->readString("class");
+            auto modclass = io->readString("class");
 
-        auto mod = ModuleStock::instance().getModule(modclass);
-        CSMOD_CHECKIO(mod, "unknown module class " << mod);
-        CSMOD_CHECKIO(addModule(mod), "could not create module " << modclass);
+            auto mod = ModuleStock::instance().getModule(modclass);
+            CSMOD_CHECKIO(mod, "unknown module class " << mod);
+            CSMOD_CHECKIO(addModule(mod), "could not create module " << modclass);
 
-        // load object properties and stuff
-        CSMOD_CHECKIO(mod->restore(io), "could not load module " << modclass);
+            // load object properties and stuff
+            CSMOD_CHECKIO(mod->restore(io), "could not load module " << modclass);
+        }
+        else
+        // connection
+        if (io->isSection("con"))
+        {
+            // get module/connector id's
+            std::string fm, fc, tm, tc;
+            io->read("fm", fm);
+            io->read("fc", fc);
+            io->read("tm", tm);
+            io->read("tc", tc);
+            auto mod1 = findModule(fm),
+                 mod2 = findModule(tm);
+            if (!mod1) { CSMOD_IO_ERROR("unknown module id '" << fm << "' in connection"); continue; }
+            if (!mod2) { CSMOD_IO_ERROR("unknown module id '" << tm << "' in connection"); continue; }
+            auto c1 = mod1->findConnector(fc),
+                 c2 = mod2->findConnector(tc);
+            if (!c1) { CSMOD_IO_ERROR("unknown connnector id '" << fm << "." << fc << "' in connection"); continue; }
+            if (!c2) { CSMOD_IO_ERROR("unknown connnector id '" << tm << "." << tc << "' in connection"); continue; }
+            // make the connection
+            auto con = connect(c1, c2);
+            // read additional data
+            CSMOD_CHECKIO(con->restore(io), "could not restore connection");
+        }
 
-        CSMOD_CHECKIO(io->leaveSection(), "unexpected end of file after module");
-    }
-
-    // read connections
-    for (size_t i=0; i<ncons; ++i)
-    {
-        CSMOD_CHECKIO(io->nextSection() && io->isSection("con"),
-                      "expected connection");
-
-        // get module/connector id's
-        std::string fm, fc, tm, tc;
-        io->read("fm", fm);
-        io->read("fc", fc);
-        io->read("tm", tm);
-        io->read("tc", tc);
-        auto mod1 = findModule(fm),
-             mod2 = findModule(tm);
-        if (!mod1) { CSMOD_IO_ERROR("unknown module id '" << fm << "' in connection"); continue; }
-        if (!mod2) { CSMOD_IO_ERROR("unknown module id '" << tm << "' in connection"); continue; }
-        auto c1 = mod1->findConnector(fc),
-             c2 = mod2->findConnector(tc);
-        if (!c1) { CSMOD_IO_ERROR("unknown connnector id '" << fm << "." << fc << "' in connection"); continue; }
-        if (!c2) { CSMOD_IO_ERROR("unknown connnector id '" << tm << "." << tc << "' in connection"); continue; }
-        // make the connection
-        auto con = connect(c1, c2);
-        // read additional data
-        CSMOD_CHECKIO(con->restore(io), "could not restore connection");
-
-        CSMOD_CHECKIO(io->leaveSection(), "unexpected end of file");
+        io->leaveSection();
     }
 
     return true;

@@ -189,6 +189,7 @@ bool Io::nextSection()
 bool Io::leaveSection()
 {
     xmlr_->skipCurrentElement();
+    cur_section_ = xmlr_->name().toString().toStdString();
     return true;
 }
 

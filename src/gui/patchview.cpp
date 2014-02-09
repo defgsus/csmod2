@@ -115,7 +115,7 @@ void PatchView::setInfo(const std::string& str)
 // ------------------ IO -------------------
 
 #define CSMOD_CHECKIO(command__, errortext__) \
-    if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; }
+    { if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; } }
 
 bool PatchView::store(CSMOD::Io * io)
 {
@@ -140,27 +140,25 @@ bool PatchView::restore(CSMOD::Io * io)
 {
     CSMOD_DEBUGF("PatchView::restore(" << io << ")");
 
-    CSMOD_CHECKIO(io->isSection("patchview"), "expected patchview, got " << io->section());
     int ver;
     CSMOD_CHECKIO(io->read("ver", ver), "could not read patchview version");
     CSMOD_CHECKIO(ver <= 1, "unknown patchview version " << ver);
 
-    size_t num;
-    CSMOD_CHECKIO(io->read("moditems",num), "expected num moditems");
-    for (size_t i=0; i<num; ++i)
+    while (io->nextSection())
     {
-        CSMOD_CHECKIO(io->nextSection() && io->isSection("moditem"), "expected moditem");
-
-        // get the ModuleItem meant by current section
-        std::string mid;
-        CSMOD_CHECKIO(io->read("id", mid), "could not find moduleitem id");
-        auto mi = findModuleItem_(mid);
-        if (!mi)
+        if (io->isSection("moditem"))
         {
-            CSMOD_IO_ERROR("skipping unknown module" << mid);
-            continue;
+            // get the ModuleItem meant by current section
+            std::string mid;
+            CSMOD_CHECKIO(io->read("id", mid), "could not find moduleitem id");
+            auto mi = findModuleItem_(mid);
+            if (!mi)
+            {
+                CSMOD_IO_ERROR("skipping unknown module" << mid);
+            }
+            else
+                CSMOD_CHECKIO(mi->restore(io), "error reading moduleitem");
         }
-        CSMOD_CHECKIO(mi->restore(io), "error reading moduleitem");
         io->leaveSection();
     }
     return true;

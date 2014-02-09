@@ -82,7 +82,7 @@ bool Model::loadPatch(const std::string& filename)
     CSMOD_CHECKIO(io.nextSection() && io.isSection("patch"), "unexpected end of file");
     CSMOD_CHECKIO(patch_->restore(&io), "could not load patch");
     CSMOD_DEBUGF(": " << io.section());
-    io.leaveSection();
+    //io.leaveSection();
 
     // create the ModuleItems and all that stuff
     updateViews_();
