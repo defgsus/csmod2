@@ -20,8 +20,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "math.h"
 
+#include <math.h>
+
 namespace CSMOD {
 namespace MODULE {
+
+CSMOD_REGISTER_MODULE(MathOperator)
+CSMOD_REGISTER_MODULE(MathUnary)
 
 MathOperator::MathOperator(Operation op)
     : Module("Math Operator", "Math Operator"),
@@ -36,6 +41,14 @@ MathOperator::MathOperator(Operation op)
    }
 
    add_( output_ = new ValueConnector(this, Connector::OUT, "out", "out") );
+}
+
+void MathOperator::step()
+{
+    csfloat o = 0;
+    for (auto i : inputs_)
+        o += i->value();
+    output_->value(o);
 }
 
 MathUnary::MathUnary(Operation op)
@@ -56,6 +69,12 @@ MathUnary::MathUnary(Operation op)
        inputs_.push_back( out );
        add_( out );
    }
+}
+
+void MathUnary::step()
+{
+    for (size_t i=0; i<inputs_.size(); ++i)
+        outputs_[i]->value( sinf(inputs_[i]->value()) );
 }
 
 } // namespace MODULE

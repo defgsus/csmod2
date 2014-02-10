@@ -43,7 +43,10 @@ SOURCES += \
     tool/stringmanip.cpp \
     tool/io.cpp \
     audio/audiodevices.cpp \
-    audio/audiodevice.cpp
+    audio/audiodevice.cpp \
+    mod/dsppatch.cpp \
+    mod/dspmodule.cpp \
+    module/dsp/stuff.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -64,7 +67,10 @@ HEADERS += \
     tool/stringmanip.h \
     tool/io.h \
     audio/audiodevices.h \
-    audio/audiodevice.h
+    audio/audiodevice.h \
+    mod/dsppatch.h \
+    mod/dspmodule.h \
+    module/dsp/stuff.h
 
 ######### MODULES ########
 

@@ -26,18 +26,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <map>
 
 /** Macro for registering a Module at runtime.
-    <p>Place this somewhere after your class definition:</p>
+    <p>Place this somewhere in the .cpp file in the
+    same namespace as your class:</p>
     @code
-    class SuperDuper : public Module
+    // --- superduper.h ---
+    namespace NAMESPACE
     {
-        ...
-    };
+        class SuperDuper : public Module
+        {
+            ...
+        };
+    }
 
-    CSMOD_REGISTER_MODULE(SuperDuper)
+    // --- superduper.cpp ---
+    namespace NAMESPACE
+    {
+        CSMOD_REGISTER_MODULE(SuperDuper)
+    }
     @endcode
     @note The id in Module::idName() is set from
     the constructor of your derived class. It must be
-    <b>globally unique</b>, since no two Modules with
+    <b>globally unique</b>. No two Modules with
     the same id can be registered!
 */
 #define CSMOD_REGISTER_MODULE( Class__ ) \

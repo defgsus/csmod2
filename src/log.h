@@ -18,8 +18,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef LOG_H
-#define LOG_H
+/** @file log.h
+
+    These are macros for debugging, warning and error printing.
+    Right now they don't do much. The functionallity will expand
+    in the future. For example, push the errors and warnings to
+    the GUI.
+    Hopefully it's also possible to convert the error printing into
+    exceptions without much change to existing code.
+*/
+
+
+#ifndef CSMOD_LOG_H
+#define CSMOD_LOG_H
 
 #include <iostream>
 
@@ -64,6 +75,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #define CSMOD_RT_ERROR(arg__) { std::cerr << "RT ERROR: " << arg__ << std::endl; }
 #define CSMOD_IO_ERROR(arg__) { std::cerr << "IO ERROR: " << arg__ << std::endl; }
-#define CSMOD_DEV_ERROR(arg__) { std::cerr << "DEV ERROR: " << arg__ << std::endl; }
+#define CSMOD_DEV_ERROR(arg__) { std::cerr << "DEVICE ERROR: " << arg__ << std::endl; }
 
-#endif // LOG_H
+// ----------------------- warnings -----------------------------
+
+#define CSMOD_RT_WARN(arg__) { std::cerr << "RT WARNING: " << arg__ << std::endl; }
+#define CSMOD_IO_WARN(arg__) { std::cerr << "IO WARNING: " << arg__ << std::endl; }
+#define CSMOD_DEV_WARN(arg__) { std::cerr << "DEVICE WARNING: " << arg__ << std::endl; }
+
+#endif // CSMOD_LOG_H

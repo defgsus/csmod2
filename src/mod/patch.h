@@ -48,8 +48,8 @@ public:
 
     // ------------------ IO -------------------
 
-    bool store(CSMOD::Io * io);
-    bool restore(CSMOD::Io * io);
+    virtual bool store(CSMOD::Io * io);
+    virtual bool restore(CSMOD::Io * io);
 
     // ------------ info -----------------
 
@@ -80,19 +80,42 @@ public:
 
     /** Connects both connectors if possible */
     Connection * connect(Connector * con1, Connector * con2);
+
     /** Removes the given Connection */
     bool disconnect(Connection * con);
+
+    // ------------ configuration --------
+
+    /** set the blocksize of this patch, as well as for
+        all contained modules. This is the bufferlength
+        of dsp blocks. */
+    void setBlockSize(size_t size);
+
+    size_t blockSize() const { return blockSize_; }
+
+    // ------------ runtime --------------
+
+    void dspStep();
 
     // ________ PROTECTED ________________
 
 protected:
 
+    // ----------- id --------------------
+
     std::string
         idName_,
         name_;
 
+    // ----------- items -----------------
+
     Modules modules_;
     Connections cons_;
+
+    // ---------- configuration ----------
+
+    /** dsp buffer length */
+    size_t blockSize_;
 };
 
 } // namespace CSMOD

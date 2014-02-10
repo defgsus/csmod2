@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_MOD_CONNECTOR_H
 
 #include <string>
+#include <vector>
 
 #include "mod/base.h"
 
@@ -109,17 +110,25 @@ protected:
 
 
 
-class AudioConnector : public Connector
+class DspConnector : public Connector
 {
 public:
-    AudioConnector(Module * module, Direction dir,
+    DspConnector(Module * module, Direction dir,
                    const std::string& idname, const std::string& name)
-        : Connector(module, dir, idname, name)
+        : Connector     (module, dir, idname, name)
     { }
 
-    virtual bool isConnectable(Connector * other)
-    { return (dir() != other->dir() && dynamic_cast<AudioConnector*>(other) != 0); }
+    size_t blockSize() const { return block_.size(); }
+    void setBlockSize(size_t size) { block_.resize(size); }
 
+    const csfloat * block() const { return &block_[0]; }
+    csfloat * block() { return &block_[0]; }
+
+    virtual bool isConnectable(Connector * other)
+    { return (dir() != other->dir() && dynamic_cast<DspConnector*>(other) != 0); }
+
+protected:
+    std::vector<csfloat> block_;
 };
 
 

@@ -18,50 +18,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_MOD_CONNECTION_H
-#define CSMOD_MOD_CONNECTION_H
+#ifndef DSPPATCH_H
+#define DSPPATCH_H
 
-#include <string>
+#include "patch.h"
 
-namespace CSMOD
+namespace CSMOD {
+
+/** well, we probably do not need this extra class ... */
+
+class DspPatch : public Patch
 {
+public:
 
-class Io;
-class Module;
-class Connector;
-
-/** general connection type */
-class Connection
-{
-    public:
-
-    Connection(Connector * connectorFrom, Connector * connectorTo);
+    DspPatch();
 
     // ------------------ IO -------------------
 
-    bool store(CSMOD::Io * io);
-    bool restore(CSMOD::Io * io);
+    //virtual bool store(CSMOD::Io * io);
+    //virtual bool restore(CSMOD::Io * io);
 
-    // ------ getter ---------
 
-    Module * moduleFrom() const { return moduleFrom_; }
-    Module * moduleTo() const { return moduleTo_; }
-
-    Connector * connectorFrom() const { return connectorFrom_; }
-    Connector * connectorTo() const { return connectorTo_; }
-
-    // __________ PRIVATE ______________
-
-    private:
-
-    Module	* moduleFrom_,
-            * moduleTo_;
-
-    Connector
-            * connectorFrom_,
-            * connectorTo_;
 };
 
 } // namespace CSMOD
 
-#endif // CSMOD_MOD_CONNECTION_H
+#endif // DSPPATCH_H

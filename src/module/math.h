@@ -46,6 +46,8 @@ public:
 
     virtual MathOperator * cloneClass() const { return new MathOperator(op_); }
 
+    virtual void step();
+
 protected:
     Operation op_;
 
@@ -69,6 +71,8 @@ public:
 
     virtual MathUnary * cloneClass() const { return new MathUnary(op_); }
 
+    virtual void step();
+
 protected:
     Operation op_;
 
@@ -76,8 +80,6 @@ protected:
         inputs_, outputs_;
 };
 
-CSMOD_REGISTER_MODULE(MathOperator)
-CSMOD_REGISTER_MODULE(MathUnary)
 
 } // namespace MODULE
 } // namespace CSMOD

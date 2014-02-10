@@ -18,50 +18,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_MOD_CONNECTION_H
-#define CSMOD_MOD_CONNECTION_H
+#include "stuff.h"
 
-#include <string>
+#include "log.h"
+#include "mod/modulestock.h"
 
-namespace CSMOD
+namespace CSMOD {
+namespace MODULE {
+
+CSMOD_REGISTER_MODULE(Stuff)
+
+
+Stuff::Stuff()
+    :   DspModule      ("Stuff~", "Stuff~")
 {
+    CSMOD_DEBUGF("Stuff::Stuff()");
 
-class Io;
-class Module;
-class Connector;
+    add_(in_  = new DspConnector(this, Connector::IN,  "in",  "in" ));
+    add_(out_ = new DspConnector(this, Connector::OUT, "out", "out"));
+}
 
-/** general connection type */
-class Connection
+void Stuff::dspStep()
 {
-    public:
+    for (size_t i = 0; i < blockSize(); ++i)
+    {
+        out_->block()[i] = 0.5f - in_->block()[i];
+    }
+}
 
-    Connection(Connector * connectorFrom, Connector * connectorTo);
 
-    // ------------------ IO -------------------
-
-    bool store(CSMOD::Io * io);
-    bool restore(CSMOD::Io * io);
-
-    // ------ getter ---------
-
-    Module * moduleFrom() const { return moduleFrom_; }
-    Module * moduleTo() const { return moduleTo_; }
-
-    Connector * connectorFrom() const { return connectorFrom_; }
-    Connector * connectorTo() const { return connectorTo_; }
-
-    // __________ PRIVATE ______________
-
-    private:
-
-    Module	* moduleFrom_,
-            * moduleTo_;
-
-    Connector
-            * connectorFrom_,
-            * connectorTo_;
-};
-
+} // namespace MODULE
 } // namespace CSMOD
-
-#endif // CSMOD_MOD_CONNECTION_H

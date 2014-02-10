@@ -27,13 +27,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connection.h"
 #include "module.h"
 #include "modulestock.h"
+#include "dspmodule.h"
 
 namespace CSMOD {
 
 
 Patch::Patch()
-    :   idName_ ("patch"),
-        name_   ("patch")
+    :   idName_     ("patch"),
+        name_       ("patch"),
+        blockSize_  (0)
 {
     CSMOD_DEBUGF("Patch::Patch()");
 }
@@ -102,7 +104,11 @@ bool Patch::restore(CSMOD::Io * io)
             auto modclass = io->readString("class");
 
             auto mod = ModuleStock::instance().getModule(modclass);
-            CSMOD_CHECKIO(mod, "unknown module class " << mod);
+            if (!mod)
+            {
+                CSMOD_IO_WARN("skipping unknown module class " << modclass);
+                goto skip_;
+            }
             CSMOD_CHECKIO(addModule(mod), "could not create module " << modclass);
 
             // load object properties and stuff
@@ -120,18 +126,19 @@ bool Patch::restore(CSMOD::Io * io)
             io->read("tc", tc);
             auto mod1 = findModule(fm),
                  mod2 = findModule(tm);
-            if (!mod1) { CSMOD_IO_ERROR("unknown module id '" << fm << "' in connection"); continue; }
-            if (!mod2) { CSMOD_IO_ERROR("unknown module id '" << tm << "' in connection"); continue; }
+            if (!mod1) { CSMOD_IO_WARN("unknown module id '" << fm << "' in connection"); goto skip_; }
+            if (!mod2) { CSMOD_IO_WARN("unknown module id '" << tm << "' in connection"); goto skip_; }
             auto c1 = mod1->findConnector(fc),
                  c2 = mod2->findConnector(tc);
-            if (!c1) { CSMOD_IO_ERROR("unknown connnector id '" << fm << "." << fc << "' in connection"); continue; }
-            if (!c2) { CSMOD_IO_ERROR("unknown connnector id '" << tm << "." << tc << "' in connection"); continue; }
+            if (!c1) { CSMOD_IO_WARN("unknown connnector id '" << fm << "." << fc << "' in connection"); goto skip_; }
+            if (!c2) { CSMOD_IO_WARN("unknown connnector id '" << tm << "." << tc << "' in connection"); goto skip_; }
             // make the connection
             auto con = connect(c1, c2);
             // read additional data
             CSMOD_CHECKIO(con->restore(io), "could not restore connection");
         }
 
+    skip_:
         io->leaveSection();
     }
 
@@ -220,6 +227,33 @@ bool Patch::disconnect(Connection * con)
     }
 
     return false;
+}
+
+
+// ------------ configuration --------
+
+void Patch::setBlockSize(size_t size)
+{
+    CSMOD_DEBUGF("Patch::setBlockSize(" << size << ")");
+
+    blockSize_ = size;
+
+    for (auto m : modules_)
+    {
+        auto dsp = dynamic_cast<DspModule*>(m);
+        if (dsp)
+            dsp->setBlockSize(blockSize_);
+    }
+}
+
+
+
+
+// ------------ runtime --------------
+
+void Patch::dspStep()
+{
+
 }
 
 } // namespace CSMOD

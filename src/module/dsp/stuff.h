@@ -18,50 +18,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_MOD_CONNECTION_H
-#define CSMOD_MOD_CONNECTION_H
+#ifndef DSPBASE_H
+#define DSPBASE_H
 
-#include <string>
+#include "mod/dspmodule.h"
 
-namespace CSMOD
+namespace CSMOD {
+namespace MODULE {
+
+/* NOTE: Don't take this serious.
+ * Currently i'm playing around with Modules to see
+ * what patterns work best. */
+
+class Stuff : public DspModule
 {
+public:
 
-class Io;
-class Module;
-class Connector;
+    Stuff();
 
-/** general connection type */
-class Connection
-{
-    public:
+    virtual Stuff * cloneClass() const { return new Stuff; }
 
-    Connection(Connector * connectorFrom, Connector * connectorTo);
+    virtual void dspStep();
 
-    // ------------------ IO -------------------
+protected:
 
-    bool store(CSMOD::Io * io);
-    bool restore(CSMOD::Io * io);
+    DspConnector * in_, * out_;
 
-    // ------ getter ---------
-
-    Module * moduleFrom() const { return moduleFrom_; }
-    Module * moduleTo() const { return moduleTo_; }
-
-    Connector * connectorFrom() const { return connectorFrom_; }
-    Connector * connectorTo() const { return connectorTo_; }
-
-    // __________ PRIVATE ______________
-
-    private:
-
-    Module	* moduleFrom_,
-            * moduleTo_;
-
-    Connector
-            * connectorFrom_,
-            * connectorTo_;
 };
 
+
+
+} // namespace MODULE
 } // namespace CSMOD
 
-#endif // CSMOD_MOD_CONNECTION_H
+#endif // DSPBASE_H

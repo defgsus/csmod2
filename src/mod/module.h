@@ -104,6 +104,11 @@ class Module
     /** return the container this module belongs to */
     Container * container() const { return container_; }
 
+    // ---------------- runtime -----------------------
+
+    /** actual worker. */
+    virtual void step() { }
+
     // _________________ PROTECTED ____________________
 
     protected:
