@@ -32,6 +32,9 @@ namespace CSMOD {
     Currently simply wraps portaudio. */
 class AudioDevices
 {
+    // for pa_initialized_
+    friend class AudioDevice;
+
     public:
 
     struct ApiInfo
@@ -59,15 +62,13 @@ class AudioDevices
     /** call this once */
     bool checkDevices();
 
-    size_t numApis();
-    const ApiInfo * getApiInfo(size_t index);
+    size_t numApis() const;
+    size_t numDevices() const ;
 
-    size_t numDevices();
-    const DeviceInfo * getDeviceInfo(size_t index);
+    const ApiInfo * getApiInfo(size_t index) const;
+    const DeviceInfo * getDeviceInfo(size_t index) const;
 
-    void dump_info(std::ostream& = std::cout);
-
-    // --------- initialisation ----------
+    void dump_info(std::ostream& = std::cout) const;
 
     // _________ HIDDEN AREA _____________
 
@@ -76,10 +77,12 @@ private:
     size_t numDevices_, numApis_;
     std::vector<DeviceInfo> dev_infos_;
     std::vector<ApiInfo> api_infos_;
+
+    // global flag to avoid multiple calls to Pa_Initialize()
+    static bool pa_initialized_;
 };
 
 
-void testAudioDevices();
 
 } // namespace CSMOD
 

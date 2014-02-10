@@ -23,8 +23,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <portaudio.h>
 
 #include "log.h"
+#include "audiodevice.h"
+
 
 namespace CSMOD {
+
+
+#define CSMOD_CHECKPA(command__, text__) \
+    { PaError err__ = (command__); if (err__ != paNoError) \
+        { CSMOD_DEV_ERROR(text__ << " (" << Pa_GetErrorText(err__) << ")"); return false; } }
+
+
+bool AudioDevices::pa_initialized_ = false;
 
 AudioDevices::AudioDevices()
 {
@@ -43,7 +53,11 @@ bool AudioDevices::checkDevices()
 {
     CSMOD_DEBUGF("AudioDevices::checkDevices()");
 
-    Pa_Initialize();
+    if (!pa_initialized_)
+    {
+        CSMOD_CHECKPA(Pa_Initialize(), "could not initialize audio library");
+        pa_initialized_ = true;
+    }
 
     api_infos_.clear();
     dev_infos_.clear();
@@ -82,12 +96,12 @@ bool AudioDevices::checkDevices()
     return numDevices_ != 0;
 }
 
-size_t AudioDevices::numDevices()
+size_t AudioDevices::numDevices() const
 {
     return numDevices_;
 }
 
-const AudioDevices::DeviceInfo * AudioDevices::getDeviceInfo(size_t index)
+const AudioDevices::DeviceInfo * AudioDevices::getDeviceInfo(size_t index) const
 {
     if (index < dev_infos_.size())
         return &dev_infos_[index];
@@ -95,12 +109,12 @@ const AudioDevices::DeviceInfo * AudioDevices::getDeviceInfo(size_t index)
     return 0;
 }
 
-size_t AudioDevices::numApis()
+size_t AudioDevices::numApis() const
 {
     return numApis_;
 }
 
-const AudioDevices::ApiInfo * AudioDevices::getApiInfo(size_t index)
+const AudioDevices::ApiInfo * AudioDevices::getApiInfo(size_t index) const
 {
     if (index < api_infos_.size())
         return &api_infos_[index];
@@ -108,7 +122,7 @@ const AudioDevices::ApiInfo * AudioDevices::getApiInfo(size_t index)
     return 0;
 }
 
-void AudioDevices::dump_info(std::ostream &out)
+void AudioDevices::dump_info(std::ostream &out) const
 {
     out << "audio APIs:\n";
     for (size_t i=0; i<numApis_; ++i)
@@ -131,21 +145,10 @@ void AudioDevices::dump_info(std::ostream &out)
     out << std::endl;
 }
 
-// --------- initialisation ----------
 
 
 
-
-
-
-void testAudioDevices()
-{
-    AudioDevices dev;
-    dev.checkDevices();
-
-    dev.dump_info();
-}
-
+#undef CSMOD_CHECKPA
 
 } // namespace CSMOD
 

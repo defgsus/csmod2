@@ -25,24 +25,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 // ------------------------ debugging ---------------------------
 
+// general
 #if !defined(NDEBUG) && (1)
 #define CSMOD_DEBUG(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUG(unused__) { }
 #endif
 
+// function entries
 #if !defined(NDEBUG) && (1)
 #define CSMOD_DEBUGF(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGF(unused__) { }
 #endif
 
+// io stuff
 #if !defined(NDEBUG) && (1)
 #define CSMOD_DEBUGIO(arg__) { std::cerr << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGIO(unused__) { }
 #endif
 
+// device stuff
+#if !defined(NDEBUG) && (1)
+#define CSMOD_DEBUGDEV(arg__) { std::cerr << arg__ << std::endl; }
+#else
+#define CSMOD_DEBUGDEV(unused__) { }
+#endif
+
+// events
 #if !defined(NDEBUG) && (0)
 #define CSMOD_DEBUGE(arg__) { std::cerr << arg__ << std::endl; }
 #else
@@ -53,5 +64,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #define CSMOD_RT_ERROR(arg__) { std::cerr << "RT ERROR: " << arg__ << std::endl; }
 #define CSMOD_IO_ERROR(arg__) { std::cerr << "IO ERROR: " << arg__ << std::endl; }
+#define CSMOD_DEV_ERROR(arg__) { std::cerr << "DEV ERROR: " << arg__ << std::endl; }
 
 #endif // LOG_H

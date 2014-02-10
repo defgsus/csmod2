@@ -42,7 +42,8 @@ SOURCES += \
     gui/modulestockmenu.cpp \
     tool/stringmanip.cpp \
     tool/io.cpp \
-    audio/audiodevices.cpp
+    audio/audiodevices.cpp \
+    audio/audiodevice.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -62,7 +63,8 @@ HEADERS += \
     gui/modulestockmenu.h \
     tool/stringmanip.h \
     tool/io.h \
-    audio/audiodevices.h
+    audio/audiodevices.h \
+    audio/audiodevice.h
 
 ######### MODULES ########
 
