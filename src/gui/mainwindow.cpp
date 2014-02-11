@@ -41,13 +41,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     setCentralWidget(patchview_);
 
-    auto p = new CSMOD::Patch();
+    // XXX this is all a quick hack
+    // handling of Patches should go to Model someday
 
-    model_->setPatch(p);
+    auto patch_ = new CSMOD::Patch();
+
+    model_->setPatch(patch_);
     model_->addPatchView(patchview_);
     patchview_->setModel(model_);
 
-    patchview_->setPatch(p);
+    patchview_->setPatch(patch_);
 
     // ------- main menu ---------
 
@@ -56,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     a = menuBar()->addAction("load patch");
     connect(a, &QAction::triggered, [=]() { model_->loadPatch("test.csmod"); });
     a = menuBar()->addAction("dsp graph");
-    connect(a, &QAction::triggered, [=]() { CSMOD::DspGraph dsp; dsp.initFromPatch(p); });
+    connect(a, &QAction::triggered, [=]() { patch_->updateDspGraph(); });
 
     /*
     auto menu = new QMenu(0);

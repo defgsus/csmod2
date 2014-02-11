@@ -30,8 +30,16 @@ namespace CSMOD {
 class Patch;
 class DspModule;
 class Connection;
+typedef std::vector<DspModule*> DspModules;
 
-/** serial executer of directed dsp graphs */
+/** serializer of directed dsp graphs.
+    Pass the graph (patch) to initFromPatch()
+    and get the sorted order of Modules from getSortedModules().
+    Afterwards the class can be destroyed.
+
+    XXX This class could maybe be templated for other structures
+        when the need arises..
+*/
 class DspGraph
 {
 public:
@@ -40,7 +48,7 @@ public:
     DspGraph();
     ~DspGraph();
 
-    // -------------- init ---------------
+    // -------------- calc ---------------
 
     /** wipe out all contents */
     void clear();
@@ -49,10 +57,9 @@ public:
         If false is returned, there was a loop in the graph. */
     bool initFromPatch(Patch * patch);
 
-    // ------------ runtime --------------
-
-    /** execute the dsp graph */
-    void dspStep();
+    /** initialize the vector with the dsp Modules in correct
+        execution order. */
+    void getSortedModules(DspModules& modules);
 
     // ____________ PRIVATE ______________
 
@@ -71,7 +78,7 @@ private:
     Patch * patch_;
 
     /** modules in order of execution */
-    std::vector<DspModule*> modules_;
+    DspModules modules_;
 
     // local work structures
     struct ModuleEdge;

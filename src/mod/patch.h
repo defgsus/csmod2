@@ -28,8 +28,10 @@ namespace CSMOD {
 
 class Io;
 class Module;
+class DspModule;
 class Connector;
 class Connection;
+typedef std::vector<DspModule*> DspModules;
 
 /** (recursive) container for Modules and Connections */
 class Patch
@@ -69,13 +71,16 @@ public:
     const Modules& modules() const { return modules_; }
 
     /** Adds the module and takes ownership.
-        If false is returned, there was something wrong
-        and the Module was not added.
-        The Module's idName will be made globally unique. */
+        <p>If false is returned, there was something wrong
+        and the Module was not added (ownership is not taken).
+        This happens if the same Module is added again.</p>
+        <p>The Module's idName will be made unique by
+        adding counter digits as needed.</p> */
     bool addModule(Module * module);
 
     // ---------- connections ------------
 
+    /** read access to all Connections in the patch. */
     const Connections& connections() const { return cons_; }
 
     /** Connects both connectors if possible */
@@ -86,12 +91,18 @@ public:
 
     // ------------ configuration --------
 
-    /** set the blocksize of this patch, as well as for
+    /** Sets the blocksize of this patch, as well as for
         all contained modules. This is the bufferlength
         of dsp blocks. */
     void setBlockSize(size_t size);
 
+    /** Returns blocksize (dsp bufferlength) of this patch. */
     size_t blockSize() const { return blockSize_; }
+
+    // ------------ dsp related ----------
+
+    /** serializes all DspModules to correct execution order. */
+    bool updateDspGraph();
 
     // ------------ runtime --------------
 
@@ -111,6 +122,9 @@ protected:
 
     Modules modules_;
     Connections cons_;
+
+    /** all dsp modules in execution order */
+    DspModules dspmodules_;
 
     // ---------- configuration ----------
 

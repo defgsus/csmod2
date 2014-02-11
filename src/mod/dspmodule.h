@@ -44,7 +44,7 @@ private:
     size_t blockSize_;
 };
 
-
+typedef std::vector<DspModule*> DspModules;
 
 } // namespace CSMOD
 

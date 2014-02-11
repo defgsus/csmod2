@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+// ------------------ internal structs --------------------
+
 // input and output connections
 struct DspGraph::ModuleEdge
 {
@@ -69,7 +71,7 @@ struct DspGraph::ModuleNode
 };
 
 
-
+// ----------------------- ctor -----------------------
 
 DspGraph::DspGraph()
     :   patch_  (0)
@@ -80,9 +82,11 @@ DspGraph::DspGraph()
 DspGraph::~DspGraph()
 {
     CSMOD_DEBUGF("DspGraph::~DspGraph()");
+    clear();
 }
 
-// -------------- init ---------------
+
+// ----------------- calculation --------------------
 
 void DspGraph::clear()
 {
@@ -106,14 +110,22 @@ bool DspGraph::initFromPatch(Patch * patch)
     // get structure of patch
     initMap_();
 
+#ifndef NDEBUG
     dump_();
+#endif
 
-    bool works = traceGraph_();
-
-
-
-    return works;
+    return traceGraph_();
 }
+
+void DspGraph::getSortedModules(DspModules& modules)
+{
+    CSMOD_DEBUGF("DspGraph::getSortedModules(...)");
+    modules = modules_;
+}
+
+
+
+// ------------------- implementation ------------------
 
 void DspGraph::initMap_()
 {
@@ -229,11 +241,5 @@ void DspGraph::dump_()
     }
 }
 
-// ------------ runtime --------------
-
-void DspGraph::dspStep()
-{
-
-}
 
 } // namespace CSMOD

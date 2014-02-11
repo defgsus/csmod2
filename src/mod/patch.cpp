@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "module.h"
 #include "modulestock.h"
 #include "dspmodule.h"
+#include "dspgraph.h"
 
 namespace CSMOD {
 
@@ -172,7 +173,7 @@ bool Patch::addModule(Module * module)
 {
     CSMOD_DEBUGF("Patch::addModule(" << module << ")");
 
-    // check presense
+    // check if present
     if (hasModule(module))
     {
         CSMOD_RT_ERROR("attempt to add module '" << module->name() << "' again.");
@@ -246,6 +247,25 @@ void Patch::setBlockSize(size_t size)
     }
 }
 
+
+
+// ------------ dsp related ----------
+
+bool Patch::updateDspGraph()
+{
+    CSMOD_DEBUGF("Patch::updateDspGraph()");
+
+    DspGraph graph;
+    if (!graph.initFromPatch(this))
+    {
+        dspmodules_.clear();
+        return false;
+    }
+
+    graph.getSortedModules(dspmodules_);
+
+    return true;
+}
 
 
 
