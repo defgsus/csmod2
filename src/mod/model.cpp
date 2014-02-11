@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "log.h"
 #include "tool/io.h"
+#include "audio/audiodevice.h"
 #include "connector.h"
 #include "module.h"
 #include "patch.h"
@@ -33,6 +34,7 @@ namespace CSMOD {
 
 
 Model::Model()
+    :   adev_   (0)
 {
     CSMOD_DEBUGF("Model::Model()");
 }
@@ -115,7 +117,7 @@ bool Model::loadPatch(const std::string& filename)
 #undef CSMOD_CHECKIO
 
 
-// ------------- containers -----------
+// ------------- connect classes -----------
 
 /** set Patch to work on, or disconnect with NULL */
 void Model::setPatch(Patch * patch)
@@ -132,8 +134,36 @@ void Model::addPatchView(PatchView * view)
     views_.push_back(view);
 }
 
+void Model::setAudioDevice(AudioDevice * adev)
+{
+    adev_ = adev;
+}
 
 
+// ############ RUNTIME INTERFACE ############
+
+bool Model::startDsp()
+{
+    if (adev_) return adev_->start();
+    return false;
+}
+
+bool Model::stopDsp()
+{
+    if (adev_) return adev_->stop();
+    return false;
+}
+
+void Model::audio_callback_(const csfloat * in, csfloat * out)
+{
+    if (patch_) patch_->audio_callback(in, out);
+}
+
+
+
+
+
+// ############## EDIT INTERFACE #############
 
 // -------- module handling -----------
 

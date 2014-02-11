@@ -36,6 +36,7 @@ typedef std::vector<csdouble> csdoubles;
 
 // ------- some forwards --------
 
+class Io;
 class Patch;
 class Module;
 class DspModule;

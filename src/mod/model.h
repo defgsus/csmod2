@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <string>
 #include <vector>
 
+#include "base.h"
+
 class PatchView;
 
 namespace CSMOD {
@@ -35,7 +37,7 @@ class Patch;
 class Module;
 class Connector;
 class Connection;
-
+class AudioDevice;
 
 
 /** @brief class for threadsafe editing.
@@ -62,14 +64,25 @@ public:
     bool savePatch(const std::string& filename);
     bool loadPatch(const std::string& filename);
 
-    // ------------- containers -----------
+    // ------------- connect classes -----------
 
     /** set Patch to work on, or disconnect with NULL */
     void setPatch(Patch * root_patch);
 
     void addPatchView(PatchView * view);
 
-    // -|-|-|-|-|-|-|- EDIT INTERFACE -|-|-|-|-|-|-|-
+    /** Installs an audiodevice.
+        Currently Model will not do anything with the device,
+        except installing the audio callback and starting and stopping.
+        So the device needs to be initialized already. */
+    void setAudioDevice(AudioDevice * adev);
+
+    // ############ RUNTIME INTERFACE ############
+
+    bool startDsp();
+    bool stopDsp();
+
+    // ############## EDIT INTERFACE #############
 
     // -------- module handling -----------
 
@@ -86,8 +99,12 @@ private:
 
     void updateViews_();
 
+    void audio_callback_(const csfloat * in, csfloat * out);
+
     Patch * patch_;
     std::vector<PatchView*> views_;
+
+    AudioDevice * adev_;
 };
 
 } // namespace CSMOD

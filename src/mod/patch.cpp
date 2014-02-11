@@ -271,6 +271,14 @@ bool Patch::updateDspGraph()
 
 // ------------ runtime --------------
 
+void Patch::audio_callback(const csfloat * in, csfloat * out)
+{
+    for (size_t i = 0; i<blockSize_; ++i)
+        *out++ = 0;
+
+    dspStep();
+}
+
 void Patch::dspStep()
 {
     for (auto &m : dspmodules_)

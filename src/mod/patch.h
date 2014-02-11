@@ -24,14 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <string>
 #include <vector>
 
-namespace CSMOD {
+#include "base.h"
 
-class Io;
-class Module;
-class DspModule;
-class Connector;
-class Connection;
-typedef std::vector<DspModule*> DspModules;
+namespace CSMOD {
 
 /** (recursive) container for Modules and Connections */
 class Patch
@@ -105,6 +100,8 @@ public:
     bool updateDspGraph();
 
     // ------------ runtime --------------
+
+    void audio_callback(const csfloat * in, csfloat * out);
 
     void dspStep();
 
