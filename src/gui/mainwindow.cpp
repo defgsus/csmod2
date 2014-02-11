@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/module.h"
 #include "mod/model.h"
 #include "mod/modulestock.h"
+#include "mod/dspgraph.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -54,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(a, &QAction::triggered, [=]() { model_->savePatch("test.csmod"); });
     a = menuBar()->addAction("load patch");
     connect(a, &QAction::triggered, [=]() { model_->loadPatch("test.csmod"); });
+    a = menuBar()->addAction("dsp graph");
+    connect(a, &QAction::triggered, [=]() { CSMOD::DspGraph dsp; dsp.initFromPatch(p); });
 
     /*
     auto menu = new QMenu(0);

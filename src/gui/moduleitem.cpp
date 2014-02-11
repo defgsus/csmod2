@@ -129,6 +129,10 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
     }
 
     setRect(0,0,width, std::max(num_in, num_out) * 15 + 20);
+
+    auto text = new QGraphicsTextItem(QString::fromStdString(module_->idName()), this);
+    text->moveBy(10,0);//(width - text->textWidth())/2,0);
+    text->setDefaultTextColor(QColor(255,255,255));
 }
 
 void ModuleItem::deleteChildItems_()

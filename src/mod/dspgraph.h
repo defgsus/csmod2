@@ -21,9 +21,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef DSPGRAPH_H
 #define DSPGRAPH_H
 
+#include <vector>
+#include <map>
+
+
 namespace CSMOD {
 
 class Patch;
+class Module;
+class Connection;
 
 /** analyzer and executer of dsp graphs */
 class DspGraph
@@ -48,8 +54,21 @@ public:
 
 private:
 
+    void initMap_();
+
+    void dump_();
+
     Patch * patch_;
 
+    struct Mod
+    {
+        Module * module;
+        bool visited;
+        std::vector<Mod*>
+            ins, outs;
+    };
+
+    std::map<Module*, Mod*> map_;
 };
 
 
