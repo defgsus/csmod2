@@ -31,7 +31,7 @@ class Patch;
 class DspModule;
 class Connection;
 
-/** analyzer and executer of dsp graphs */
+/** serial executer of directed dsp graphs */
 class DspGraph
 {
 public:
@@ -42,32 +42,41 @@ public:
 
     // -------------- init ---------------
 
+    /** wipe out all contents */
     void clear();
 
+    /** starts a new serialisation from the modules in patch.
+        If false is returned, there was a loop in the graph. */
     bool initFromPatch(Patch * patch);
 
     // ------------ runtime --------------
 
+    /** execute the dsp graph */
     void dspStep();
 
     // ____________ PRIVATE ______________
 
 private:
 
+    /** initialize local graph structure from patch */
     void initMap_();
 
+    /** serialize the graph */
     bool traceGraph_();
 
+    /** debug output */
     void dump_();
 
+    /** connected patch */
     Patch * patch_;
-
-    struct ModuleEdge;
-    struct ModuleInfo;
-    std::map<DspModule*, ModuleInfo*> map_;
 
     /** modules in order of execution */
     std::vector<DspModule*> modules_;
+
+    // local work structures
+    struct ModuleEdge;
+    struct ModuleNode;
+    std::map<DspModule*, ModuleNode*> map_;
 };
 
 

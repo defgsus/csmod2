@@ -78,6 +78,9 @@ class Connector
     /** see if the Connector is connected to the @p module */
     bool isConnectedTo(Module * module);
 
+    /** read access to the list of connected modules */
+    const std::vector<Module*>& modules() const { return modules_; }
+
     // __________ PRIVATE ______________
 
     private:

@@ -30,26 +30,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+// input and output connections
 struct DspGraph::ModuleEdge
 {
-    ModuleInfo * mod;
-    bool present;
-    ModuleEdge(ModuleInfo * mod)
+    ModuleEdge(ModuleNode * mod)
         :   mod(mod), present(true)
     { }
+
+    // parent node
+    ModuleNode * mod;
+
+    // flag to remove edges without acually changing the container
+    bool present;
+
 };
 
-struct DspGraph::ModuleInfo
+// represent a module + sum locally needed helper
+struct DspGraph::ModuleNode
 {
-    ModuleInfo(DspModule * m)
+    ModuleNode(DspModule * m)
         : module(m)
     { }
 
+    // represented module
     DspModule * module;
+    // ingoing and outgoing connections
     std::vector<ModuleEdge>
         ins, outs;
 
-    // return number of input nodes (check ModuleEdge::present)
+    // returns number of input nodes (checks ModuleEdge::present)
     size_t numInputs()
     {
         size_t count = 0;
@@ -111,15 +120,19 @@ void DspGraph::initMap_()
     CSMOD_DEBUGF("DspGraph::initMap_()");
 
     // add all dsp modules to map_
-    for (auto m : patch_->modules())
+    for (auto &m : patch_->modules())
     if (auto dsp = dynamic_cast<DspModule*>(m))
     {
-        auto mod = new ModuleInfo(dsp);
+        // create a node for each module
+        auto mod = new ModuleNode(dsp);
         map_.insert(std::make_pair(dsp, mod));
     }
 
     // add connections
-    for (auto c : patch_->connections())
+    // NOTE: we could use the info that is already
+    // in Connector::modules() but below method is
+    // more convenient to code
+    for (auto &c : patch_->connections())
     {
         auto m1 = dynamic_cast<DspModule*>(c->moduleFrom()),
              m2 = dynamic_cast<DspModule*>(c->moduleTo());
@@ -139,7 +152,7 @@ bool DspGraph::traceGraph_()
     CSMOD_DEBUGF("DspGraph::traceGraph_()");
 
     // nodes with no inputs (temporary space)
-    std::vector<ModuleInfo*> mods;
+    std::vector<ModuleNode*> mods;
 
     // modules with only outputs
     // are at the start of calculation
