@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 class Patch;
-class Module;
+class DspModule;
 class Connection;
 
 /** analyzer and executer of dsp graphs */
@@ -56,19 +56,18 @@ private:
 
     void initMap_();
 
+    bool traceGraph_();
+
     void dump_();
 
     Patch * patch_;
 
-    struct Mod
-    {
-        Module * module;
-        bool visited;
-        std::vector<Mod*>
-            ins, outs;
-    };
+    struct ModuleEdge;
+    struct ModuleInfo;
+    std::map<DspModule*, ModuleInfo*> map_;
 
-    std::map<Module*, Mod*> map_;
+    /** modules in order of execution */
+    std::vector<DspModule*> modules_;
 };
 
 

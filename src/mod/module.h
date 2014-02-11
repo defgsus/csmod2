@@ -93,11 +93,14 @@ class Module
 
     // ------------- connectors -----------------------
 
-    /** Returns the Connector match the id, or NULL if not present. */
+    /** Returns the Connector matching the id, or NULL if not present. */
     Connector * findConnector(const std::string& idName);
 
     /** Read-access to all Connectors of this module. */
     const std::vector<Connector*>& connectors() const { return cons_; }
+
+    // ------------- connections ----------------------
+
 
     // -------------- container -----------------------
 
