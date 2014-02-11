@@ -29,10 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 
-class Module;
-
-
-
 class Connector
 {
     // needed to set idName_
@@ -63,27 +59,46 @@ class Connector
     Direction dir() const { return dir_; }
     /** persistent global id */
     const std::string& idName() const { return idName_; }
-    /** humand-readable name */
+    /** human-readable name */
     const std::string& name() const { return name_; }
+
+    /** Returns moduleId.connectorId */
+    std::string longIdName() const;
+    /** Returns moduleName.connectorName */
+    std::string longName() const;
 
     // -------- connections -------------
 
-    /** return true if this connector and 'other' are connectable */
-    virtual bool isConnectable(Connector * other) = 0;
+    /** Returns true if this connector and 'other' are connectable */
+    virtual bool isConnectable(Connector * other) const = 0;
 
-    /** add the @p module to the list of connections. */
-    bool connectModule(Module * module);
-    /** remove the @p module from the list of connections. */
-    bool disconnectModule(Module * module);
-    /** see if the Connector is connected to the @p module */
-    bool isConnectedTo(Module * module);
+    /** Adds the Connector to the list of connections.
+        (Only statistics, still needs a Connection in Patch) */
+    virtual bool connectTo(Connector * con);
+    /** Removes the Connector from the list of connections.
+        (Only statistics, still needs a Connection in Patch) */
+    virtual bool disconnectFrom(Connector * con);
+
+    /** Sees if this Connector is connected to the another one  */
+    bool isConnectedTo(Connector * con) const;
+    /** Sees if this Connector is connected to the Module  */
+    bool isConnectedTo(Module * module) const;
+
+    /** Returns number of connections going in or out */
+    size_t numConnections() const { return cons_.size(); }
+
+    /** Returns number of Modules connected to */
+    size_t numModules() const { return modules_.size(); }
+
+    /** read access to the list of connected Connectors */
+    const Connectors& connectors() const { return cons_; }
 
     /** read access to the list of connected modules */
-    const std::vector<Module*>& modules() const { return modules_; }
+    const Modules& modules() const { return modules_; }
 
-    // __________ PRIVATE ______________
+    // __________ PROTECTED ______________
 
-    private:
+    protected:
 
     /** parent module */
     Module * module_;
@@ -98,7 +113,9 @@ class Connector
         name_;
 
     /** connected modules */
-    std::vector<Module*> modules_;
+    Modules modules_;
+    /** connected other Connectors */
+    Connectors cons_;
 };
 
 
@@ -111,7 +128,7 @@ public:
         : Connector(module, dir, idname, name)
     { }
 
-    virtual bool isConnectable(Connector * other)
+    virtual bool isConnectable(Connector * other) const
     { return (dir() != other->dir() && dynamic_cast<ValueConnector*>(other) != 0); }
 
     csfloat value() const { return value_; }
@@ -128,20 +145,32 @@ class DspConnector : public Connector
 public:
     DspConnector(Module * module, Direction dir,
                    const std::string& idname, const std::string& name)
-        : Connector     (module, dir, idname, name)
-    { }
+        : Connector      (module, dir, idname, name),
+          blockSize_     (0),
+          dsp_block_ptr_ (0)
+    { updateDspData_(); }
 
-    size_t blockSize() const { return block_.size(); }
-    void setBlockSize(size_t size) { block_.resize(size); }
+    size_t blockSize() const { return blockSize_; }
+    void setBlockSize(size_t size);
 
-    const csfloat * block() const { return &block_[0]; }
-    csfloat * block() { return &block_[0]; }
+    const csfloat * block() const { return dsp_block_ptr_; }
+    csfloat * block() { return dsp_block_ptr_; }
 
-    virtual bool isConnectable(Connector * other)
+    virtual bool isConnectable(Connector * other) const
     { return (dir() != other->dir() && dynamic_cast<DspConnector*>(other) != 0); }
 
+    /** add the @p module to the list of connections. */
+    virtual bool connectTo(Connector *con);
+    /** remove the @p module from the list of connections. */
+    virtual bool disconnectFrom(Connector *con);
+
 protected:
-    std::vector<csfloat> block_;
+    /** this will setup the internal or external block data. */
+    virtual void updateDspData_();
+
+    size_t blockSize_;
+    csfloat * dsp_block_ptr_;
+    csfloats dsp_block_;
 };
 
 

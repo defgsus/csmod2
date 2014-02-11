@@ -273,7 +273,10 @@ bool Patch::updateDspGraph()
 
 void Patch::dspStep()
 {
-
+    for (auto &m : dspmodules_)
+    {
+        m->dspStep();
+    }
 }
 
 } // namespace CSMOD

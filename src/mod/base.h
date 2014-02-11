@@ -18,19 +18,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef MOD_BASE_H
-#define MOD_BASE_H
+#ifndef CSMOD_MOD_BASE_H
+#define CSMOD_MOD_BASE_H
+
+#include <vector>
 
 namespace CSMOD {
 
 /** default float type */
 typedef float csfloat;
+typedef std::vector<csfloat> csfloats;
 
 /** default double type */
 typedef double csdouble;
+typedef std::vector<csdouble> csdoubles;
 
+
+// ------- some forwards --------
+
+class Patch;
+class Module;
+class DspModule;
+class Connector;
+class Connection;
+
+typedef std::vector<Module*> Modules;
+typedef std::vector<DspModule*> DspModules;
+typedef std::vector<Connector*> Connectors;
+typedef std::vector<Connection*> Connections;
 
 } // namespace CSMOD
 
 
-#endif // MOD_BASE_H
+#endif // CSMOD_MOD_BASE_H

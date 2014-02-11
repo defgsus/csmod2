@@ -47,8 +47,8 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
     }
 
     // same goes for this error check
-    if (!connectorFrom_->connectModule(moduleTo_) ||
-        !connectorTo_->connectModule(moduleFrom_))
+    if (!connectorFrom_->connectTo(connectorTo_) ||
+        !connectorTo_->connectTo(connectorFrom_))
     {
         CSMOD_RT_ERROR("can't connect "
                        << moduleFrom_->idName() << "." << connectorFrom_->idName()

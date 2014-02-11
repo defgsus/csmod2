@@ -25,12 +25,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <map>
 
 
+#include "base.h"
+
 namespace CSMOD {
 
-class Patch;
-class DspModule;
-class Connection;
-typedef std::vector<DspModule*> DspModules;
 
 /** serializer of directed dsp graphs.
     Pass the graph (patch) to initFromPatch()
