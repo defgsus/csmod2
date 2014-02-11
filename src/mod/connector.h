@@ -66,10 +66,17 @@ class Connector
     /** humand-readable name */
     const std::string& name() const { return name_; }
 
-    // -------- connectors -------------
+    // -------- connections -------------
 
     /** return true if this connector and 'other' are connectable */
     virtual bool isConnectable(Connector * other) = 0;
+
+    /** add the @p module to the list of connections. */
+    bool connectModule(Module * module);
+    /** remove the @p module from the list of connections. */
+    bool disconnectModule(Module * module);
+    /** see if the Connector is connected to the @p module */
+    bool isConnectedTo(Module * module);
 
     // __________ PRIVATE ______________
 
@@ -86,6 +93,9 @@ class Connector
         idName_,
     /** user defined name */
         name_;
+
+    /** connected modules */
+    std::vector<Module*> modules_;
 };
 
 

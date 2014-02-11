@@ -35,6 +35,10 @@ class Connection
 {
     public:
 
+    /** This constructor will add the Modules belonging to the Connectors
+        to the list of connected Modules of each Connector.
+        E.g. connectorFrom->connectModule(connectorTo->module()) and
+        connectorTo->connectModule(connectorFrom->module()) */
     Connection(Connector * connectorFrom, Connector * connectorTo);
 
     // ------------------ IO -------------------

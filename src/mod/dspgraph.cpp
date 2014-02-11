@@ -138,7 +138,7 @@ bool DspGraph::traceGraph_()
 {
     CSMOD_DEBUGF("DspGraph::traceGraph_()");
 
-    // nodes with no inputs
+    // nodes with no inputs (temporary space)
     std::vector<ModuleInfo*> mods;
 
     // modules with only outputs
@@ -176,6 +176,16 @@ bool DspGraph::traceGraph_()
             {
                 mods.push_back(o.mod);
             }
+        }
+    }
+
+    // check if edges left
+    for (auto &m : map_)
+    {
+        if (m.second->numInputs())
+        {
+            CSMOD_GRAPH_ERROR("detected loop in patch at module '" << m.first->idName() << "'");
+            return false;
         }
     }
 

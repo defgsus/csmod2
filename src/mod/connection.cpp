@@ -36,7 +36,24 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
             connectorFrom_	(connectorFrom),
             connectorTo_	(connectorTo)
 {
-    assert(connectorFrom_->dir() != connectorTo_->dir() && "invalid connection of same direction");
+    // this error can not happen, unless Connector::isConnectable()
+    // is bogus. However, at this point we can't resolve it, it's too late.
+    // Only way out would be an exception
+    if (connectorFrom_->dir() == connectorTo_->dir())
+    {
+        CSMOD_RT_ERROR("invalid connection of same direction "
+                       << moduleFrom_->idName() << "." << connectorFrom_->idName()
+                       << " -> " << moduleTo_->idName() << "." << connectorTo_->idName());
+    }
+
+    // same goes for this error check
+    if (!connectorFrom_->connectModule(moduleTo_) ||
+        !connectorTo_->connectModule(moduleFrom_))
+    {
+        CSMOD_RT_ERROR("can't connect "
+                       << moduleFrom_->idName() << "." << connectorFrom_->idName()
+                       << " -> " << moduleTo_->idName() << "." << connectorTo_->idName());
+    }
 }
 
 // ------------------ IO -------------------
