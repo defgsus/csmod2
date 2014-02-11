@@ -113,6 +113,16 @@ AudioDevice::~AudioDevice()
 
 // --------- initialisation ----------
 
+bool AudioDevice::init(const Properties& props)
+{
+    return init(
+        props.deviceIndex,
+        props.numChannelsIn,
+        props.numChannelsOut,
+        props.sampleRate,
+        props.bufferLength);
+}
+
 bool AudioDevice::init(size_t deviceIndex,
                        size_t numInputChannels,
                        size_t numOutputChannels,

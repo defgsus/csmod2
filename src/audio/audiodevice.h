@@ -93,6 +93,16 @@ public:
         audio callback. */
     typedef std::function<void(const float*,float*)> Callback;
 
+    /** all device parameters in one go */
+    struct Properties
+    {
+        size_t deviceIndex,
+               sampleRate,
+               bufferLength,
+               numChannelsIn,
+               numChannelsOut;
+    };
+
 
     // --------------- ctor --------------
 
@@ -141,6 +151,9 @@ public:
               size_t numOutputChannels,
               size_t sampleRate = 0,
               size_t bufferLength = 0);
+
+    /** look for other init() function for description. */
+    bool init(const Properties& props);
 
     /** close the audio stream. */
     bool close();

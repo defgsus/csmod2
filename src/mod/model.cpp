@@ -145,12 +145,14 @@ void Model::setAudioDevice(AudioDevice * adev)
 bool Model::startDsp()
 {
     if (adev_) return adev_->start();
+    CSMOD_DEV_ERROR("no audio device selected");
     return false;
 }
 
 bool Model::stopDsp()
 {
     if (adev_) return adev_->stop();
+    CSMOD_DEV_ERROR("no audio device selected");
     return false;
 }
 

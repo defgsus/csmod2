@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/model.h"
 #include "mod/modulestock.h"
 #include "mod/dspgraph.h"
+#include "audio/audiodevice.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -54,6 +55,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     patchview_->setPatch(patch_);
 
+    auto audiodev = new CSMOD::AudioDevice;
+
+    auto devwin = new AudioDeviceFrame();
+    connect(devwin, &AudioDeviceFrame::deviceSelected, [this, audiodev](CSMOD::AudioDevice::Properties p)
+    {
+        model_->stopDsp();
+        audiodev->init(p);
+        model_->setAudioDevice(audiodev);
+    });
+
     // ------- main menu ---------
 
     auto a = menuBar()->addAction("save patch");
@@ -62,9 +73,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(a, &QAction::triggered, [=]() { model_->loadPatch("test.csmod"); });
     a = menuBar()->addAction("dsp graph");
     connect(a, &QAction::triggered, [=]() { patch_->updateDspGraph(); });
+    a = menuBar()->addAction("select device");
+    connect(a, &QAction::triggered, [=]() { devwin->show(); });
+    a = menuBar()->addAction("dsp on");
+    connect(a, &QAction::triggered, [=]() { model_->startDsp(); });
+    a = menuBar()->addAction("dsp off");
+    connect(a, &QAction::triggered, [=]() { model_->stopDsp(); });
 
-    auto devwin = new AudioDeviceFrame();
-    devwin->show();
     /*
     auto menu = new QMenu(0);
 

@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QWidget>
 
+#include "audio/audiodevice.h"
+
 class QListWidget;
 class QLineEdit;
 
@@ -31,31 +33,29 @@ class AudioDeviceFrame : public QWidget
 {
     Q_OBJECT
 public:
-    struct Properties
-    {
-        size_t device_index,
-               sampleRate,
-               bufferLength;
-    };
-
 
     explicit AudioDeviceFrame(QWidget *parent = 0);
 
     QSize sizeHint() const { return QSize(500, 350); }
 signals:
 
-    void deviceSelected(Properties);
+    /** called when user selects a device. */
+    void deviceSelected(CSMOD::AudioDevice::Properties);
 
 public slots:
 
 private:
+    virtual void showEvent(QShowEvent *);
+
     void updateWidgets_();
 
     int device_index_;
 
     QListWidget * device_list_;
     QLineEdit * text_rate_,
-              * text_buffer_;
+              * text_buffer_,
+              * text_chan_in_,
+              * text_chan_out_;
 };
 
 #endif // CSMOD_AUDIODEVICEFRAME_H
