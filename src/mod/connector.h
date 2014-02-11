@@ -153,9 +153,6 @@ public:
     size_t blockSize() const { return blockSize_; }
     void setBlockSize(size_t size);
 
-    const csfloat * block() const { return dsp_block_ptr_; }
-    csfloat * block() { return dsp_block_ptr_; }
-
     virtual bool isConnectable(Connector * other) const
     { return (dir() != other->dir() && dynamic_cast<DspConnector*>(other) != 0); }
 
@@ -163,6 +160,17 @@ public:
     virtual bool connectTo(Connector *con);
     /** remove the @p module from the list of connections. */
     virtual bool disconnectFrom(Connector *con);
+
+    // ------------- runtime ----------------
+
+    /** This will sum the dspblocks of multiple input Connectors.
+        For outputs or single inputs this does nothing. */
+    void transport();
+
+    /** read access to the dsp block */
+    const csfloat * block() const { return dsp_block_ptr_; }
+    /** write access to the dsp block */
+    csfloat * block() { return dsp_block_ptr_; }
 
 protected:
     /** this will setup the internal or external block data. */

@@ -132,8 +132,9 @@ bool DspConnector::disconnectFrom(Connector * con)
 
 void DspConnector::updateDspData_()
 {
-    // outputs or multiple inputs need own storage
-    if (dir() == OUT || numConnections() > 1)
+    // outputs, multiple inputs or unconnected inputs
+    // need their own storage
+    if (dir() == OUT || numConnections() != 1)
     {
         dsp_block_.resize(blockSize_);
         dsp_block_ptr_ = &dsp_block_[0];
@@ -151,11 +152,19 @@ void DspConnector::updateDspData_()
         else
         {
             // unlikely unless isConnectable() is screwed
-            CSMOD_RT_ERROR("DspConnector not fed by DspConnector");
+            CSMOD_RT_ERROR("DspConnector not fed by DspConnector "
+                           << cons_[0]->longIdName() << " -> " << longIdName());
             exit(-1);
         }
     }
 }
 
+void DspConnector::transport()
+{
+    if (dir() == IN && numConnections() > 1)
+    {
+        for (size_t )
+    }
+}
 
 } // namespace CSMOD
