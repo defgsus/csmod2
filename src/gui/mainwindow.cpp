@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QMenuBar>
 
 #include "patchview.h"
+#include "audiodeviceframe.h"
 #include "mod/patch.h"
 #include "mod/module.h"
 #include "mod/model.h"
@@ -42,7 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(patchview_);
 
     // XXX this is all a quick hack
-    // handling of Patches should go to Model someday
+    // The GUI will be it's own project...
+    // and handling of Patches should go to Model someday
 
     auto patch_ = new CSMOD::Patch();
 
@@ -61,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent)
     a = menuBar()->addAction("dsp graph");
     connect(a, &QAction::triggered, [=]() { patch_->updateDspGraph(); });
 
+    auto devwin = new AudioDeviceFrame();
+    devwin->show();
     /*
     auto menu = new QMenu(0);
 

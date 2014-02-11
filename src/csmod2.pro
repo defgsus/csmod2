@@ -47,7 +47,8 @@ SOURCES += \
     mod/dsppatch.cpp \
     mod/dspmodule.cpp \
     module/dsp/stuff.cpp \
-    mod/dspgraph.cpp
+    mod/dspgraph.cpp \
+    gui/audiodeviceframe.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -72,7 +73,8 @@ HEADERS += \
     mod/dsppatch.h \
     mod/dspmodule.h \
     module/dsp/stuff.h \
-    mod/dspgraph.h
+    mod/dspgraph.h \
+    gui/audiodeviceframe.h
 
 ######### MODULES ########
 

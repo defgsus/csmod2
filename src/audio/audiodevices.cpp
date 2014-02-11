@@ -89,6 +89,12 @@ bool AudioDevices::checkDevices()
         inf.name = pa->name;
         inf.numInputChannels = pa->maxInputChannels;
         inf.numOutputChannels = pa->maxOutputChannels;
+        inf.defaultSampleRate = pa->defaultSampleRate;
+        inf.defaultBufferLength = pa->defaultLowOutputLatency
+                                    * pa->defaultSampleRate;
+        // sometimes Pa returns bogus values
+        if (inf.defaultBufferLength > 4096)
+            inf.defaultBufferLength = 4096;
 
         dev_infos_.push_back(inf);
     }

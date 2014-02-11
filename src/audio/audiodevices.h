@@ -49,7 +49,9 @@ class AudioDevices
         std::string name;
         size_t
             numInputChannels,
-            numOutputChannels;
+            numOutputChannels,
+            defaultSampleRate,
+            defaultBufferLength;
     };
 
     // --------------- ctor --------------

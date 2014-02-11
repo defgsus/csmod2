@@ -1,0 +1,103 @@
+/***************************************************************************
+
+Copyright (C) 2014  stefan.berke @ modular-audio-graphics.com
+
+This source is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either
+version 3.0 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this software; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+****************************************************************************/
+
+#include "audiodeviceframe.h"
+
+#include <QLayout>
+#include <QListWidget>
+#include <QPushButton>
+#include <QLineEdit>
+#include <QLabel>
+
+#include "audio/audiodevices.h"
+
+AudioDeviceFrame::AudioDeviceFrame(QWidget *parent)
+    :   QWidget(parent),
+        device_index_   (-1)
+{
+    auto l0 = new QVBoxLayout(this);
+
+        device_list_ = new QListWidget(this);
+        l0->addWidget(device_list_, 2);
+        device_list_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+        auto l = new QLabel("samplerate", this);
+        l0->addWidget(l);
+        text_rate_ = new QLineEdit(this);
+        l0->addWidget(text_rate_);
+
+        l = new QLabel("buffer length", this);
+        l0->addWidget(l);
+        text_buffer_ = new QLineEdit(this);
+        l0->addWidget(text_buffer_);
+
+        auto go_button = new QPushButton("use", this);
+        l0->addWidget(go_button);
+
+    updateWidgets_();
+
+    // hook-up
+
+    connect(device_list_, &QListWidget::itemClicked, [this](QListWidgetItem * item)
+    {
+        device_index_ = item->data(Qt::UserRole).toInt();
+        text_rate_->setText(QString::number(item->data(Qt::UserRole+1).toInt()));
+        text_buffer_->setText(QString::number(item->data(Qt::UserRole+2).toInt()));
+    });
+
+    connect(go_button, &QPushButton::clicked, [this]()
+    {
+        if (device_index_<0) return;
+
+        Properties p;
+        p.device_index = device_index_;
+        p.sampleRate = text_rate_->text().toInt();
+        p.bufferLength = text_buffer_->text().toInt();
+        // issue signal
+        deviceSelected(p);
+    });
+}
+
+
+void AudioDeviceFrame::updateWidgets_()
+{
+    device_list_->clear();
+
+    CSMOD::AudioDevices devs;
+    devs.checkDevices();
+
+    for (size_t i=0; i<devs.numDevices(); ++i)
+    {
+        // each device info
+        auto info = devs.getDeviceInfo(i);
+
+        // setup a list item
+        auto item = new QListWidgetItem(device_list_);
+        item->setData(Qt::UserRole, (int)i);
+        item->setData(Qt::UserRole+1, (int)info->defaultSampleRate);
+        item->setData(Qt::UserRole+2, (int)info->defaultBufferLength);
+        item->setData(Qt::DisplayRole,
+                      QString::fromStdString(info->name)
+                      + " " + QString::number(info->numInputChannels) + " ins / "
+                      + QString::number(info->numOutputChannels) + " outs ");
+
+        device_list_->addItem(item);
+    }
+}
