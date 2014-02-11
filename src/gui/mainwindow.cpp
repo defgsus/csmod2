@@ -55,14 +55,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     patchview_->setPatch(patch_);
 
-    auto audiodev = new CSMOD::AudioDevice;
-
     auto devwin = new AudioDeviceFrame();
-    connect(devwin, &AudioDeviceFrame::deviceSelected, [this, audiodev](CSMOD::AudioDevice::Properties p)
+    connect(devwin, &AudioDeviceFrame::deviceSelected, [this](CSMOD::AudioDevice::Properties p)
     {
         model_->stopDsp();
-        audiodev->init(p);
-        model_->setAudioDevice(audiodev);
+        model_->initAudioDevice(p);
     });
 
     // ------- main menu ---------

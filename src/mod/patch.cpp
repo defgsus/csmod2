@@ -34,9 +34,11 @@ namespace CSMOD {
 
 
 Patch::Patch()
-    :   idName_     ("patch"),
-        name_       ("patch"),
-        blockSize_  (0)
+    :   idName_         ("patch"),
+        name_           ("patch"),
+        blockSize_      (0),
+        numChannelsIn_  (0),
+        numChannelsOut_ (0)
 {
     CSMOD_DEBUGF("Patch::Patch()");
 }
@@ -45,7 +47,9 @@ Patch::~Patch()
 {
     CSMOD_DEBUGF("Patch::~Patch()");
 
-    for(auto m : modules_)
+    for (auto c : cons_)
+        delete c;
+    for (auto m : modules_)
         delete m;
 }
 
@@ -247,6 +251,12 @@ void Patch::setBlockSize(size_t size)
     }
 }
 
+void Patch::setNumChannels(size_t in, size_t out)
+{
+    CSMOD_DEBUGF("Patch::setNumChannels(" << in << ", " << out << ")");
+    numChannelsIn_ = in;
+    numChannelsOut_ = out;
+}
 
 
 // ------------ dsp related ----------
@@ -273,7 +283,7 @@ bool Patch::updateDspGraph()
 
 void Patch::audio_callback(const csfloat * in, csfloat * out)
 {
-    for (size_t i = 0; i<blockSize_; ++i)
+    for (size_t i = 0; i<blockSize_ * numChannelsOut_; ++i)
         *out++ = 0;
 
     dspStep();

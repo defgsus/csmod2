@@ -94,6 +94,12 @@ public:
     /** Returns blocksize (dsp bufferlength) of this patch. */
     size_t blockSize() const { return blockSize_; }
 
+    /** Sets the number of audio channels of the audio device. */
+    void setNumChannels(size_t in, size_t out);
+
+    size_t numChannelsIn() const { return numChannelsIn_; }
+    size_t numChannelsOut() const { return numChannelsOut_; }
+
     // ------------ dsp related ----------
 
     /** serializes all DspModules to correct execution order. */
@@ -126,7 +132,11 @@ protected:
     // ---------- configuration ----------
 
     /** dsp buffer length */
-    size_t blockSize_;
+    size_t blockSize_,
+    /** input channels */
+           numChannelsIn_,
+    /** output channels */
+           numChannelsOut_;
 };
 
 } // namespace CSMOD

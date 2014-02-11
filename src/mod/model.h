@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <vector>
 
 #include "base.h"
+#include "audio/audiodevice.h"
 
 class PatchView;
 
@@ -64,20 +65,20 @@ public:
     bool savePatch(const std::string& filename);
     bool loadPatch(const std::string& filename);
 
-    // ------------- connect classes -----------
+    // ------------- content classes -----------
 
     /** set Patch to work on, or disconnect with NULL */
     void setPatch(Patch * root_patch);
 
     void addPatchView(PatchView * view);
 
-    /** Installs an audiodevice.
-        Currently Model will not do anything with the device,
-        except installing the audio callback and starting and stopping.
-        So the device needs to be initialized already. */
-    void setAudioDevice(AudioDevice * adev);
+    /** Read access to AudioDevice */
+    const AudioDevice & audioDevice() const { return *adev_; }
 
     // ############ RUNTIME INTERFACE ############
+
+    /** initialize the audiodevice */
+    bool initAudioDevice(const AudioDevice::Properties&);
 
     bool startDsp();
     bool stopDsp();

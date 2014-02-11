@@ -86,6 +86,7 @@ AudioDeviceFrame::AudioDeviceFrame(QWidget *parent)
         p.numChannelsOut = text_chan_out_->text().toInt();
         // issue signal
         deviceSelected(p);
+        close();
     });
 }
 

@@ -34,7 +34,7 @@ namespace CSMOD {
 
 
 Model::Model()
-    :   adev_   (0)
+    :   adev_   (new AudioDevice)
 {
     CSMOD_DEBUGF("Model::Model()");
 }
@@ -134,26 +134,31 @@ void Model::addPatchView(PatchView * view)
     views_.push_back(view);
 }
 
-void Model::setAudioDevice(AudioDevice * adev)
-{
-    adev_ = adev;
-}
 
 
 // ############ RUNTIME INTERFACE ############
 
+bool Model::initAudioDevice(const AudioDevice::Properties& p)
+{
+    CSMOD_DEBUGF("Model::initAudioDevice(...)");
+    if (!adev_->init(p)) return false;
+
+    // tell Patch the settings
+    patch_->setNumChannels(p.numChannelsIn, p.numChannelsOut);
+    patch_->setBlockSize(p.bufferLength);
+    return true;
+}
+
 bool Model::startDsp()
 {
-    if (adev_) return adev_->start();
-    CSMOD_DEV_ERROR("no audio device selected");
-    return false;
+    CSMOD_DEBUGF("Model::startDsp()");
+    return adev_->start();
 }
 
 bool Model::stopDsp()
 {
-    if (adev_) return adev_->stop();
-    CSMOD_DEV_ERROR("no audio device selected");
-    return false;
+    CSMOD_DEBUGF("Model::stopDsp()");
+    return adev_->stop();
 }
 
 void Model::audio_callback_(const csfloat * in, csfloat * out)
