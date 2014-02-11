@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "modulestock.h"
 #include "dspmodule.h"
 #include "dspgraph.h"
+#include "module/dsp/audioout.h"
 
 namespace CSMOD {
 
@@ -36,6 +37,7 @@ namespace CSMOD {
 Patch::Patch()
     :   idName_         ("patch"),
         name_           ("patch"),
+        audioOutModule_ (0),
         blockSize_      (0),
         numChannelsIn_  (0),
         numChannelsOut_ (0)
@@ -193,6 +195,8 @@ bool Patch::addModule(Module * module)
     // assign patch to module
     module->patch_ = this;
 
+    updateDspGraph();
+
     return true;
 }
 
@@ -216,6 +220,8 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
 
     cons_.push_back(c);
 
+    updateDspGraph();
+
     return c;
 }
 
@@ -228,6 +234,9 @@ bool Patch::disconnect(Connection * con)
     {
         cons_.erase(i);
         delete *i;
+
+        updateDspGraph();
+
         return true;
     }
 
@@ -249,13 +258,32 @@ void Patch::setBlockSize(size_t size)
         if (dsp)
             dsp->setBlockSize(blockSize_);
     }
+
+    audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
+    if (audioOutModule_)
+        audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
 }
 
+void Patch::setSampleRate(size_t rate)
+{
+    CSMOD_DEBUGF("Patch::setSampleRate(" << rate << ")");
+
+    sampleRate_ = rate;
+
+    for (auto m : modules_)
+    {
+        m->setSampleRate(sampleRate_);
+    }
+}
 void Patch::setNumChannels(size_t in, size_t out)
 {
     CSMOD_DEBUGF("Patch::setNumChannels(" << in << ", " << out << ")");
     numChannelsIn_ = in;
     numChannelsOut_ = out;
+
+    audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
+    if (audioOutModule_)
+        audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
 }
 
 
@@ -274,6 +302,18 @@ bool Patch::updateDspGraph()
 
     graph.getSortedModules(dspmodules_);
 
+    // find AudioOut module
+    // XXX This will be multiple outs later!!
+    audioOutModule_ = 0;
+    for (auto &m : dspmodules_)
+    {
+        if ((audioOutModule_ = dynamic_cast<MODULE::DSP::AudioOut*>(m)))
+        {
+            audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
+            break;
+        }
+    }
+
     return true;
 }
 
@@ -283,10 +323,12 @@ bool Patch::updateDspGraph()
 
 void Patch::audio_callback(const csfloat * in, csfloat * out)
 {
-    for (size_t i = 0; i<blockSize_ * numChannelsOut_; ++i)
-        *out++ = 0;
-
     dspStep();
+
+    if (!audioOutBuffer_.empty())
+    for (size_t i = 0; i<blockSize_ * numChannelsOut_; ++i)
+        *out++ = audioOutBuffer_[i];
+
 }
 
 void Patch::dspStep()

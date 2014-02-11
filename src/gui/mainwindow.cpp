@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     // The GUI will be it's own project...
     // and handling of Patches should go to Model someday
 
-    auto patch_ = new CSMOD::Patch();
+    patch_ = new CSMOD::Patch();
 
     model_->setPatch(patch_);
     model_->addPatchView(patchview_);
@@ -88,5 +88,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-
+    delete model_;
+    delete patch_;
 }

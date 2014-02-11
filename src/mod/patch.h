@@ -28,6 +28,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+namespace MODULE { namespace DSP {
+class AudioOut;
+} }
+
 /** (recursive) container for Modules and Connections */
 class Patch
 {
@@ -100,6 +104,10 @@ public:
     size_t numChannelsIn() const { return numChannelsIn_; }
     size_t numChannelsOut() const { return numChannelsOut_; }
 
+    /** Sets the sampling rate for this patch. */
+    void setSampleRate(size_t rate);
+    size_t sampleRate() const { return sampleRate_; }
+
     // ------------ dsp related ----------
 
     /** serializes all DspModules to correct execution order. */
@@ -129,10 +137,16 @@ protected:
     /** all dsp modules in execution order */
     DspModules dspmodules_;
 
+    //std::vector<MODULE::DSP::AudioOut*>
+    MODULE::DSP::AudioOut * audioOutModule_;
+    csfloats audioOutBuffer_;
+
     // ---------- configuration ----------
 
     /** dsp buffer length */
     size_t blockSize_,
+    /** sampling rate (hz) */
+           sampleRate_,
     /** input channels */
            numChannelsIn_,
     /** output channels */

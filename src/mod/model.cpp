@@ -34,14 +34,18 @@ namespace CSMOD {
 
 
 Model::Model()
-    :   adev_   (new AudioDevice)
+    :   adev_   (0)
 {
     CSMOD_DEBUGF("Model::Model()");
+    adev_ = new AudioDevice;
+    using namespace std::placeholders;
+    adev_->setCallback(std::bind(&Model::audio_callback_, this, _1, _2));
 }
 
 Model::~Model()
 {
     CSMOD_DEBUGF("Model::~Model()");
+    delete adev_;
 }
 
 
@@ -146,6 +150,7 @@ bool Model::initAudioDevice(const AudioDevice::Properties& p)
     // tell Patch the settings
     patch_->setNumChannels(p.numChannelsIn, p.numChannelsOut);
     patch_->setBlockSize(p.bufferLength);
+    patch_->setSampleRate(p.sampleRate);
     return true;
 }
 

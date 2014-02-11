@@ -129,6 +129,9 @@ bool AudioDevice::init(size_t deviceIndex,
                        size_t sampleRate,
                        size_t bufferLength)
 {
+    CSMOD_DEBUGF("AudioDevice::init(" << deviceIndex << ", " << numInputChannels <<
+                 ", " << numOutputChannels << ", " << sampleRate << ", " << bufferLength);
+
     // init portaudio if not already done
     if (!AudioDevices::pa_initialized_)
     {
@@ -220,6 +223,8 @@ bool AudioDevice::init(size_t deviceIndex,
 
 bool AudioDevice::close()
 {
+    CSMOD_DEBUGF("AudioDevice::close()");
+
     // no error reporting nescessary, i think
     if (!ok_) return false;
 
@@ -245,6 +250,8 @@ bool AudioDevice::close()
 
 void AudioDevice::setCallback(Callback func)
 {
+    CSMOD_DEBUGF("AudioDevice::setCallback(...)");
+
     func_ = func;
 }
 
@@ -253,6 +260,8 @@ void AudioDevice::setCallback(Callback func)
 
 bool AudioDevice::start()
 {
+    CSMOD_DEBUGF("AudioDevice::start()");
+
     if (!ok_) return false;
     CSMOD_CHECKPA(Pa_StartStream(p_->stream), "could not start audio stream");
     play_ = true;
@@ -261,6 +270,8 @@ bool AudioDevice::start()
 
 bool AudioDevice::stop()
 {
+    CSMOD_DEBUGF("AudioDevice::stop()");
+
     if (!(ok_ && play_)) return false;
     CSMOD_CHECKPA(Pa_StopStream(p_->stream), "could not stop audio stream");
     play_ = false;

@@ -18,9 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "stuff.h"
-
-#include <cmath>
+#include "audioout.h"
 
 #include "log.h"
 #include "mod/modulestock.h"
@@ -30,26 +28,37 @@ namespace MODULE {
 namespace DSP {
 
 
-CSMOD_REGISTER_MODULE(Stuff)
+CSMOD_REGISTER_MODULE(AudioOut)
 
 
-Stuff::Stuff()
-    :   DspModule       ("Stuff~", "Stuff~"),
-        phase_          (0.0)
+AudioOut::AudioOut()
+    :   DspModule       ("AudioOut~", "AudioOut~"),
+        numChannels_    (0),
+        buffer_         (0)
 {
-    CSMOD_DEBUGF("Stuff::Stuff()");
+    CSMOD_DEBUGF("AudioOut::AudioOut()");
 
-    add_(in_  = new DspConnector(this, Connector::IN,  "in",  "in" ));
-    add_(out_ = new DspConnector(this, Connector::OUT, "out", "out"));
+    // XXX need to implemented dynamic Connectors
+    ins_.resize(2);
+    for (size_t i=0; i<ins_.size(); ++i)
+        add_(ins_[i]  = new DspConnector(this, Connector::IN,  "in",  "in" ));
 }
 
-void Stuff::dspStep()
+void AudioOut::setAudioOutput(size_t channels, csfloat *buffer)
 {
+    numChannels_ = channels;
+    buffer_ = buffer;
+}
+
+void AudioOut::dspStep()
+{
+    if (!buffer_ || !numChannels_) return;
+
+    auto b = &buffer_[0];
     for (size_t i = 0; i < blockSize(); ++i)
+    for (size_t j = 0; j < numChannels_; ++j)
     {
-        out_->block()[i] = 0.5f * sinf(phase_);
-        phase_ += 6.28 * 100.0 / sampleRate()
-                + in_->block()[i];
+        *b++ = ins_[j]->block()[i];
     }
 }
 

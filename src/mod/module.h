@@ -107,6 +107,14 @@ class Module
     /** return the container this module belongs to */
     Container * container() const { return container_; }
 
+    // ------------- config ---------------------------
+
+    /** Sets the sampling rate. This is only called
+        once and then, so it's good to override this
+        and do samplerate dependent pre-calculations. */
+    virtual void setSampleRate(size_t rate) { sampleRate_ = rate; }
+    size_t sampleRate() const { return sampleRate_; }
+
     // ---------------- runtime -----------------------
 
     /** actual worker. */
@@ -154,6 +162,9 @@ class Module
         idName_,
     /** user defineable name */
         name_;
+
+    /** sampling rate of the containing patch. */
+    size_t sampleRate_;
 
 };
 

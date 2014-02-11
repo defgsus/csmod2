@@ -18,42 +18,40 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "stuff.h"
+#include "mod/dspmodule.h"
 
-#include <cmath>
-
-#include "log.h"
-#include "mod/modulestock.h"
+#ifndef CSMOD_MODULE_DSP_AUDIOOUT_H
+#define CSMOD_MODULE_DSP_AUDIOOUT_H
 
 namespace CSMOD {
 namespace MODULE {
 namespace DSP {
 
+/* NOTE: Don't take this serious.
+ * Currently i'm playing around with Modules to see
+ * what patterns work best. */
 
-CSMOD_REGISTER_MODULE(Stuff)
-
-
-Stuff::Stuff()
-    :   DspModule       ("Stuff~", "Stuff~"),
-        phase_          (0.0)
+class AudioOut : public DspModule
 {
-    CSMOD_DEBUGF("Stuff::Stuff()");
+public:
 
-    add_(in_  = new DspConnector(this, Connector::IN,  "in",  "in" ));
-    add_(out_ = new DspConnector(this, Connector::OUT, "out", "out"));
-}
+    AudioOut();
 
-void Stuff::dspStep()
-{
-    for (size_t i = 0; i < blockSize(); ++i)
-    {
-        out_->block()[i] = 0.5f * sinf(phase_);
-        phase_ += 6.28 * 100.0 / sampleRate()
-                + in_->block()[i];
-    }
-}
+    virtual AudioOut * cloneClass() const { return new AudioOut; }
 
+    virtual void dspStep();
+
+    void setAudioOutput(size_t channels, csfloat * buffer);
+
+protected:
+
+    DspConnectors ins_;
+    size_t numChannels_;
+    csfloat * buffer_;
+};
 
 } // namespace DSP
 } // namespace MODULE
 } // namespace CSMOD
+
+#endif // CSMOD_MODULE_DSP_AUDIOOUT_H

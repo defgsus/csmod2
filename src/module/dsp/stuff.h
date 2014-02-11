@@ -18,13 +18,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef DSPBASE_H
-#define DSPBASE_H
+#ifndef CSMOD_MODULE_DSP_DSPBASE_H
+#define CSMOD_MODULE_DSP_DSPBASE_H
 
 #include "mod/dspmodule.h"
 
 namespace CSMOD {
 namespace MODULE {
+namespace DSP {
+
 
 /* NOTE: Don't take this serious.
  * Currently i'm playing around with Modules to see
@@ -44,11 +46,12 @@ protected:
 
     DspConnector * in_, * out_;
 
+    csdouble phase_;
 };
 
 
-
+} // namespace DSP
 } // namespace MODULE
 } // namespace CSMOD
 
-#endif // DSPBASE_H
+#endif // CSMOD_MODULE_DSP_DSPBASE_H
