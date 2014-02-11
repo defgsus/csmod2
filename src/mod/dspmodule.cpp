@@ -32,18 +32,35 @@ DspModule::DspModule(const std::string& idName, const std::string& className)
     CSMOD_DEBUGF("DspModule::DspModule(" << idName << ", " << className << ")");
 }
 
+Connector* DspModule::add_(Connector * c)
+{
+    Module::add_(c);
+    if (c->dir() == Connector::IN)
+    if (auto dsp = dynamic_cast<DspConnector*>(c))
+    {
+        dsp_inputs_.push_back(dsp);
+    }
+    return c;
+}
 
 void DspModule::setBlockSize(size_t size)
 {
     blockSize_ = size;
 
     // all dsp connectors
-    for (auto c : connectors())
+    for (auto &c : connectors())
     {
         auto dsp = dynamic_cast<DspConnector*>(c);
         if (dsp) dsp->setBlockSize(blockSize_);
     }
 }
 
+void DspModule::updateDspInputs()
+{
+    for (auto c : dsp_inputs_)
+    {
+        c->transport();
+    }
+}
 
 } // namespace CSMOD

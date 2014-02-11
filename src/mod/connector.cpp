@@ -161,9 +161,27 @@ void DspConnector::updateDspData_()
 
 void DspConnector::transport()
 {
+    // NOTE:
+    // We use static_cast instead of dynamic_cast
+    // because we assume that all connected Connectors are
+    // also DspConnectors. There have been checks already
+    // and this is a high-performance function.
+
     if (dir() == IN && numConnections() > 1)
     {
-        for (size_t )
+        // fill the dsp_block_ with contents from first DspConnector
+        csfloats::iterator b;
+        const csfloat * bf = static_cast<DspConnector*>(cons_[0])->block();
+        for (b = dsp_block_.begin(); b != dsp_block_.end(); ++b, ++bf)
+            *b = *bf;
+
+        // add the other DspConnectors
+        for (size_t i=1; i<numConnections(); ++i)
+        {
+            bf = static_cast<DspConnector*>(cons_[i])->block();
+            for (b = dsp_block_.begin(); b != dsp_block_.end(); ++b, ++bf)
+                *b += *bf;
+        }
     }
 }
 

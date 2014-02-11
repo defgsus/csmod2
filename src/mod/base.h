@@ -40,11 +40,13 @@ class Patch;
 class Module;
 class DspModule;
 class Connector;
+class DspConnector;
 class Connection;
 
 typedef std::vector<Module*> Modules;
 typedef std::vector<DspModule*> DspModules;
 typedef std::vector<Connector*> Connectors;
+typedef std::vector<DspConnector*> DspConnectors;
 typedef std::vector<Connection*> Connections;
 
 } // namespace CSMOD

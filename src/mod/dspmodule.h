@@ -29,12 +29,21 @@ namespace CSMOD {
 class DspModule : public Module
 {
 public:
-
+    /** Same constructor as for Module */
     DspModule(const std::string& idName, const std::string& className);
 
-    void setBlockSize(size_t size);
+    /** simply calls Module::add_() but keeps track
+        of DspConnectors */
+    virtual Connector* add_(Connector * c);
 
+    /** Sets the dsp buffer length */
+    void setBlockSize(size_t size);
+    /** Returns the dsp buffer length */
     size_t blockSize() const { return blockSize_ ; }
+
+    /** This will be called before each dspStep().
+        It will simply sum the inputs of multi-in dsp inputs. */
+    void updateDspInputs();
 
     /** execute action for one dsp block */
     virtual void dspStep() = 0;
@@ -42,6 +51,9 @@ public:
 private:
 
     size_t blockSize_;
+
+    /** list of DspConnector inputs */
+    DspConnectors dsp_inputs_;
 };
 
 typedef std::vector<DspModule*> DspModules;

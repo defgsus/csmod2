@@ -125,7 +125,7 @@ class Module
         <p>The given instance is returned by the function.</p>
         <p>The id's of the connector will be made unique for
         this module by appending or increasing digits if nescessary.</p> */
-    Connector* add_(Connector * c);
+    virtual Connector* add_(Connector * c);
 
     // -------------- container -----------------------
 
