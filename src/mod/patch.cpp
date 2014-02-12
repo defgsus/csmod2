@@ -239,9 +239,9 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
     return c;
 }
 
-bool Patch::disconnect(Connection * con)
+bool Patch::deleteConnection(Connection * con)
 {
-    CSMOD_DEBUGF("Patch::disconnect(" << con << ")");
+    CSMOD_DEBUGF("Patch::deleteConnection(" << con << ")");
 
     for (auto i = cons_.begin(); i!=cons_.end(); ++i)
     if (*i == con)
@@ -253,7 +253,7 @@ bool Patch::disconnect(Connection * con)
 
         updateDspGraph();
 
-        break;
+        return true;
     }
 
     return false;

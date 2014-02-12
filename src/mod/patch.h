@@ -86,7 +86,7 @@ public:
     Connection * connect(Connector * con1, Connector * con2);
 
     /** Removes the given Connection */
-    bool disconnect(Connection * con);
+    bool deleteConnection(Connection * con);
 
     bool isConnected(Connector * con1, Connector * con2) const;
 

@@ -64,7 +64,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------- main menu ---------
 
-    auto a = menuBar()->addAction("save patch");
+    auto a = menuBar()->addAction("debugDUMP");
+    connect(a, &QAction::triggered, [=]() { patch_->debug_dump(); });
+    a = menuBar()->addAction("save patch");
     connect(a, &QAction::triggered, [=]() { model_->savePatch("test.csmod"); });
     a = menuBar()->addAction("load patch");
     connect(a, &QAction::triggered, [=]() { model_->loadPatch("test.csmod"); });

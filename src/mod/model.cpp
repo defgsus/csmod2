@@ -218,7 +218,7 @@ bool Model::disconnect(Connection * con)
 {
     CSMOD_DEBUGF("Model::disconnect(" << con << ")");
 
-    if (!con || !patch_->disconnect(con)) return false;
+    if (!con || !patch_->deleteConnection(con)) return false;
 
     updateViews_();
     return true;

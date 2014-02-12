@@ -225,7 +225,7 @@ void PatchView::updateFromPatch()
     }
 
     // remove all ModuleItems that are not needed
-    for (auto mi = moduleitems_.begin(); mi!=moduleitems_.end(); )
+    for (auto mi = moduleitems_.begin(); mi!=moduleitems_.end(); ++mi)
     {
         bool present = false;
 
@@ -240,7 +240,6 @@ void PatchView::updateFromPatch()
             delete *mi;
             moduleitems_.erase(*mi);
         }
-        else ++mi;
     }
 
     // update CableItem for each Connection
@@ -256,7 +255,7 @@ void PatchView::updateFromPatch()
     }
 
     // remove all CableItems that are not needed
-    for (auto ci = cableitems_.begin(); ci!=cableitems_.end(); )
+    for (auto ci = cableitems_.begin(); ci!=cableitems_.end(); ++ci)
     {
         bool present = false;
 
@@ -271,7 +270,6 @@ void PatchView::updateFromPatch()
             delete *ci;
             cableitems_.erase(*ci);
         }
-        else ++ci;
     }
 
     updateCables();
