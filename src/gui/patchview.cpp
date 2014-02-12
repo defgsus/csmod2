@@ -225,7 +225,7 @@ void PatchView::updateFromPatch()
     }
 
     // remove all ModuleItems that are not needed
-    for (auto mi = moduleitems_.begin(); mi!=moduleitems_.end(); ++mi)
+    for (auto mi = moduleitems_.begin(); mi!=moduleitems_.end(); )
     {
         bool present = false;
 
@@ -237,9 +237,10 @@ void PatchView::updateFromPatch()
         {
             // remove from everywhere
             pview_->scene()->removeItem(*mi);
-            moduleitems_.erase(*mi);
             delete *mi;
+            moduleitems_.erase(*mi);
         }
+        else ++mi;
     }
 
     // update CableItem for each Connection
@@ -255,7 +256,7 @@ void PatchView::updateFromPatch()
     }
 
     // remove all CableItems that are not needed
-    for (auto ci = cableitems_.begin(); ci!=cableitems_.end(); ++ci)
+    for (auto ci = cableitems_.begin(); ci!=cableitems_.end(); )
     {
         bool present = false;
 
@@ -267,9 +268,10 @@ void PatchView::updateFromPatch()
         {
             // remove from everywhere
             pview_->scene()->removeItem(*ci);
-            cableitems_.erase(*ci);
             delete *ci;
+            cableitems_.erase(*ci);
         }
+        else ++ci;
     }
 
     updateCables();
@@ -292,10 +294,21 @@ void PatchView::updateCables(CSMOD::Module * mod)
     CSMOD_DEBUGF("PatchView::updateCables(" << mod << ")");
 
     for (auto ci : cableitems_)
-    if (ci->connection()->connectorFrom()->module() == mod
-     || ci->connection()->connectorTo()->module() == mod)
     {
-        ci->updatePos();
+        if (   !ci->connection()
+            || !ci->connection()->connectorTo()
+            || !ci->connection()->connectorTo()->module()
+            || !ci->connection()->connectorFrom()
+            || !ci->connection()->connectorFrom()->module())
+        {
+            CSMOD_RT_WARN("ci is strange");
+        }
+        else
+        if (ci->connection()->connectorFrom()->module() == mod
+         || ci->connection()->connectorTo()->module() == mod)
+        {
+            ci->updatePos();
+        }
     }
 }
 

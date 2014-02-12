@@ -88,6 +88,8 @@ public:
     /** Removes the given Connection */
     bool disconnect(Connection * con);
 
+    bool isConnected(Connector * con1, Connector * con2) const;
+
     // ------------ configuration --------
 
     /** Sets the blocksize of this patch, as well as for
@@ -118,6 +120,10 @@ public:
     void audio_callback(const csfloat * in, csfloat * out);
 
     void dspStep();
+
+    // ------------- debug ---------------
+
+    void debug_dump();
 
     // ________ PROTECTED ________________
 

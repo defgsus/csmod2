@@ -26,6 +26,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+Connector::~Connector()
+{
+    CSMOD_DEBUGF("Connector::~Connector() this=" << this);
+}
+
 // --------------- info -------------
 
 std::string Connector::longIdName() const
@@ -103,6 +108,12 @@ bool Connector::isConnectedTo(Module * module) const
     return false;
 }
 
+// ------------- debug ---------------
+
+void Connector::debug_dump()
+{
+    std::cout << "connector " << this << " " << idName() << "\n";
+}
 
 
 
@@ -184,5 +195,7 @@ void DspConnector::transport()
         }
     }
 }
+
+
 
 } // namespace CSMOD

@@ -204,6 +204,13 @@ bool Patch::addModule(Module * module)
 
 // --------------- connections -------------------------
 
+bool Patch::isConnected(Connector * con1, Connector * con2) const
+{
+    CSMOD_DEBUGF("Patch::isConnected(" << con1 << ", " << con2 << ")");
+    return (con1->isConnectedTo(con2) ||
+            con2->isConnectedTo(con1));
+}
+
 Connection * Patch::connect(Connector * con1, Connector * con2)
 {
     CSMOD_DEBUGF("Patch::connect(" << con1 << ", " << con2 << ")");
@@ -212,7 +219,14 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
     if (con1->module()->patch() != this
         || con2->module()->patch() != this)
     {
-        CSMOD_RT_ERROR("Can not connect");
+        CSMOD_RT_ERROR("This patch can not connect outside Modules");
+        return 0;
+    }
+
+    if (isConnected(con1, con2))
+    {
+        CSMOD_RT_ERROR("Request for duplicate connection " << con1->longIdName()
+                       << " -> " << con2->longIdName());
         return 0;
     }
 
@@ -232,12 +246,14 @@ bool Patch::disconnect(Connection * con)
     for (auto i = cons_.begin(); i!=cons_.end(); ++i)
     if (*i == con)
     {
-        cons_.erase(i);
+        con->disconnect();
+
         delete *i;
+        cons_.erase(i);
 
         updateDspGraph();
 
-        return true;
+        break;
     }
 
     return false;
@@ -339,5 +355,25 @@ void Patch::dspStep()
         m->dspStep();
     }
 }
+
+
+// ------------- debug ---------------
+
+void Patch::debug_dump()
+{
+    std::cout << "---------- patch debug dump -------------"
+              << "\nmodules     " << modules_.size()
+              << "\ndspmodules  " << dspmodules_.size()
+              << "\nconnections " << cons_.size() << "\n";
+    for (auto i : modules_)
+    {
+        i->debug_dump();
+    }
+    for (auto i : cons_)
+    {
+        i->debug_dump();
+    }
+}
+
 
 } // namespace CSMOD

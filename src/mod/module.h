@@ -120,6 +120,10 @@ class Module
     /** actual worker. */
     virtual void step() { }
 
+    // ------------- debug ---------------
+
+    void debug_dump();
+
     // _________________ PROTECTED ____________________
 
     protected:

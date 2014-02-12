@@ -50,6 +50,7 @@ class Connector
             idName_	(idName),
             name_	(name)
     { }
+    virtual ~Connector();
 
     // ------ getter ---------
 
@@ -95,6 +96,10 @@ class Connector
 
     /** read access to the list of connected modules */
     const Modules& modules() const { return modules_; }
+
+    // ------------- debug ---------------
+
+    void debug_dump();
 
     // __________ PROTECTED ______________
 
@@ -156,9 +161,9 @@ public:
     virtual bool isConnectable(Connector * other) const
     { return (dir() != other->dir() && dynamic_cast<DspConnector*>(other) != 0); }
 
-    /** add the @p module to the list of connections. */
+    /** add the Connector to the list of connections. */
     virtual bool connectTo(Connector *con);
-    /** remove the @p module from the list of connections. */
+    /** remove the Connector from the list of connections. */
     virtual bool disconnectFrom(Connector *con);
 
     // ------------- runtime ----------------

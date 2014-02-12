@@ -117,5 +117,17 @@ void Module::deleteConnectors_()
 }
 
 
+// ------------- debug ---------------
+
+void Module::debug_dump()
+{
+    std::cout << "module " << this << " " << idName() << "\n";
+    for (auto i : cons_)
+    {
+        i->debug_dump();
+    }
+    std::cout << "\n";
+}
+
 
 } // namespace CSMOD

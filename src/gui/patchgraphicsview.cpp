@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/module.h"
 #include "mod/model.h"
 #include "connectoritem.h"
+#include "cableitem.h"
 #include "moduleitem.h"
 #include "patchview.h"
 
@@ -79,7 +80,7 @@ void PatchGraphicsView::setModel(CSMOD::Model * model)
 
 void PatchGraphicsView::startConnect(ConnectorItem * con)
 {
-    CSMOD_DEBUGF("PatchGraphicsView::startConnect(" << con << ")");
+    CSMOD_DEBUGE("PatchGraphicsView::startConnect(" << con << ")");
 
     con_from_ = con;
     con_to_ = 0;
@@ -101,7 +102,7 @@ void PatchGraphicsView::startConnect(ConnectorItem * con)
 
 void PatchGraphicsView::moveConnect(const QPointF &pos)
 {
-    CSMOD_DEBUGF("PatchGraphicsView::moveConnect(" << pos.x() << ", " << pos.y() << ")");
+    CSMOD_DEBUGE("PatchGraphicsView::moveConnect(" << pos.x() << ", " << pos.y() << ")");
 
     if (!con_from_ || !con_line_) return;
 
@@ -151,7 +152,7 @@ void PatchGraphicsView::moveConnect(const QPointF &pos)
 
 void PatchGraphicsView::endConnect()
 {
-    CSMOD_DEBUGF("PatchGraphicsView::endConnect()");// << pos.x() << ", " << pos.y() << ")");
+    CSMOD_DEBUGE("PatchGraphicsView::endConnect()");// << pos.x() << ", " << pos.y() << ")");
 
     // check if on connector
     if (con_to_)
@@ -233,6 +234,17 @@ void PatchGraphicsView::paintEvent(QPaintEvent *event)
 
 void PatchGraphicsView::keyPressEvent(QKeyEvent * e)
 {
+    if (e->key() == Qt::Key_Delete)
+    {
+        for (auto &i : scene()->selectedItems())
+        {
+            if (auto cable = dynamic_cast<CableItem*>(i))
+            {
+                model_->disconnect(cable->connection());
+            }
+        }
+    }
+    //std::cout << e->key() << std::endl;
     QGraphicsView::keyPressEvent(e);
 }
 

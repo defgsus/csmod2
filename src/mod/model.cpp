@@ -216,7 +216,7 @@ bool Model::connect(Connector * from, Connector * to)
 
 bool Model::disconnect(Connection * con)
 {
-    CSMOD_DEBUGF("Model::Model(" << con << ")");
+    CSMOD_DEBUGF("Model::disconnect(" << con << ")");
 
     if (!con || !patch_->disconnect(con)) return false;
 

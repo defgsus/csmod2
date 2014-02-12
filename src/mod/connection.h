@@ -22,13 +22,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_MOD_CONNECTION_H
 
 #include <string>
+#include "base.h"
 
 namespace CSMOD
 {
 
-class Io;
-class Module;
-class Connector;
 
 /** general connection type */
 class Connection
@@ -37,9 +35,11 @@ class Connection
 
     /** This constructor will add the Modules belonging to the Connectors
         to the list of connected Modules of each Connector.
-        E.g. connectorFrom->connectModule(connectorTo->module()) and
-        connectorTo->connectModule(connectorFrom->module()) */
+        <p>E.g. connectorFrom->connectModule(connectorTo->module()) and
+        connectorTo->connectModule(connectorFrom->module())</p>
+        <p>Also it will flip From and To, if the direction does not match.</p> */
     Connection(Connector * connectorFrom, Connector * connectorTo);
+    ~Connection();
 
     // ------------------ IO -------------------
 
@@ -53,6 +53,16 @@ class Connection
 
     Connector * connectorFrom() const { return connectorFrom_; }
     Connector * connectorTo() const { return connectorTo_; }
+
+    // ------- handling ------
+
+    /** This will remove references from the Connectors to each other.
+        Note! This has to be done before deleting the Connection. */
+    void disconnect();
+
+    // ------------- debug ---------------
+
+    void debug_dump();
 
     // __________ PRIVATE ______________
 

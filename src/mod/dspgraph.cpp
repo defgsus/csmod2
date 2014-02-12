@@ -68,6 +68,22 @@ struct DspGraph::ModuleNode
             if (i.present) ++count;
         return count;
     }
+
+    void addInputNonDuplicate(ModuleNode * m)
+    {
+        for (auto &i : ins)
+            if (i.mod->module == m->module)
+                return;
+        ins.push_back(ModuleEdge(m));
+    }
+
+    void addOutputNonDuplicate(ModuleNode * m)
+    {
+        for (auto &i : outs)
+            if (i.mod->module == m->module)
+                break;
+        outs.push_back(ModuleEdge(m));
+    }
 };
 
 
@@ -132,28 +148,31 @@ void DspGraph::initMap_()
     CSMOD_DEBUGF("DspGraph::initMap_()");
 
     // add all dsp modules to map_
-    for (auto &m : patch_->modules())
+    for (auto m : patch_->modules())
     if (auto dsp = dynamic_cast<DspModule*>(m))
     {
         // create a node for each module
-        auto mod = new ModuleNode(dsp);
-        map_.insert(std::make_pair(dsp, mod));
+        auto node = new ModuleNode(dsp);
+        map_.insert(std::make_pair(dsp, node));
     }
 
     // add connections
     // NOTE: we could use the info that is already
     // in Connector::modules() but below method is
     // more convenient to code
-    for (auto &c : patch_->connections())
+    for (auto c : patch_->connections())
     {
+        std::cout << "con " << c << ": mods " << c->moduleFrom() << "->" << c->moduleTo() << "\n";
         auto m1 = dynamic_cast<DspModule*>(c->moduleFrom()),
              m2 = dynamic_cast<DspModule*>(c->moduleTo());
         auto i1 = map_.find(m1),
              i2 = map_.find(m2);
         if (i1 != map_.end() && i2 != map_.end())
         {
-            i1->second->outs.push_back(ModuleEdge(i2->second));
-            i2->second->ins.push_back(ModuleEdge(i1->second));
+            i1->second->addOutputNonDuplicate(i2->second);
+            i2->second->addInputNonDuplicate(i1->second);
+            //i1->second->outs.push_back(ModuleEdge(i2->second));
+            //i2->second->ins.push_back(ModuleEdge(i1->second));
         }
     }
 }

@@ -36,12 +36,21 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
             connectorFrom_	(connectorFrom),
             connectorTo_	(connectorTo)
 {
+    CSMOD_DEBUGF("Connection::Connection(...)");
+
+    // correct order
+    if (connectorFrom_->dir() == Connector::IN)
+    {
+        std::swap(connectorFrom_, connectorTo_);
+        std::swap(moduleFrom_, moduleTo_);
+    }
+
     // this error can not happen, unless Connector::isConnectable()
     // is bogus. However, at this point we can't resolve it, it's too late.
     // Only way out would be an exception
     if (connectorFrom_->dir() == connectorTo_->dir())
     {
-        CSMOD_RT_ERROR("invalid connection of same direction "
+        CSMOD_RT_ERROR("::Connection() invalid connection of same direction "
                        << moduleFrom_->idName() << "." << connectorFrom_->idName()
                        << " -> " << moduleTo_->idName() << "." << connectorTo_->idName());
     }
@@ -50,10 +59,15 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
     if (!connectorFrom_->connectTo(connectorTo_) ||
         !connectorTo_->connectTo(connectorFrom_))
     {
-        CSMOD_RT_ERROR("can't connect "
+        CSMOD_RT_ERROR("::Connection() can't connect "
                        << moduleFrom_->idName() << "." << connectorFrom_->idName()
                        << " -> " << moduleTo_->idName() << "." << connectorTo_->idName());
     }
+}
+
+Connection::~Connection()
+{
+    CSMOD_DEBUGF("Connection::~Connection() this=" << this);
 }
 
 // ------------------ IO -------------------
@@ -84,10 +98,34 @@ bool Connection::restore(CSMOD::Io * io)
 
     // essential data has been read by Patch::restore() already
 
-
     return true;
 }
 
+
+// ------------- handling ----------------
+
+void Connection::disconnect()
+{
+    connectorFrom_->disconnectFrom(connectorTo_);
+    connectorTo_->disconnectFrom(connectorFrom_);
+    connectorFrom_ = 0;
+    connectorTo_ = 0;
+    moduleFrom_ = 0;
+    moduleTo_ = 0;
+}
+
+// ------------- debug ---------------
+
+void Connection::debug_dump()
+{
+    std::cout << "connection " << this << " "
+    << "from " << moduleFrom_ << "." << connectorFrom_
+    << " to " << moduleTo_ << "." << connectorTo_
+    //<< " (" << moduleFrom_->idName() << "." << connectorFrom_->idName() << " -> "
+    //<< moduleTo_->idName() << connectorTo_->idName() << ")"
+    << "\n";
+
+}
 
 
 } // namespace CSMOD
