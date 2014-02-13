@@ -60,7 +60,7 @@ void CableItem::setInfo(const std::string& info)
 
 void CableItem::updatePos()
 {
-    CSMOD_DEBUGF("CableItem::updatePos()");
+    CSMOD_DEBUGE("CableItem::updatePos()");
 
     if (!con_ || !citem1_ || !citem2_) return;
 

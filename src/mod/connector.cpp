@@ -197,5 +197,16 @@ void DspConnector::transport()
 }
 
 
+// ------------- debug ---------------
+
+void DspConnector::debug_dump()
+{
+    std::cout << "dspconnector " << this << " " << idName()
+              << " blocks=" << blockSize_;
+    if (dsp_block_.size()) std::cout
+            << " block.size=" << dsp_block_.size() << " &block[0]=" << &dsp_block_[0];
+    std::cout << " blockptr=" << dsp_block_ptr_
+              << "\n";
+}
 
 } // namespace CSMOD

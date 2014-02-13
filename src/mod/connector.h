@@ -99,7 +99,7 @@ class Connector
 
     // ------------- debug ---------------
 
-    void debug_dump();
+    virtual void debug_dump();
 
     // __________ PROTECTED ______________
 
@@ -176,6 +176,10 @@ public:
     const csfloat * block() const { return dsp_block_ptr_; }
     /** write access to the dsp block */
     csfloat * block() { return dsp_block_ptr_; }
+
+    // ------------- debug ---------------
+
+    virtual void debug_dump();
 
 protected:
     /** this will setup the internal or external block data. */

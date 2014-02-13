@@ -122,7 +122,7 @@ class Module
 
     // ------------- debug ---------------
 
-    void debug_dump();
+    virtual void debug_dump();
 
     // _________________ PROTECTED ____________________
 

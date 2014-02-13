@@ -279,7 +279,7 @@ void PatchView::updateFromPatch()
 
 void PatchView::updateCables()
 {
-    CSMOD_DEBUGF("PatchView::updateCables()");
+    CSMOD_DEBUGE("PatchView::updateCables()");
 
     for (auto ci : cableitems_)
     {
@@ -289,11 +289,11 @@ void PatchView::updateCables()
 
 void PatchView::updateCables(CSMOD::Module * mod)
 {
-    CSMOD_DEBUGF("PatchView::updateCables(" << mod << ")");
+    CSMOD_DEBUGE("PatchView::updateCables(" << mod << ")");
 
     for (auto ci : cableitems_)
     {
-        if (   !ci->connection()
+        /*if (   !ci->connection()
             || !ci->connection()->connectorTo()
             || !ci->connection()->connectorTo()->module()
             || !ci->connection()->connectorFrom()
@@ -301,7 +301,7 @@ void PatchView::updateCables(CSMOD::Module * mod)
         {
             CSMOD_RT_WARN("ci is strange");
         }
-        else
+        else*/
         if (ci->connection()->connectorFrom()->module() == mod
          || ci->connection()->connectorTo()->module() == mod)
         {

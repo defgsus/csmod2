@@ -63,4 +63,18 @@ void DspModule::updateDspInputs()
     }
 }
 
+
+// ------------- debug ---------------
+
+void DspModule::debug_dump()
+{
+    std::cout << "dspmodule " << this << " " << idName()
+              << " blocks=" << blockSize_ << "\n";
+    for (auto i : connectors())
+    {
+        i->debug_dump();
+    }
+    std::cout << "\n";
+}
+
 } // namespace CSMOD

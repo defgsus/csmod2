@@ -48,7 +48,7 @@ void Stuff::dspStep()
     for (size_t i = 0; i < blockSize(); ++i)
     {
         out_->block()[i] = 0.5f * sinf(phase_);
-        phase_ += 6.28 * 100.0 / sampleRate()
+        phase_ += 6.28 * 200.0 / sampleRate()
                 + in_->block()[i];
     }
 }

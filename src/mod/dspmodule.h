@@ -48,6 +48,10 @@ public:
     /** execute action for one dsp block */
     virtual void dspStep() = 0;
 
+    // ------------- debug ---------------
+
+    virtual void debug_dump();
+
 private:
 
     size_t blockSize_;

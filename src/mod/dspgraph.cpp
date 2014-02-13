@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "dspmodule.h"
 #include "patch.h"
 
-// this will be connected to the DspGraph class later
+// this will be connected to the DspGraph and GUI class later
 #define CSMOD_GRAPH_ERROR(arg__) { std::cerr << "DSP GRAPH ERROR: " << arg__ << std::endl; }
 
 namespace CSMOD {
@@ -74,6 +74,7 @@ struct DspGraph::ModuleNode
         for (auto &i : ins)
             if (i.mod->module == m->module)
                 return;
+        std::cout << "ADDED IN " << module->idName() << " -> " << m->module->idName() << "\n";
         ins.push_back(ModuleEdge(m));
     }
 
@@ -81,7 +82,8 @@ struct DspGraph::ModuleNode
     {
         for (auto &i : outs)
             if (i.mod->module == m->module)
-                break;
+                return;
+        std::cout << "ADDED OUT " << module->idName() << " -> " << m->module->idName() << "\n";
         outs.push_back(ModuleEdge(m));
     }
 };
@@ -162,7 +164,6 @@ void DspGraph::initMap_()
     // more convenient to code
     for (auto c : patch_->connections())
     {
-        std::cout << "con " << c << ": mods " << c->moduleFrom() << "->" << c->moduleTo() << "\n";
         auto m1 = dynamic_cast<DspModule*>(c->moduleFrom()),
              m2 = dynamic_cast<DspModule*>(c->moduleTo());
         auto i1 = map_.find(m1),

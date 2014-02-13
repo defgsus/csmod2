@@ -196,6 +196,9 @@ bool Patch::addModule(Module * module)
     module->patch_ = this;
 
     updateDspGraph();
+    module->setSampleRate(sampleRate_);
+    auto dsp = dynamic_cast<DspModule*>(module);
+    if (dsp) dsp->setBlockSize(blockSize_);
 
     return true;
 }
@@ -235,6 +238,9 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
     cons_.push_back(c);
 
     updateDspGraph();
+    // update dspmodule's input storage
+    auto dsp = dynamic_cast<DspModule*>(con2->module());
+    if (dsp) dsp->setBlockSize(blockSize_);
 
     return c;
 }
@@ -246,12 +252,16 @@ bool Patch::deleteConnection(Connection * con)
     for (auto i = cons_.begin(); i!=cons_.end(); ++i)
     if (*i == con)
     {
+        // memorize if this connection led to a dspmodule
+        auto dsp = dynamic_cast<DspModule*>(con->moduleTo());
         con->disconnect();
 
         delete *i;
         cons_.erase(i);
 
         updateDspGraph();
+        // update the dspmodule's input storage
+        if (dsp) dsp->setBlockSize(blockSize_);
 
         return true;
     }
