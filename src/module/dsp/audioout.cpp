@@ -29,7 +29,7 @@ namespace DSP {
 
 
 CSMOD_REGISTER_MODULE(AudioOut)
-
+CSMOD_REGISTER_MODULE(AudioIn)
 
 AudioOut::AudioOut()
     :   DspModule       ("AudioOut~", "AudioOut~"),
@@ -59,6 +59,38 @@ void AudioOut::dspStep()
     for (size_t j = 0; j < numChannels_; ++j)
     {
         *b++ = ins_[j]->block()[i];
+    }
+}
+
+
+AudioIn::AudioIn()
+    :   DspModule       ("AudioIn~", "AudioIn~"),
+        numChannels_    (0),
+        buffer_         (0)
+{
+    CSMOD_DEBUGF("AudioIn::AudioIn()");
+
+    // XXX need to implemented dynamic Connectors
+    outs_.resize(2);
+    for (size_t i=0; i<outs_.size(); ++i)
+        add_(outs_[i]  = new DspConnector(this, Connector::OUT,  "out",  "out" ));
+}
+
+void AudioIn::setAudioInput(size_t channels, csfloat *buffer)
+{
+    numChannels_ = channels;
+    buffer_ = buffer;
+}
+
+void AudioIn::dspStep()
+{
+    if (!buffer_ || !numChannels_) return;
+
+    auto b = &buffer_[0];
+    for (size_t i = 0; i < blockSize(); ++i)
+    for (size_t j = 0; j < numChannels_; ++j)
+    {
+        outs_[j]->block()[i] = *b++;
     }
 }
 

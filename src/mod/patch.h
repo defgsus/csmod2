@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 namespace MODULE { namespace DSP {
+class AudioIn;
 class AudioOut;
 } }
 
@@ -85,7 +86,8 @@ public:
     /** Connects both connectors if possible */
     Connection * connect(Connector * con1, Connector * con2);
 
-    /** Removes the given Connection */
+    /** Removes the given Connection.
+        @p con will be deleted! */
     bool deleteConnection(Connection * con);
 
     bool isConnected(Connector * con1, Connector * con2) const;
@@ -143,9 +145,12 @@ protected:
     /** all dsp modules in execution order */
     DspModules dspmodules_;
 
+    // XXX there will be multiple ins and outs
     //std::vector<MODULE::DSP::AudioOut*>
+    MODULE::DSP::AudioIn * audioInModule_;
     MODULE::DSP::AudioOut * audioOutModule_;
-    csfloats audioOutBuffer_;
+    csfloats audioInBuffer_,
+             audioOutBuffer_;
 
     // ---------- configuration ----------
 

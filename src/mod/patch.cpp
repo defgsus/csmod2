@@ -37,6 +37,7 @@ namespace CSMOD {
 Patch::Patch()
     :   idName_         ("patch"),
         name_           ("patch"),
+        audioInModule_  (0),
         audioOutModule_ (0),
         blockSize_      (0),
         numChannelsIn_  (0),
@@ -285,6 +286,9 @@ void Patch::setBlockSize(size_t size)
             dsp->setBlockSize(blockSize_);
     }
 
+    audioInBuffer_.resize(numChannelsIn_ * blockSize_);
+    if (audioInModule_)
+        audioInModule_->setAudioInput(numChannelsIn_, &audioInBuffer_[0]);
     audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
     if (audioOutModule_)
         audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
@@ -307,6 +311,9 @@ void Patch::setNumChannels(size_t in, size_t out)
     numChannelsIn_ = in;
     numChannelsOut_ = out;
 
+    audioInBuffer_.resize(numChannelsIn_ * blockSize_);
+    if (audioInModule_)
+        audioInModule_->setAudioInput(numChannelsIn_, &audioInBuffer_[0]);
     audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
     if (audioOutModule_)
         audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
@@ -329,13 +336,23 @@ bool Patch::updateDspGraph()
     graph.getSortedModules(dspmodules_);
 
     // find AudioOut module
-    // XXX This will be multiple outs later!!
+    // XXX There will be multiple outs later!!
     audioOutModule_ = 0;
     for (auto &m : dspmodules_)
     {
         if ((audioOutModule_ = dynamic_cast<MODULE::DSP::AudioOut*>(m)))
         {
             audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
+            break;
+        }
+    }
+
+    audioInModule_ = 0;
+    for (auto &m : dspmodules_)
+    {
+        if ((audioInModule_ = dynamic_cast<MODULE::DSP::AudioIn*>(m)))
+        {
+            audioInModule_->setAudioInput(numChannelsIn_, &audioInBuffer_[0]);
             break;
         }
     }
@@ -349,6 +366,10 @@ bool Patch::updateDspGraph()
 
 void Patch::audio_callback(const csfloat * in, csfloat * out)
 {
+    if (!audioInBuffer_.empty())
+    for (size_t i = 0; i<blockSize_ * numChannelsOut_; ++i)
+        audioInBuffer_[i] = *in;
+
     dspStep();
 
     if (!audioOutBuffer_.empty())

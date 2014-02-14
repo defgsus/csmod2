@@ -50,6 +50,26 @@ protected:
     csfloat * buffer_;
 };
 
+
+class AudioIn : public DspModule
+{
+public:
+
+    AudioIn();
+
+    virtual AudioIn * cloneClass() const { return new AudioIn; }
+
+    virtual void dspStep();
+
+    void setAudioInput(size_t channels, csfloat * buffer);
+
+protected:
+
+    DspConnectors outs_;
+    size_t numChannels_;
+    csfloat * buffer_;
+};
+
 } // namespace DSP
 } // namespace MODULE
 } // namespace CSMOD
