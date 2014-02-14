@@ -37,9 +37,7 @@ public:
     virtual Connector* add_(Connector * c);
 
     /** Sets the dsp buffer length */
-    void setBlockSize(size_t size);
-    /** Returns the dsp buffer length */
-    size_t blockSize() const { return blockSize_ ; }
+    virtual void setBlockSize(size_t size);
 
     /** This will be called before each dspStep().
         It will simply sum the inputs of multi-in dsp inputs. */
@@ -53,8 +51,6 @@ public:
     virtual void debug_dump();
 
 private:
-
-    size_t blockSize_;
 
     /** list of DspConnector inputs */
     DspConnectors dsp_inputs_;

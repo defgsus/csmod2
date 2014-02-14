@@ -26,8 +26,7 @@ namespace CSMOD {
 
 
 DspModule::DspModule(const std::string& idName, const std::string& className)
-    :   Module      (idName, className),
-        blockSize_  (0)
+    :   Module      (idName, className)
 {
     CSMOD_DEBUGF("DspModule::DspModule(" << idName << ", " << className << ")");
 }
@@ -45,13 +44,13 @@ Connector* DspModule::add_(Connector * c)
 
 void DspModule::setBlockSize(size_t size)
 {
-    blockSize_ = size;
+    Module::setBlockSize(size);
 
     // all dsp connectors
     for (auto &c : connectors())
     {
         auto dsp = dynamic_cast<DspConnector*>(c);
-        if (dsp) dsp->setBlockSize(blockSize_);
+        if (dsp) dsp->setBlockSize(blockSize());
     }
 }
 
@@ -69,7 +68,7 @@ void DspModule::updateDspInputs()
 void DspModule::debug_dump()
 {
     std::cout << "dspmodule " << this << " " << idName()
-              << " blocks=" << blockSize_ << "\n";
+              << " blocks=" << blockSize() << "\n";
     for (auto i : connectors())
     {
         i->debug_dump();

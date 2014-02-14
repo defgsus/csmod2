@@ -115,6 +115,12 @@ class Module
     virtual void setSampleRate(size_t rate) { sampleRate_ = rate; }
     size_t sampleRate() const { return sampleRate_; }
 
+    /** Sets the number of samples per dsp-block.
+        Although only dsp modules depend on this setting,
+        also normal Modules know the value. */
+    virtual void setBlockSize(size_t size) { blockSize_ = size; }
+    size_t blockSize() const { return blockSize_; }
+
     // ---------------- runtime -----------------------
 
     /** actual worker. */
@@ -167,8 +173,12 @@ class Module
     /** user defineable name */
         name_;
 
+    // -------- config -----------
+
     /** sampling rate of the containing patch. */
-    size_t sampleRate_;
+    size_t sampleRate_,
+    /** number of samples per dsp-block. */
+            blockSize_;
 
 };
 

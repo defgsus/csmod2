@@ -27,10 +27,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 Module::Module(const std::string& idName, const std::string& className)
-    :   patch_    (0),
-        className_(className),
-        idName_   (idName),
-        name_     (className)
+    :   patch_      (0),
+        className_  (className),
+        idName_     (idName),
+        name_       (className),
+        sampleRate_ (0),
+        blockSize_  (0)
 {
     CSMOD_DEBUGF("Module::Module(\"" << idName << "\", \"" << className << "\")");
 

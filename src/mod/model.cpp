@@ -30,6 +30,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "gui/patchview.h"
 
+
+#define CSMOD_MODEL_LOCK \
+    std::lock_guard<std::mutex> lock(dsp_mutex_);
+
+
+
 namespace CSMOD {
 
 
@@ -168,6 +174,8 @@ bool Model::stopDsp()
 
 void Model::audio_callback_(const csfloat * in, csfloat * out)
 {
+    CSMOD_MODEL_LOCK;
+
     if (patch_) patch_->audio_callback(in, out);
 }
 
@@ -187,11 +195,15 @@ bool Model::createModule(Patch * patch, const std::string& idName)
     auto m = ModuleStock::instance().getModule(idName);
     if (!m) return false;
 
-    // add to patch
-    if (!patch->addModule(m))
     {
-        delete m;
-        return false;
+        CSMOD_MODEL_LOCK;
+
+        // add to patch
+        if (!patch->addModule(m))
+        {
+            delete m;
+            return false;
+        }
     }
 
     updateViews_();
@@ -208,7 +220,11 @@ bool Model::connect(Connector * from, Connector * to)
     if (!from || !to) return false;
     if (!from->isConnectable(to)) return false;
 
-    if (!patch_->connect(from, to)) return false;
+    {
+        CSMOD_MODEL_LOCK;
+
+        if (!patch_->connect(from, to)) return false;
+    }
 
     updateViews_();
     return true;
@@ -218,7 +234,10 @@ bool Model::disconnect(Connection * con)
 {
     CSMOD_DEBUGF("Model::disconnect(" << con << ")");
 
-    if (!con || !patch_->deleteConnection(con)) return false;
+    {
+        CSMOD_MODEL_LOCK;
+        if (!con || !patch_->deleteConnection(con)) return false;
+    }
 
     updateViews_();
     return true;

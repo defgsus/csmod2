@@ -121,39 +121,56 @@ void Connector::debug_dump()
 
 // ------------------------ DspConnector ---------------------------
 
+DspConnector::DspConnector(Module * module, Direction dir,
+                           const std::string& idname, const std::string& name)
+    : Connector         (module, dir, idname, name),
+      blockSize_        (0),
+      dsp_block_ptr_    (0),
+      do_sum_dsp_inputs_(false)
+{
+    updateDspStorage_();
+}
+
+
 void DspConnector::setBlockSize(size_t size)
 {
     blockSize_ = size;
-    updateDspData_();
+    updateDspStorage_();
 }
 
 bool DspConnector::connectTo(Connector * con)
 {
     if (!Connector::connectTo(con)) return false;
-    updateDspData_();
+    updateDspStorage_();
     return true;
 }
 
 bool DspConnector::disconnectFrom(Connector * con)
 {
     if (!Connector::disconnectFrom(con)) return false;
-    updateDspData_();
+    updateDspStorage_();
     return true;
 }
 
-void DspConnector::updateDspData_()
+void DspConnector::updateDspStorage_()
 {
+    CSMOD_DEBUGF("DspConnector::updateDspStorage_() this=" << this);
+
     // outputs, multiple inputs or unconnected inputs
     // need their own storage
     if (dir() == OUT || numConnections() != 1)
     {
         dsp_block_.resize(blockSize_);
         dsp_block_ptr_ = &dsp_block_[0];
+        // multiple INs need to be summed
+        do_sum_dsp_inputs_ = (dir() == IN);
     }
     // single input connectors can reuse the
     // storage of another output
     else
     {
+        do_sum_dsp_inputs_ = false;
+
         // clear memory
         csfloats tmp; tmp.swap(dsp_block_);
         // point to the connected output Connector
@@ -165,6 +182,7 @@ void DspConnector::updateDspData_()
             // unlikely unless isConnectable() is screwed
             CSMOD_RT_ERROR("DspConnector not fed by DspConnector "
                            << cons_[0]->longIdName() << " -> " << longIdName());
+            dsp_block_ptr_ = 0;
             exit(-1);
         }
     }
@@ -178,7 +196,8 @@ void DspConnector::transport()
     // also DspConnectors. There have been checks already
     // and this is a high-performance function.
 
-    if (dir() == IN && numConnections() > 1)
+    //if (dir() == IN && numConnections() > 1)
+    if (do_sum_dsp_inputs_)
     {
         // fill the dsp_block_ with contents from first DspConnector
         csfloats::iterator b;

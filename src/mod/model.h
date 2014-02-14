@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "base.h"
 #include "audio/audiodevice.h"
@@ -106,6 +107,8 @@ private:
     std::vector<PatchView*> views_;
 
     AudioDevice * adev_;
+
+    std::mutex dsp_mutex_;
 };
 
 } // namespace CSMOD

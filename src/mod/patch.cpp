@@ -198,8 +198,7 @@ bool Patch::addModule(Module * module)
 
     updateDspGraph();
     module->setSampleRate(sampleRate_);
-    auto dsp = dynamic_cast<DspModule*>(module);
-    if (dsp) dsp->setBlockSize(blockSize_);
+    module->setBlockSize(blockSize_);
 
     return true;
 }
@@ -223,7 +222,7 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
     if (con1->module()->patch() != this
         || con2->module()->patch() != this)
     {
-        CSMOD_RT_ERROR("This patch can not connect outside Modules");
+        CSMOD_RT_ERROR("The Patch can not connect outside Modules");
         return 0;
     }
 
@@ -240,8 +239,7 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
 
     updateDspGraph();
     // update dspmodule's input storage
-    auto dsp = dynamic_cast<DspModule*>(con2->module());
-    if (dsp) dsp->setBlockSize(blockSize_);
+    con2->module()->setBlockSize(blockSize_);
 
     return c;
 }
@@ -255,6 +253,7 @@ bool Patch::deleteConnection(Connection * con)
     {
         // memorize if this connection led to a dspmodule
         auto dsp = dynamic_cast<DspModule*>(con->moduleTo());
+
         con->disconnect();
 
         delete *i;
@@ -281,10 +280,15 @@ void Patch::setBlockSize(size_t size)
 
     for (auto m : modules_)
     {
-        auto dsp = dynamic_cast<DspModule*>(m);
-        if (dsp)
-            dsp->setBlockSize(blockSize_);
+        m->setBlockSize(blockSize_);
     }
+
+    // XXX DspModule::setBlockSize() updates the storage
+    // for dsp input connectors. This needs to happen in
+    // correct execution order. (Or at least, every dsp-input
+    // needs to be setup after all dsp-outputs that lead to it)
+    for (auto dsp : dspmodules_)
+        dsp->setBlockSize(blockSize_);
 
     audioInBuffer_.resize(numChannelsIn_ * blockSize_);
     if (audioInModule_)
@@ -335,24 +339,26 @@ bool Patch::updateDspGraph()
 
     graph.getSortedModules(dspmodules_);
 
-    // find AudioOut module
-    // XXX There will be multiple outs later!!
-    audioOutModule_ = 0;
-    for (auto &m : dspmodules_)
-    {
-        if ((audioOutModule_ = dynamic_cast<MODULE::DSP::AudioOut*>(m)))
-        {
-            audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
-            break;
-        }
-    }
+    // XXX There will be multiple ins & outs later!!
 
+    // find AudioIn module
     audioInModule_ = 0;
     for (auto &m : dspmodules_)
     {
         if ((audioInModule_ = dynamic_cast<MODULE::DSP::AudioIn*>(m)))
         {
             audioInModule_->setAudioInput(numChannelsIn_, &audioInBuffer_[0]);
+            break;
+        }
+    }
+
+    // find AudioOut module
+    audioOutModule_ = 0;
+    for (auto &m : dspmodules_)
+    {
+        if ((audioOutModule_ = dynamic_cast<MODULE::DSP::AudioOut*>(m)))
+        {
+            audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
             break;
         }
     }
@@ -393,9 +399,11 @@ void Patch::dspStep()
 void Patch::debug_dump()
 {
     std::cout << "---------- patch debug dump -------------"
-              << "\nmodules     " << modules_.size()
-              << "\ndspmodules  " << dspmodules_.size()
-              << "\nconnections " << cons_.size() << "\n";
+              << "\nmodules      " << modules_.size()
+              << "\ndspmodules   " << dspmodules_.size()
+              << "\naudio in/out " << (audioInModule_!=0) << "/" << (audioOutModule_!=0)
+              << "\nconnections  " << cons_.size()
+              << "\n";
     for (auto i : modules_)
     {
         i->debug_dump();

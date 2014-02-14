@@ -149,11 +149,7 @@ class DspConnector : public Connector
 {
 public:
     DspConnector(Module * module, Direction dir,
-                   const std::string& idname, const std::string& name)
-        : Connector      (module, dir, idname, name),
-          blockSize_     (0),
-          dsp_block_ptr_ (0)
-    { updateDspData_(); }
+                 const std::string& idname, const std::string& name);
 
     size_t blockSize() const { return blockSize_; }
     void setBlockSize(size_t size);
@@ -183,11 +179,15 @@ public:
 
 protected:
     /** this will setup the internal or external block data. */
-    virtual void updateDspData_();
+    virtual void updateDspStorage_();
 
     size_t blockSize_;
     csfloat * dsp_block_ptr_;
     csfloats dsp_block_;
+
+    /** flag if inputs must be summed, or a single input
+        is simply referenced */
+    bool do_sum_dsp_inputs_;
 };
 
 

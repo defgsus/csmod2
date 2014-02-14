@@ -86,7 +86,7 @@ void AudioIn::dspStep()
 {
     if (!buffer_ || !numChannels_) return;
 
-    auto b = &buffer_[0];
+    auto b = buffer_;
     for (size_t i = 0; i < blockSize(); ++i)
     for (size_t j = 0; j < numChannels_; ++j)
     {
