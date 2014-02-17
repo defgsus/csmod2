@@ -32,6 +32,8 @@ namespace CSMOD {
 
 class Io;
 class Module;
+class Property;
+class Properties;
 
 typedef int (*numModulesFunction)();
 typedef Module * (*getModuleFunction)(int index);
@@ -77,7 +79,7 @@ class Module
     const std::string& idName() const { return idName_; }
 
     /** returns the user-defined name */
-    const std::string& name() const { return name_; }
+    const std::string& name() const;
 
     /** return Patch, this Module belongs to */
     Patch * patch() const { return patch_; }
@@ -105,7 +107,14 @@ class Module
 
     // ------------- connections ----------------------
 
+    // --------------- properties ---------------------
 
+    Properties& properties() { return *props_; }
+    const Properties& properties() const { return *props_; }
+
+    /** Called after a property change, or after restore.
+        Check the Property::changed() flag to react to changes. */
+    virtual void applyProperties();
 
     // ------------- config ---------------------------
 
@@ -152,12 +161,16 @@ class Module
         this module by appending or increasing digits if nescessary.</p> */
     virtual Connector* add_(Connector * c);
 
+    /** simply wipes out all connectors */
+    void deleteConnectors_();
+
+    // -------------------- properties ----------------
+
+    virtual Property* add_(Property * p);
+
     // __________________ PRIVATE _____________________
 
     private:
-
-    /** simply wipes out all connectors */
-    void deleteConnectors_();
 
     // _______________ PRIVATE MEMBER _________________
 
@@ -173,9 +186,14 @@ class Module
     /** derived classes name */
         className_,
     /** patch unique id */
-        idName_,
-    /** user defineable name */
-        name_;
+        idName_;
+
+    // -------- properties -------
+
+    /** list of all properties */
+    Properties * props_;
+
+    StringProperty * name_;
 
     // -------- config -----------
 

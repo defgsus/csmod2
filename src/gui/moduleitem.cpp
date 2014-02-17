@@ -111,7 +111,7 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
 
     if (!module_) return;
 
-    int width = 100;
+    int width = 150;
     int ystart = 23;
     int conspace = 23;
 

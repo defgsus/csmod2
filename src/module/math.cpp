@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <math.h>
 
 #include "log.h"
+#include "mod/property.h"
 
 namespace CSMOD {
 namespace MODULE {
@@ -34,15 +35,28 @@ MathOperator::MathOperator(Operation op)
     : Module("Math Operator", "Math Operator"),
       op_   (op)
 {
+    add_( num_inputs_ = new ValueProperty<size_t>("num_in","number of inputs",2, 2,CSMOD_MAX_INPUTS) );
+}
 
-   for (int i=0; i<2; ++i)
-   {
-       auto in = new ValueConnector(this, Connector::IN,  "in", "in");
-       inputs_.push_back( in );
-       add_( in );
-   }
+void MathOperator::applyProperties()
+{
+    Module::applyProperties();
 
-   add_( output_ = new ValueConnector(this, Connector::OUT, "out", "out") );
+    if (num_inputs_->changed())
+    {
+        deleteConnectors_();
+
+        for (size_t i=0; i<num_inputs_->value(); ++i)
+        {
+           auto in = new ValueConnector(this, Connector::IN,  "in", "in");
+           inputs_.push_back( in );
+           add_( in );
+        }
+
+        add_( output_ = new ValueConnector(this, Connector::OUT, "out", "out") );
+
+        num_inputs_->accept();
+    }
 }
 
 void MathOperator::step()

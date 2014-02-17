@@ -102,7 +102,7 @@ bool Patch::restore(CSMOD::Io * io)
     // read all modules and connections
     while (io->nextSection())
     {
-        // modules
+        // a module
         if (io->isSection("module"))
         {
 
@@ -120,9 +120,11 @@ bool Patch::restore(CSMOD::Io * io)
 
             // load object properties and stuff
             CSMOD_CHECKIO(mod->restore(io), "could not load module " << modclass);
+
+            mod->applyProperties();
         }
         else
-        // connection
+        // a connection
         if (io->isSection("con"))
         {
             // get module/connector id's
@@ -197,6 +199,9 @@ bool Patch::addModule(Module * module)
 
     // copy patch settings
     module->setSampleRate(sampleRate_);
+
+    // initialize module
+    module->applyProperties();
 
     updateDspGraph();
 

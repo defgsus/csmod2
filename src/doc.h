@@ -36,4 +36,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
     m.out(0,1)
     @endcode
 
+
+    @section property thoughts
+
+
+    add_( p = new ValueProperty<csfloat>("id","name",1.f, 0.f,10.f) );
+    p->value()
+
  **/

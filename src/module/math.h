@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/modulestock.h"
 
 namespace CSMOD {
+
 namespace MODULE {
 
 /* NOTE: Don't take this serious.
@@ -46,6 +47,8 @@ public:
 
     virtual MathOperator * cloneClass() const { return new MathOperator(op_); }
 
+    virtual void applyProperties();
+
     virtual void step();
 
     virtual void dspStep() { };
@@ -55,6 +58,8 @@ protected:
 
     std::vector<ValueConnector*> inputs_;
     ValueConnector * output_;
+
+    ValueProperty<size_t> * num_inputs_;
 };
 
 

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "log.h"
 #include "tool/io.h"
 #include "tool/stringmanip.h"
+#include "property.h"
 
 namespace CSMOD {
 
@@ -30,7 +31,7 @@ Module::Module(const std::string& idName, const std::string& className)
     :   patch_      (0),
         className_  (className),
         idName_     (idName),
-        name_       (className),
+        props_      (new Properties),
         is_dsp_     (false),
         sampleRate_ (0),
         blockSize_  (0)
@@ -40,6 +41,8 @@ Module::Module(const std::string& idName, const std::string& className)
     // make sure the strings are right
     checkIdName(className_);
     checkIdName(idName_);
+
+    add_( name_ = new StringProperty("name","module name", className_) );
 }
 
 Module::~Module()
@@ -62,7 +65,11 @@ bool Module::store(CSMOD::Io * io)
     CSMOD_CHECKIO(io->write("ver", 1), "could not write module version");
     io->write("class", className_);
     io->write("id", idName_);
-    io->write("name", name_);
+
+    // store properties
+    io->newSection("props");
+    CSMOD_CHECKIO(props_->store(io), "could not store Properties");
+    io->endSection();
 
     return true;
 }
@@ -76,13 +83,25 @@ bool Module::restore(CSMOD::Io * io)
     CSMOD_CHECKIO(ver <= 1, "unknown module version " << ver);
 
     CSMOD_CHECKIO(io->read("id", idName_), "could not read module id");
-    CSMOD_CHECKIO(io->read("name", name_), "could not read module name");
+
+    // restore properties
+    if (io->nextSection() && io->isSection("props"))
+    {
+        CSMOD_CHECKIO(props_->restore(io), "could not restore Properties");
+        io->leaveSection();
+    }
 
     return true;
 }
 
 #undef CSMOD_CHECKIO
 
+// ------------------- info ---------------------------
+
+const std::string& Module::name() const
+{
+    return name_->value();
+}
 
 // ------------------ config --------------------------
 
@@ -126,7 +145,7 @@ Connector* Module::add_(Connector * c)
     // keep in general list
     cons_.push_back(c);
 
-    // inputs are kept additionaly
+    // inputs are kept additionally
     if (c->dir() == Connector::IN)
     {
         inputs_.push_back(c);
@@ -144,6 +163,19 @@ void Module::deleteConnectors_()
         delete c;
     cons_.clear();
     inputs_.clear();
+}
+
+// ----------- properties ------------
+
+Property* Module::add_(Property * p)
+{
+    props_->add(p);
+    return p;
+}
+
+void Module::applyProperties()
+{
+    CSMOD_DEBUGF("Module::applyProperties() this=" << this << " / " << idName_);
 }
 
 // -------------- runtime ------------

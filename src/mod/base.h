@@ -22,8 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #define CSMOD_MOD_BASE_H
 
 #include <vector>
+#include <string>
 
 namespace CSMOD {
+
+#define CSMOD_MAX_INPUTS (1024)
+
 
 /** default float type */
 typedef float csfloat;
@@ -33,6 +37,9 @@ typedef std::vector<csfloat> csfloats;
 typedef double csdouble;
 typedef std::vector<csdouble> csdoubles;
 
+/** default string type
+    XXX not sure to use QString everywhere... */
+typedef std::string String;
 
 // ------- some forwards --------
 
@@ -42,11 +49,18 @@ class Module;
 class Connector;
 class DspConnector;
 class Connection;
+class Property;
 
 typedef std::vector<Module*> Modules;
 typedef std::vector<Connector*> Connectors;
 typedef std::vector<DspConnector*> DspConnectors;
 typedef std::vector<Connection*> Connections;
+
+template <class T> class ValueProperty;
+typedef ValueProperty<int> IntProperty;
+typedef ValueProperty<csfloat> FloatProperty;
+typedef ValueProperty<csdouble> DoubleProperty;
+typedef ValueProperty<String> StringProperty;
 
 } // namespace CSMOD
 
