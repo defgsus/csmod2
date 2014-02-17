@@ -23,8 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <string>
 #include <vector>
-#include <iostream>//debug
 
+#include "log.h"
 #include "tool/io.h"
 
 namespace CSMOD {
@@ -63,6 +63,7 @@ private:
     bool changed_;
 };
 
+// ######################### Properties ##############################
 
 class Properties
 {
@@ -90,6 +91,7 @@ private:
 };
 
 
+// ######################### ValueProperty<T> ##############################
 
 template <class T>
 class ValueProperty : public Property
@@ -129,6 +131,80 @@ protected:
 };
 
 
+
+// ######################### ListProperty<T> ##############################
+
+template <class T>
+class ListProperty : public Property
+{
+public:
+    // ----------- ctor ------------
+
+    ListProperty(const String& id, const String& name,
+                 const std::vector<T>&      item_values,
+                 const std::vector<String>& item_ids,
+                 const std::vector<String>& item_names,
+                 const T& value)
+        :   Property(id, name),
+            value_  (value),
+            default_(value),
+            values_ (item_values),
+            ids_    (item_ids),
+            names_  (item_names)
+    { }
+
+    const T& value() const { return value_; }
+    void value(const T& value) { value_ = value; setChanged(); }
+
+    T idToValue(const String& id);
+    String valueToId(const T& value);
+
+    // ----------- io --------------
+
+    virtual bool store(Io * io) { return io->write("v", valueToId(value_)); }
+    virtual bool restore(Io * io);
+
+protected:
+    T value_, default_;
+    std::vector<T> values_;
+    std::vector<String> ids_, names_;
+};
+
+template <class T>
+T ListProperty<T>::idToValue(const String& id)
+{
+    for (size_t i=0; i<ids_.size(); ++i)
+        if (id == ids_[i])
+            return values_[i];
+    return T();
+}
+
+template <class T>
+String ListProperty<T>::valueToId(const T & value)
+{
+    for (size_t i=0; i<values_.size(); ++i)
+        if (value == values_[i])
+            return ids_[i];
+    return "";
+}
+
+template <class T>
+bool ListProperty<T>::restore(Io * io)
+{
+    String vstr;
+    if (!io->read("v", vstr, valueToId(default_))) return false;
+
+    for (size_t i=0; i<ids_.size(); ++i)
+        if (vstr == ids_[i])
+        {
+            value_ = values_[i];
+            return true;
+        }
+
+    CSMOD_IO_WARN("unknown ListProperty id '" << vstr << "'");
+
+    return false;
+}
 
 } // namespace CSMOD
 

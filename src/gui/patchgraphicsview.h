@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "base.h"
 
+namespace CSMOD {
+namespace GUI {
 
 #ifndef CSMOD_PATCH_INFO
 #define CSMOD_PATCH_INFO(arg__) \
@@ -35,15 +37,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
     setInfo(s__.str()); \
 }
 #endif
-
-namespace CSMOD {
-class Patch;
-class Connector;
-class Model;
-}
-
-class PatchView;
-class ConnectorItem;
 
 /** @brief direct view of a patch and it's modules and connections.
 
@@ -110,5 +103,9 @@ protected:
     ConnectorItem * con_from_, * con_to_;
     QGraphicsLineItem * con_line_;
 };
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // PATCHGRAPHICSVIEW_H

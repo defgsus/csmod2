@@ -23,10 +23,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QMainWindow>
 
-namespace CSMOD { class Patch; class Model; }
+#include "base.h"
 
-class Patch;
-class PatchView;
+namespace CSMOD {
+namespace GUI {
 
 class MainWindow : public QMainWindow
 {
@@ -41,5 +41,10 @@ private:
     CSMOD::Model * model_;
     PatchView * patchview_;
 };
+
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // MAINWINDOW_H

@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QKeyEvent>
 
+namespace CSMOD {
+namespace GUI {
+
 ValueEditItem::ValueEditItem(QGraphicsItem *parent) :
     QGraphicsTextItem(parent),
     last_value_ (0),
@@ -91,3 +94,6 @@ void ValueEditItem::keyPressEvent(QKeyEvent *event)
     }
 
 }
+
+} // namespace GUI
+} // namespace CSMOD

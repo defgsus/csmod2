@@ -18,12 +18,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef VALUEEDITITEM_H
-#define VALUEEDITITEM_H
+#ifndef CSMOD_GUI_VALUEEDITITEM_H
+#define CSMOD_GUI_VALUEEDITITEM_H
 
 #include <functional>
 
 #include <QGraphicsTextItem>
+
+namespace CSMOD {
+namespace GUI {
 
 class ValueEditItem : public QGraphicsTextItem
 {
@@ -53,4 +56,8 @@ protected:
     std::function<void (double)> change_callback_;
 };
 
-#endif // VALUEEDITITEM_H
+
+} // namespace GUI
+} // namespace CSMOD
+
+#endif // CSMOD_GUI_VALUEEDITITEM_H

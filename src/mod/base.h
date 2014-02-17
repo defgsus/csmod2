@@ -44,6 +44,7 @@ typedef std::string String;
 // ------- some forwards --------
 
 class Io;
+class Model;
 class Patch;
 class Module;
 class Connector;
@@ -61,6 +62,8 @@ typedef ValueProperty<int> IntProperty;
 typedef ValueProperty<csfloat> FloatProperty;
 typedef ValueProperty<csdouble> DoubleProperty;
 typedef ValueProperty<String> StringProperty;
+
+template <class T> class ListProperty;
 
 } // namespace CSMOD
 

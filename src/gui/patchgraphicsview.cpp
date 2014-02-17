@@ -36,6 +36,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "moduleitem.h"
 #include "patchview.h"
 
+namespace CSMOD {
+namespace GUI {
+
 PatchGraphicsView::PatchGraphicsView(PatchView * view, QWidget * parent) :
     QGraphicsView(new QGraphicsScene(parent), parent),
     patch_  (0),
@@ -318,3 +321,8 @@ void PatchGraphicsView::mouseReleaseEvent(QMouseEvent * e)
     QGraphicsView::mouseReleaseEvent(e);
     setDragMode(QGraphicsView::NoDrag);
 }
+
+
+
+} // namespace GUI
+} // namespace CSMOD

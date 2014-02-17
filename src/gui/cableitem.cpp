@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connectoritem.h"
 #include "patchgraphicsview.h"
 
+namespace CSMOD {
+namespace GUI {
 
 CableItem::CableItem(CSMOD::Connection * con,
                      ConnectorItem * ci1, ConnectorItem * ci2,
@@ -84,3 +86,8 @@ void CableItem::paint(QPainter * p, const
 
     p->drawLine(line());
 }
+
+
+
+} // namespace GUI
+} // namespace CSMOD

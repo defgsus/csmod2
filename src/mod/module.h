@@ -92,7 +92,7 @@ class Module
     // ------------ basic settings --------------------
 
     /** set a new user name */
-    void name(const String& name);
+    void setName(const String& name);
 
     // ------------ initializers ----------------------
 

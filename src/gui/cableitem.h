@@ -26,11 +26,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "base.h"
 
-namespace CSMOD { class Connection; }
+namespace CSMOD {
+namespace GUI {
 
-class PatchGraphicsView;
-class ModuleItem;
-class ConnectorItem;
 
 class CableItem : public QGraphicsLineItem
 {
@@ -64,5 +62,10 @@ protected:
     ConnectorItem * citem1_, * citem2_;
     QColor color_;
 };
+
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // CSMOD_CABLEITEM_H

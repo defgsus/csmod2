@@ -25,10 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "base.h"
 
-namespace CSMOD { class Module; class Connector; class Io; }
-
-class PatchGraphicsView;
-class ConnectorItem;
+namespace CSMOD {
+namespace GUI {
 
 class ModuleItem : public QGraphicsRectItem
 {
@@ -98,5 +96,9 @@ protected:
 
     QGraphicsSimpleTextItem * tlabel_;
 };
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // MODULEITEM_H

@@ -105,6 +105,11 @@ const String& Module::name() const
 
 // ------------------ config --------------------------
 
+void Module::setName(const String &name)
+{
+    name_->value(name);
+}
+
 void Module::setBlockSize(size_t size)
 {
     blockSize_ = size;

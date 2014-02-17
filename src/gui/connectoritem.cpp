@@ -35,6 +35,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "moduleitem.h"
 #include "patchgraphicsview.h"
 
+namespace CSMOD {
+namespace GUI {
+
 ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
     :   QGraphicsRectItem(parent),
         moduleItem_     (parent),
@@ -211,3 +214,8 @@ void ConnectorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
 
     QGraphicsRectItem::mouseReleaseEvent(e);
 }
+
+
+
+} // namespace GUI
+} // namespace CSMOD

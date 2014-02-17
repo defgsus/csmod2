@@ -44,6 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "patchgraphicsview.h"
 #include "modulestockmenu.h"
 
+namespace CSMOD {
+namespace GUI {
 
 PatchView::PatchView(QWidget *parent) :
     QFrame(parent),
@@ -464,3 +466,8 @@ void PatchView::mouseReleaseEvent(QMouseEvent * e)
     QFrame::mouseReleaseEvent(e);
 }
 */
+
+
+
+} // namespace GUI
+} // namespace CSMOD

@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "audio/audiodevices.h"
 
+namespace CSMOD {
+namespace GUI {
+
 AudioDeviceFrame::AudioDeviceFrame(QWidget *parent)
     :   QWidget(parent),
         device_index_   (-1)
@@ -78,7 +81,7 @@ AudioDeviceFrame::AudioDeviceFrame(QWidget *parent)
     {
         if (device_index_<0) return;
 
-        CSMOD::AudioDevice::Properties p;
+        AudioDevice::Properties p;
         p.deviceIndex = device_index_;
         p.sampleRate = text_rate_->text().toInt();
         p.bufferLength = text_buffer_->text().toInt();
@@ -95,7 +98,7 @@ void AudioDeviceFrame::updateWidgets_()
 {
     device_list_->clear();
 
-    CSMOD::AudioDevices devs;
+    AudioDevices devs;
     devs.checkDevices();
 
     for (size_t i=0; i<devs.numDevices(); ++i)
@@ -123,3 +126,8 @@ void AudioDeviceFrame::showEvent(QShowEvent *)
 {
     updateWidgets_();
 }
+
+
+
+} // namespace GUI
+} // namespace CSMOD

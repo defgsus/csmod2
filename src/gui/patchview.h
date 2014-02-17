@@ -28,24 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QLabel>
 #include <QTimer>
 
-#include "gui/base.h"
+#include "base.h"
 
-// --- forwards ---
-
-namespace CSMOD {
-class Io;
-class Module;
-class Connection;
-class Connector;
-class Patch;
-class Model;
-}
-
-class PatchGraphicsView;
-class ModuleItem;
-class ConnectorItem;
-class CableItem;
-class ModuleStockMenu;
 
 #ifndef CSMOD_PATCH_INFO
 #define CSMOD_PATCH_INFO(arg__) \
@@ -55,6 +39,9 @@ class ModuleStockMenu;
 }
 #endif
 
+
+namespace CSMOD {
+namespace GUI {
 
 /** @brief direct view into a patch */
 class PatchView : public QFrame
@@ -153,5 +140,9 @@ protected:
 
     QTimer update_timer_;
 };
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // PATCHVIEW_H

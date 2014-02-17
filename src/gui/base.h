@@ -23,6 +23,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "mod/base.h"
 
-typedef CSMOD::String String;
+namespace CSMOD {
+namespace GUI {
+
+    // forwards
+    class PatchGraphicsView;
+    class ModuleItem;
+    class ConnectorItem;
+    class CableItem;
+    class ValueEditItem;
+    class ModuleStockMenu;
+    class PropertyView;
+    class PatchView;
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // CSMOD_GUI_BASE_H

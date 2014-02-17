@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "base.h"
 
+namespace CSMOD {
+namespace GUI {
+
 /** A menu containg all Modules. */
 class ModuleStockMenu : public QMenu
 {
@@ -43,5 +46,9 @@ signals:
 public slots:
 
 };
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // MODULESTOCKMENU_H

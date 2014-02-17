@@ -92,7 +92,7 @@ bool Model::loadPatch(const String& filename)
 
     bool patch_loaded = false;
 
-    PatchView * view = 0;
+    GUI::PatchView * view = 0;
     if (!views_.empty()) view = views_[0];
 
     // read patch
@@ -137,7 +137,7 @@ void Model::setPatch(Patch * patch)
     patch_ = patch;
 }
 
-void Model::addPatchView(PatchView * view)
+void Model::addPatchView(GUI::PatchView * view)
 {
     CSMOD_DEBUGF("Model::addPatchView(" << view << ")");
 

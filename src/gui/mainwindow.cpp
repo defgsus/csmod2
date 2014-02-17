@@ -35,6 +35,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/dspgraph.h"
 #include "audio/audiodevice.h"
 
+namespace CSMOD {
+namespace GUI {
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -93,3 +96,9 @@ MainWindow::~MainWindow()
     delete model_;
     delete patch_;
 }
+
+
+
+
+} // namespace GUI
+} // namespace CSMOD

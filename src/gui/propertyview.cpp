@@ -18,51 +18,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_AUDIODEVICEFRAME_H
-#define CSMOD_AUDIODEVICEFRAME_H
-
-#include <QWidget>
-
-#include "audio/audiodevice.h"
-
-class QListWidget;
-class QLineEdit;
+#include "propertyview.h"
 
 namespace CSMOD {
 namespace GUI {
 
-/** Displaying and selection of Audio Devices */
-class AudioDeviceFrame : public QWidget
+PropertyView::PropertyView(QWidget *parent) :
+    QWidget(parent)
 {
-    Q_OBJECT
-public:
-
-    explicit AudioDeviceFrame(QWidget *parent = 0);
-
-    QSize sizeHint() const { return QSize(500, 350); }
-signals:
-
-    /** called when user selects a device. */
-    void deviceSelected(AudioDevice::Properties);
-
-public slots:
-
-private:
-    virtual void showEvent(QShowEvent *);
-
-    void updateWidgets_();
-
-    int device_index_;
-
-    QListWidget * device_list_;
-    QLineEdit * text_rate_,
-              * text_buffer_,
-              * text_chan_in_,
-              * text_chan_out_;
-};
+}
 
 
 } // namespace GUI
 } // namespace CSMOD
-
-#endif // CSMOD_AUDIODEVICEFRAME_H

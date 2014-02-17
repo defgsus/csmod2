@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
     //CSMOD::ModuleStock::instance().addDll("/home/defgsus/prog/qt_project/build-testbullet-Desktop_Qt_5_1_1_GCC_64bit-Debug/math.o");
 
-    MainWindow w;
+    CSMOD::GUI::MainWindow w;
     w.show();
 
     return a.exec();

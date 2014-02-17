@@ -45,7 +45,7 @@ public:
 
     MathOperator(Operation op = O_ADD);
 
-    virtual MathOperator * cloneClass() const { return new MathOperator(op_); }
+    virtual MathOperator * cloneClass() const { return new MathOperator(operation()); }
 
     virtual void applyProperties();
 
@@ -53,13 +53,14 @@ public:
 
     virtual void dspStep() { };
 
-protected:
-    Operation op_;
+    Operation operation() const;
 
+protected:
     std::vector<ValueConnector*> inputs_;
     ValueConnector * output_;
 
     ValueProperty<size_t> * num_inputs_;
+    ListProperty<Operation> * op_;
 };
 
 

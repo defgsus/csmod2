@@ -33,6 +33,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "patchview.h"
 #include "patchgraphicsview.h"
 
+namespace CSMOD {
+namespace GUI {
+
 ModuleItem::ModuleItem(CSMOD::Module * module,
                        PatchGraphicsView * view,
                        QGraphicsItem *parent)
@@ -259,3 +262,8 @@ void ModuleItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
     update();
 }
 */
+
+
+
+} // namespace GUI
+} // namespace CSMOD

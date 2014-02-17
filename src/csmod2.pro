@@ -49,7 +49,8 @@ SOURCES += \
     gui/audiodeviceframe.cpp \
     module/dsp/audioout.cpp \
     gui/valueedititem.cpp \
-    mod/property.cpp
+    mod/property.cpp \
+    gui/propertyview.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -78,7 +79,8 @@ HEADERS += \
     doc.h \
     gui/valueedititem.h \
     mod/property.h \
-    gui/base.h
+    gui/base.h \
+    gui/propertyview.h
 
 ######### MODULES ########
 

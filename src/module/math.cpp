@@ -32,17 +32,26 @@ CSMOD_REGISTER_MODULE(MathOperator)
 CSMOD_REGISTER_MODULE(MathUnary)
 
 MathOperator::MathOperator(Operation op)
-    : Module("Math Operator", "Math Operator"),
-      op_   (op)
+    : Module("Math Operator", "Math Operator")
 {
     add_( num_inputs_ = new ValueProperty<size_t>("num_in","number of inputs",2, 2,CSMOD_MAX_INPUTS) );
+    add_( op_ = new ListProperty<Operation>("op", "math operation",
+                        { O_ADD, O_SUB, O_MUL, O_DIV },
+                        { "add", "sub", "mul", "div" },
+                        { "addition", "subtraction", "multiplication", "division" },
+                        op ));
+}
+
+MathOperator::Operation MathOperator::operation() const
+{
+    return op_->value();
 }
 
 void MathOperator::applyProperties()
 {
     Module::applyProperties();
 
-    if (num_inputs_->changed())
+    if (num_inputs_->accept())
     {
         deleteConnectors_();
 
@@ -54,8 +63,11 @@ void MathOperator::applyProperties()
         }
 
         add_( output_ = new ValueConnector(this, Connector::OUT, "out", "out") );
+    }
 
-        num_inputs_->accept();
+    if (op_->accept())
+    {
+        setName(className() + " " + op_->valueToId(op_->value()));
     }
 }
 

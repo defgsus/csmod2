@@ -25,13 +25,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "base.h"
 
-class ValueEditItem;
-
-namespace CSMOD { class Connector; }
-
-class ModuleItem;
-class PatchGraphicsView;
 class QGraphicsTextItem;
+
+namespace CSMOD {
+namespace GUI {
 
 class ConnectorItem : public QGraphicsRectItem
 {
@@ -81,5 +78,10 @@ protected:
 
     QString last_value_;
 };
+
+
+
+} // namespace GUI
+} // namespace CSMOD
 
 #endif // CONNECTORITEM_H

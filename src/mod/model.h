@@ -28,18 +28,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "base.h"
 #include "audio/audiodevice.h"
 
-class PatchView;
 
 namespace CSMOD {
 
-
-
-class Model;
-class Patch;
-class Module;
-class Connector;
-class Connection;
-class AudioDevice;
+namespace GUI { class PatchView; }
 
 
 /** @brief class for threadsafe editing.
@@ -71,7 +63,7 @@ public:
     /** set Patch to work on, or disconnect with NULL */
     void setPatch(Patch * root_patch);
 
-    void addPatchView(PatchView * view);
+    void addPatchView(GUI::PatchView * view);
 
     /** Read access to AudioDevice */
     const AudioDevice & audioDevice() const { return *adev_; }
@@ -110,7 +102,7 @@ private:
     void audio_callback_(const csfloat * in, csfloat * out);
 
     Patch * patch_;
-    std::vector<PatchView*> views_;
+    std::vector<GUI::PatchView*> views_;
 
     AudioDevice * adev_;
 
