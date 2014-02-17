@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "mod/base.h"
 
+class ValueEditItem;
+
 namespace CSMOD { class Connector; }
 
 class ModuleItem;
@@ -54,6 +56,9 @@ public:
     /** Does Connector display it's value. */
     bool hasValueDisplay() const;
 
+    /** refresh the textual value display */
+    void updateValueDisplay();
+
 protected:
 
     // ------------- events --------------
@@ -69,7 +74,7 @@ protected:
     PatchGraphicsView * view_;
 
     QGraphicsSimpleTextItem * tname_;
-    QGraphicsTextItem * tvalue_;
+    ValueEditItem * tvalue_;
 
     bool is_con_,
         matches_;

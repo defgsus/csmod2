@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <math.h>
 
+#include "log.h"
+
 namespace CSMOD {
 namespace MODULE {
 
@@ -47,9 +49,17 @@ void MathOperator::step()
 {
     csfloat o = 0;
     for (auto i : inputs_)
+    {
         o += i->value();
+    }
     output_->value(o);
 }
+
+
+
+
+
+
 
 MathUnary::MathUnary(Operation op)
     : Module("Math Unary", "Math Unary"),
@@ -66,7 +76,7 @@ MathUnary::MathUnary(Operation op)
    for (int i=0; i<4; ++i)
    {
        auto out = new ValueConnector(this, Connector::OUT,  "out", "out");
-       inputs_.push_back( out );
+       outputs_.push_back( out );
        add_( out );
    }
 }

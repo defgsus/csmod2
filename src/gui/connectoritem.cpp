@@ -29,7 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "log.h"
 #include "mod/connector.h"
 #include "mod/module.h"
+#include "mod/model.h"
 
+#include "valueedititem.h"
 #include "moduleitem.h"
 #include "patchgraphicsview.h"
 
@@ -57,30 +59,34 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
 
     // name label
     tname_ = new QGraphicsSimpleTextItem(QString::fromStdString(con_->name()), this);
-    tname_->setY(-rect().height()*2/3);
-    tname_->setX(con_->dir() == CSMOD::Connector::IN?
+    tname_->setPos(con_->dir() == CSMOD::Connector::IN?
                       12 :
                       -(tname_->boundingRect().width())
-                      );
+                      , -rect().height()*2/3);
     tname_->setBrush(QBrush(QColor(155,200,155)));
 
     if (hasValueDisplay())
     {
         // value label
-        tvalue_ = new QGraphicsTextItem(con_->valueQString(), this);
-        tvalue_->setDefaultTextColor(QColor(200,200,200));
-        tvalue_->setY(tname_->boundingRect().y());
-        tvalue_->setX(con_->dir() == CSMOD::Connector::IN?
+        tvalue_ = new ValueEditItem(this);
+        tvalue_->setPos(con_->dir() == CSMOD::Connector::IN?
                           12 :
                           -(tvalue_->boundingRect().width())
-                          );
+                          , tname_->boundingRect().y());
         // input editable
+        tvalue_->setEditable(hasValueInput());
+
         if (hasValueInput())
         {
-            tvalue_->setTextInteractionFlags(Qt::TextEditorInteraction);
-            tvalue_->setTabChangesFocus(true);
+            // callback from value input
+            tvalue_->setValueChanged([this](double v)
+            {
+                moduleItem_->view()->model()->setConnectorValue(con_, v);
+            });
         }
     }
+
+    updateValueDisplay();
 }
 
 void ConnectorItem::setInfo(const std::string& info)
@@ -132,6 +138,11 @@ void ConnectorItem::paint(QPainter *p, const QStyleOptionGraphicsItem * /*option
                        50 + isSelected() * 100
                        ));
     p->drawRect(rect());
+}
+
+void ConnectorItem::updateValueDisplay()
+{
+    //CSMOD_DEBUGF("ConnectorItem::updateValueDisplay()");
 
     // udpate value display
     if (hasValueDisplay() && !hasValueInput())
@@ -140,6 +151,7 @@ void ConnectorItem::paint(QPainter *p, const QStyleOptionGraphicsItem * /*option
         if (v != last_value_)
         {
             tvalue_->setPlainText(v);
+
             // update alignment
             if (con_->dir() == CSMOD::Connector::OUT)
                 tvalue_->setX(-(tvalue_->boundingRect().width()));

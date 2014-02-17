@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QFrame>
 #include <QLabel>
+#include <QTimer>
 
 // --- forwards ---
 
@@ -62,11 +63,23 @@ public:
 
     QSize sizeHint() const;
 
+    // ------------------ IO -------------------
+
+    bool store(CSMOD::Io * io);
+    bool restore(CSMOD::Io * io);
+
+    // --------- association -------------------
+
     void setModel(CSMOD::Model * model);
 
     /** Assigns a patch for editing/viewing.
         Set to NULL to deconnect. */
     void setPatch(CSMOD::Patch * patch);
+
+    // ----------- graphics update -------------
+
+    /** Sets the contents of the info string in the toolbar */
+    void setInfo(const std::string& info);
 
     /** update changes in patch */
     void updateFromPatch();
@@ -76,13 +89,12 @@ public:
     /** update all cables connected to this module */
     void updateCables(CSMOD::Module * mod);
 
-    /** reset the info string in the toolbar */
-    void setInfo(const std::string& info);
+    /** update all Connector values */
+    void updateValueDisplays();
 
-    // ------------------ IO -------------------
-
-    bool store(CSMOD::Io * io);
-    bool restore(CSMOD::Io * io);
+    /** Starts or stops automatic value update.
+        A value of 0 will stop the automatic update. */
+    void setValueUpdateInterval(int milliseconds);
 
 signals:
 
@@ -136,6 +148,8 @@ protected:
 
     ModuleStockMenu * stockmenu_;
     QLabel * infoLabel_;
+
+    QTimer update_timer_;
 };
 
 #endif // PATCHVIEW_H

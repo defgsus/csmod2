@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD { class Module; class Connector; class Io; }
 
 class PatchGraphicsView;
+class ConnectorItem;
 
 class ModuleItem : public QGraphicsRectItem
 {
@@ -53,10 +54,10 @@ public:
 
     void markConnectorsThatMatch(CSMOD::Connector * con);
 
+    // --- gui ----
 
-signals:
-
-public slots:
+    /** refresh the value displays */
+    void updateValueDisplays();
 
 protected:
 
@@ -86,6 +87,8 @@ protected:
 
     CSMOD::Module * module_;
     PatchGraphicsView * view_;
+
+    std::vector<ConnectorItem*> conitems_;
 
     Action action_;
 

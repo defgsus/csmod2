@@ -163,13 +163,23 @@ bool Model::initAudioDevice(const AudioDevice::Properties& p)
 bool Model::startDsp()
 {
     CSMOD_DEBUGF("Model::startDsp()");
-    return adev_->start();
+
+    if (!adev_->start()) return false;
+
+    // set patchview updates
+    const int interval = 1000 / 10;
+    for (auto v : views_)
+        v->setValueUpdateInterval(interval);
+    return true;
 }
 
 bool Model::stopDsp()
 {
     CSMOD_DEBUGF("Model::stopDsp()");
-    return adev_->stop();
+    if (!adev_->stop()) return false;
+    for (auto v : views_)
+        v->setValueUpdateInterval(0);
+    return true;
 }
 
 void Model::audio_callback_(const csfloat * in, csfloat * out)
@@ -243,7 +253,20 @@ bool Model::disconnect(Connection * con)
     return true;
 }
 
+// ------------- connector handling -----------------
 
+bool Model::setConnectorValue(Connector * con, csfloat value)
+{
+    CSMOD_DEBUGF("Model::setConnectorValue(" << con << ", " << value << ")");
+
+    if (auto v = dynamic_cast<ValueConnector*>(con))
+    {
+        CSMOD_MODEL_LOCK;
+        v->value(value);
+        return true;
+    }
+    return false;
+}
 
 
 

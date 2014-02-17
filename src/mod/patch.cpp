@@ -407,6 +407,7 @@ void Patch::dspStep()
     for (auto &m : dspmodules_)
     {
         m->sumDspInputs();
+        m->step();
         m->dspStep();
     }
 }

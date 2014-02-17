@@ -140,7 +140,8 @@ class ValueConnector : public Connector
 public:
     ValueConnector(Module * module, Direction dir,
                    const std::string& idname, const std::string& name)
-        : Connector(module, dir, idname, name)
+        : Connector (module, dir, idname, name),
+          value_    (0.f)
     { }
 
     virtual bool isConnectable(Connector * other) const

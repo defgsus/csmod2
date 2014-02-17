@@ -47,7 +47,8 @@ SOURCES += \
     module/dsp/stuff.cpp \
     mod/dspgraph.cpp \
     gui/audiodeviceframe.cpp \
-    module/dsp/audioout.cpp
+    module/dsp/audioout.cpp \
+    gui/valueedititem.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -73,7 +74,8 @@ HEADERS += \
     mod/dspgraph.h \
     gui/audiodeviceframe.h \
     module/dsp/audioout.h \
-    doc.h
+    doc.h \
+    gui/valueedititem.h
 
 ######### MODULES ########
 

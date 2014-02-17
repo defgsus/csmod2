@@ -99,6 +99,11 @@ PatchView::PatchView(QWidget *parent) :
         pview_ = new PatchGraphicsView(this, this);
         l0->addWidget(pview_);
 
+    // update timer callback
+    connect(&update_timer_, &QTimer::timeout, [this]()
+    {
+        updateValueDisplays();
+    });
 }
 
 QSize PatchView::sizeHint() const
@@ -307,6 +312,29 @@ void PatchView::updateCables(CSMOD::Module * mod)
         {
             ci->updatePos();
         }
+    }
+}
+
+void PatchView::updateValueDisplays()
+{
+    //CSMOD_DEBUGF("PatchView::updateValueDisplays()");
+
+    for (auto m : moduleitems_)
+        m->updateValueDisplays();
+}
+
+void PatchView::setValueUpdateInterval(int msec)
+{
+    CSMOD_DEBUGF("PatchView::setValueUpdateInterval(" << msec << ")");
+
+    if (msec == 0)
+    {
+        update_timer_.stop();
+    }
+    else
+    {
+        update_timer_.setInterval(msec);
+        update_timer_.start();
     }
 }
 

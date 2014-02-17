@@ -61,6 +61,7 @@ public:
     void setModel(CSMOD::Model * model);
 
     PatchView * patchView() const { return view_; }
+    CSMOD::Model * model() const { return model_; }
 
     void setInfo(const std::string& info);
 

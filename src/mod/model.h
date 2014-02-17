@@ -97,6 +97,12 @@ public:
 
     bool disconnect(Connection * con);
 
+    // -------- connector handling --------
+
+    /** Sets a value for an input connector.
+        If the Connector can't set a value, false is returned. */
+    bool setConnectorValue(Connector * con, csfloat value);
+
 private:
 
     void updateViews_();

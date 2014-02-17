@@ -138,6 +138,8 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
             ci->setPos(width - 10, ystart + num_out * conspace);
             ++num_out;
         }
+
+        conitems_.push_back(ci);
     }
 
     setRect(0,0,width, std::max(num_in, num_out) * conspace + ystart + 2);
@@ -150,6 +152,7 @@ void ModuleItem::deleteChildItems_()
         delete c;
 
     childItems().clear();
+    conitems_.clear();
 }
 
 
@@ -170,6 +173,12 @@ void ModuleItem::markConnectorsThatMatch(CSMOD::Connector * con)
 
 
 // ----------------------- paint -------------------------------
+
+void ModuleItem::updateValueDisplays()
+{
+    for (auto c : conitems_)
+        c->updateValueDisplay();
+}
 
 void ModuleItem::paint(QPainter * p, const
                        QStyleOptionGraphicsItem * /*option*/,

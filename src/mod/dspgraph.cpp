@@ -148,11 +148,11 @@ void DspGraph::initMap_()
 
     // add all dsp modules to map_
     for (auto m : patch_->modules())
-    if (auto dsp = dynamic_cast<Module*>(m))
+    //if (auto dsp = dynamic_cast<Module*>(m))
     {
         // create a node for each module
-        auto node = new ModuleNode(dsp);
-        map_.insert(std::make_pair(dsp, node));
+        auto node = new ModuleNode(m);
+        map_.insert(std::make_pair(m, node));
     }
 
     // add connections
