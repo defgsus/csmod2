@@ -166,7 +166,7 @@ public:
 
     /** This will sum the dspblocks of multiple input Connectors.
         For outputs or single inputs this does nothing. */
-    void transport();
+    void sumDspInputs();
 
     /** read access to the dsp block */
     const csfloat * block() const { return dsp_block_ptr_; }

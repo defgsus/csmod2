@@ -53,10 +53,13 @@ bool Connector::connectTo(Connector * con)
                       << longIdName() << " -> " << con->longIdName());
         return false;
     }
-    // keep track
+
+    // keep link to other connector
     cons_.push_back(con);
+    // keep track of associated modules
     if (!isConnectedTo(con->module()))
         modules_.push_back(con->module());
+
     return true;
 }
 
@@ -78,19 +81,24 @@ bool Connector::disconnectFrom(Connector * con)
 
     // see if we stay connected to the Module
     // (another Connector on the same Module)
+    bool another = false;
     for (auto &c : cons_)
         if (c->module() == con->module())
-            return true;
+            { another = true; break; }
 
-    // delete the module from list
-    for (auto m = modules_.begin(); m!=modules_.end(); ++m)
+    if (!another)
     {
-        if (*m == con->module())
+        // delete the module from list
+        for (auto m = modules_.begin(); m!=modules_.end(); ++m)
         {
-            modules_.erase(m);
-            return true;
+            if (*m == con->module())
+            {
+                modules_.erase(m);
+                break;
+            }
         }
     }
+
     return true;
 }
 
@@ -141,14 +149,14 @@ void DspConnector::setBlockSize(size_t size)
 bool DspConnector::connectTo(Connector * con)
 {
     if (!Connector::connectTo(con)) return false;
-    updateDspStorage_();
+    //updateDspStorage_();
     return true;
 }
 
 bool DspConnector::disconnectFrom(Connector * con)
 {
     if (!Connector::disconnectFrom(con)) return false;
-    updateDspStorage_();
+    //updateDspStorage_();
     return true;
 }
 
@@ -171,8 +179,9 @@ void DspConnector::updateDspStorage_()
     {
         do_sum_dsp_inputs_ = false;
 
-        // clear memory
+        // clear storage memory
         csfloats tmp; tmp.swap(dsp_block_);
+
         // point to the connected output Connector
         auto dspcon = dynamic_cast<DspConnector*>(cons_[0]);
         if (dspcon)
@@ -188,10 +197,9 @@ void DspConnector::updateDspStorage_()
     }
 }
 
-void DspConnector::transport()
+void DspConnector::sumDspInputs()
 {
-    // NOTE:
-    // We use static_cast instead of dynamic_cast
+    // NOTE: We don't use dynamic_cast
     // because we assume that all connected Connectors are
     // also DspConnectors. There have been checks already
     // and this is a high-performance function.

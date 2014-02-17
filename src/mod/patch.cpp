@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connection.h"
 #include "module.h"
 #include "modulestock.h"
-#include "dspmodule.h"
 #include "dspgraph.h"
 #include "module/dsp/audioout.h"
 
@@ -196,9 +195,10 @@ bool Patch::addModule(Module * module)
     // assign patch to module
     module->patch_ = this;
 
-    updateDspGraph();
+    // copy patch settings
     module->setSampleRate(sampleRate_);
-    module->setBlockSize(blockSize_);
+
+    updateDspGraph();
 
     return true;
 }
@@ -233,13 +233,11 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
         return 0;
     }
 
+    // create and bind a connection class
     auto c = new Connection(con1, con2);
-
     cons_.push_back(c);
 
     updateDspGraph();
-    // update dspmodule's input storage
-    con2->module()->setBlockSize(blockSize_);
 
     return c;
 }
@@ -251,17 +249,14 @@ bool Patch::deleteConnection(Connection * con)
     for (auto i = cons_.begin(); i!=cons_.end(); ++i)
     if (*i == con)
     {
-        // memorize if this connection led to a dspmodule
-        auto dsp = dynamic_cast<DspModule*>(con->moduleTo());
-
+        // update connector ties
         con->disconnect();
 
+        // wipe out Connection
         delete *i;
         cons_.erase(i);
 
         updateDspGraph();
-        // update the dspmodule's input storage
-        if (dsp) dsp->setBlockSize(blockSize_);
 
         return true;
     }
@@ -283,17 +278,20 @@ void Patch::setBlockSize(size_t size)
         m->setBlockSize(blockSize_);
     }
 
-    // XXX DspModule::setBlockSize() updates the storage
+    // do it again
+    // XXX setBlockSize() updates the storage
     // for dsp input connectors. This needs to happen in
-    // correct execution order. (Or at least, every dsp-input
+    // correct execution order. (Every dsp-input
     // needs to be setup after all dsp-outputs that lead to it)
-    for (auto dsp : dspmodules_)
-        dsp->setBlockSize(blockSize_);
+    updateDspStorage_();
 
+    // update patch audio in/out buffer size
     audioInBuffer_.resize(numChannelsIn_ * blockSize_);
+    audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
+
+    // update in/out modules
     if (audioInModule_)
         audioInModule_->setAudioInput(numChannelsIn_, &audioInBuffer_[0]);
-    audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
     if (audioOutModule_)
         audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
 }
@@ -308,17 +306,23 @@ void Patch::setSampleRate(size_t rate)
     {
         m->setSampleRate(sampleRate_);
     }
+
+    //updateDspStorage_();
 }
+
 void Patch::setNumChannels(size_t in, size_t out)
 {
     CSMOD_DEBUGF("Patch::setNumChannels(" << in << ", " << out << ")");
     numChannelsIn_ = in;
     numChannelsOut_ = out;
 
+    // update patch audio in/out buffer
     audioInBuffer_.resize(numChannelsIn_ * blockSize_);
+    audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
+
+    // update in/out modules
     if (audioInModule_)
         audioInModule_->setAudioInput(numChannelsIn_, &audioInBuffer_[0]);
-    audioOutBuffer_.resize(numChannelsOut_ * blockSize_);
     if (audioOutModule_)
         audioOutModule_->setAudioOutput(numChannelsOut_, &audioOutBuffer_[0]);
 }
@@ -338,6 +342,11 @@ bool Patch::updateDspGraph()
     }
 
     graph.getSortedModules(dspmodules_);
+
+    // update the connector storage memory/pointers
+    updateDspStorage_();
+
+    // update patch in/out modules
 
     // XXX There will be multiple ins & outs later!!
 
@@ -366,7 +375,16 @@ bool Patch::updateDspGraph()
     return true;
 }
 
+void Patch::updateDspStorage_()
+{
+    CSMOD_DEBUGF("Patch::updateDspStorage_()");
 
+    for (auto dsp : dspmodules_)
+    {
+        // XXX This is currently the way to update a Module's Connectors
+        dsp->setBlockSize(blockSize_);
+    }
+}
 
 // ------------ runtime --------------
 
@@ -388,7 +406,7 @@ void Patch::dspStep()
 {
     for (auto &m : dspmodules_)
     {
-        m->updateDspInputs();
+        m->sumDspInputs();
         m->dspStep();
     }
 }

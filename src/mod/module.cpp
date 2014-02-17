@@ -31,6 +31,7 @@ Module::Module(const std::string& idName, const std::string& className)
         className_  (className),
         idName_     (idName),
         name_       (className),
+        is_dsp_     (false),
         sampleRate_ (0),
         blockSize_  (0)
 {
@@ -82,6 +83,21 @@ bool Module::restore(CSMOD::Io * io)
 
 #undef CSMOD_CHECKIO
 
+
+// ------------------ config --------------------------
+
+void Module::setBlockSize(size_t size)
+{
+    blockSize_ = size;
+
+    // update all dsp connectors
+    for (auto &c : connectors())
+    {
+        if (auto dsp = dynamic_cast<DspConnector*>(c))
+            dsp->setBlockSize(blockSize());
+    }
+}
+
 // ------------------- connectors ---------------------
 
 Connector * Module::findConnector(const std::string& idName)
@@ -99,14 +115,24 @@ Connector* Module::add_(Connector * c)
     {
         std::string id(c->idName());
         do
-        {   increase_number(id,1);
-
-        } while (findConnector(id));
+        {
+            increase_number(id,1);
+        }
+            while (findConnector(id));
 
         c->idName_ = id;
     }
 
+    // keep in general list
     cons_.push_back(c);
+
+    // dsp inputs are kept additionaly
+    if (c->dir() == Connector::IN)
+    if (auto dsp = dynamic_cast<DspConnector*>(c))
+    {
+        dsp_inputs_.push_back(dsp);
+        is_dsp_ = true;
+    }
 
     return c;
 }
@@ -116,14 +142,26 @@ void Module::deleteConnectors_()
     for (auto c : cons_)
         delete c;
     cons_.clear();
+    dsp_inputs_.clear();
 }
 
+// -------------- runtime ------------
+
+void Module::sumDspInputs()
+{
+    for (auto c : dsp_inputs_)
+    {
+        c->sumDspInputs();
+    }
+}
 
 // ------------- debug ---------------
 
 void Module::debug_dump()
 {
-    std::cout << "module " << this << " " << idName() << "\n";
+    std::cout << "module " << this << " " << idName()
+              << " blocks=" << blockSize() << "\n"
+              << "\n";
     for (auto i : cons_)
     {
         i->debug_dump();

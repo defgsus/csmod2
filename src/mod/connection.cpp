@@ -36,7 +36,9 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
             connectorFrom_	(connectorFrom),
             connectorTo_	(connectorTo)
 {
-    CSMOD_DEBUGF("Connection::Connection(...)");
+    CSMOD_DEBUGF("Connection::Connection("
+                 << connectorFrom << ", " << connectorTo << ") this="
+                 << this);
 
     // correct order
     if (connectorFrom_->dir() == Connector::IN)

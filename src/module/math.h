@@ -48,6 +48,8 @@ public:
 
     virtual void step();
 
+    virtual void dspStep() { };
+
 protected:
     Operation op_;
 
@@ -72,6 +74,8 @@ public:
     virtual MathUnary * cloneClass() const { return new MathUnary(op_); }
 
     virtual void step();
+
+    virtual void dspStep() { }
 
 protected:
     Operation op_;

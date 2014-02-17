@@ -18,42 +18,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "stuff.h"
+/**
 
-#include <cmath>
-
-#include "log.h"
-#include "mod/modulestock.h"
-
-namespace CSMOD {
-namespace MODULE {
-namespace DSP {
+    @page stuff
 
 
-CSMOD_REGISTER_MODULE(Stuff)
+    @section scripting / modularity of objects
 
+    @code
+    // mAYbe:
+    module m,n;
+    m.out ++;
+    n.in += 2;
+    m.out(0) >> n.in(0);
+    m.out(0) >> n.in(1);
 
-Stuff::Stuff()
-    :   Module       ("Stuff~", "Stuff~"),
-        phase_          (0.0)
-{
-    CSMOD_DEBUGF("Stuff::Stuff()");
+    m.out(0,1)
+    @endcode
 
-    add_(in_  = new DspConnector(this, Connector::IN,  "in",  "in" ));
-    add_(out_ = new DspConnector(this, Connector::OUT, "out", "out"));
-}
-
-void Stuff::dspStep()
-{
-    for (size_t i = 0; i < blockSize(); ++i)
-    {
-        out_->block()[i] = 0.5f * sinf(phase_);
-        phase_ += 6.28 * 350.0 / sampleRate()
-                + in_->block()[i];
-    }
-}
-
-
-} // namespace DSP
-} // namespace MODULE
-} // namespace CSMOD
+ **/

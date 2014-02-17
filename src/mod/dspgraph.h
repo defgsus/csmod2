@@ -57,7 +57,7 @@ public:
 
     /** initialize the vector with the dsp Modules in correct
         execution order. */
-    void getSortedModules(DspModules& modules);
+    void getSortedModules(Modules& modules);
 
     // ____________ PRIVATE ______________
 
@@ -76,12 +76,12 @@ private:
     Patch * patch_;
 
     /** modules in order of execution */
-    DspModules modules_;
+    Modules modules_;
 
     // local work structures
     struct ModuleEdge;
     struct ModuleNode;
-    std::map<DspModule*, ModuleNode*> map_;
+    std::map<Module*, ModuleNode*> map_;
 };
 
 

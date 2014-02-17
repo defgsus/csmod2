@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "mod/dspmodule.h"
+#include "mod/module.h"
 
 #ifndef CSMOD_MODULE_DSP_AUDIOOUT_H
 #define CSMOD_MODULE_DSP_AUDIOOUT_H
@@ -31,7 +31,7 @@ namespace DSP {
  * Currently i'm playing around with Modules to see
  * what patterns work best. */
 
-class AudioOut : public DspModule
+class AudioOut : public Module
 {
 public:
 
@@ -51,7 +51,7 @@ protected:
 };
 
 
-class AudioIn : public DspModule
+class AudioIn : public Module
 {
 public:
 

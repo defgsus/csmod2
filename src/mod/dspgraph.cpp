@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "log.h"
 #include "module.h"
-#include "dspmodule.h"
 #include "patch.h"
 
 // this will be connected to the DspGraph and GUI class later
@@ -50,12 +49,12 @@ struct DspGraph::ModuleEdge
 // represent a module + sum locally needed helper
 struct DspGraph::ModuleNode
 {
-    ModuleNode(DspModule * m)
+    ModuleNode(Module * m)
         : module(m)
     { }
 
     // represented module
-    DspModule * module;
+    Module * module;
     // ingoing and outgoing connections
     std::vector<ModuleEdge>
         ins, outs;
@@ -74,7 +73,6 @@ struct DspGraph::ModuleNode
         for (auto &i : ins)
             if (i.mod->module == m->module)
                 return;
-        std::cout << "ADDED IN " << module->idName() << " -> " << m->module->idName() << "\n";
         ins.push_back(ModuleEdge(m));
     }
 
@@ -83,7 +81,6 @@ struct DspGraph::ModuleNode
         for (auto &i : outs)
             if (i.mod->module == m->module)
                 return;
-        std::cout << "ADDED OUT " << module->idName() << " -> " << m->module->idName() << "\n";
         outs.push_back(ModuleEdge(m));
     }
 };
@@ -129,13 +126,13 @@ bool DspGraph::initFromPatch(Patch * patch)
     initMap_();
 
 #ifndef NDEBUG
-    dump_();
+    //dump_();
 #endif
 
     return traceGraph_();
 }
 
-void DspGraph::getSortedModules(DspModules& modules)
+void DspGraph::getSortedModules(Modules& modules)
 {
     CSMOD_DEBUGF("DspGraph::getSortedModules(...)");
     modules = modules_;
@@ -151,7 +148,7 @@ void DspGraph::initMap_()
 
     // add all dsp modules to map_
     for (auto m : patch_->modules())
-    if (auto dsp = dynamic_cast<DspModule*>(m))
+    if (auto dsp = dynamic_cast<Module*>(m))
     {
         // create a node for each module
         auto node = new ModuleNode(dsp);
@@ -159,21 +156,19 @@ void DspGraph::initMap_()
     }
 
     // add connections
-    // NOTE: we could use the info that is already
-    // in Connector::modules() but below method is
+    // XXX we could use the info that is already
+    // in Connector::modules() but below method i found
     // more convenient to code
     for (auto c : patch_->connections())
     {
-        auto m1 = dynamic_cast<DspModule*>(c->moduleFrom()),
-             m2 = dynamic_cast<DspModule*>(c->moduleTo());
+        auto m1 = dynamic_cast<Module*>(c->moduleFrom()),
+             m2 = dynamic_cast<Module*>(c->moduleTo());
         auto i1 = map_.find(m1),
              i2 = map_.find(m2);
         if (i1 != map_.end() && i2 != map_.end())
         {
             i1->second->addOutputNonDuplicate(i2->second);
             i2->second->addInputNonDuplicate(i1->second);
-            //i1->second->outs.push_back(ModuleEdge(i2->second));
-            //i2->second->ins.push_back(ModuleEdge(i1->second));
         }
     }
 }

@@ -114,7 +114,7 @@ public:
 
     // ------------ dsp related ----------
 
-    /** serializes all DspModules to correct execution order. */
+    /** serializes all Modules to correct execution order. */
     bool updateDspGraph();
 
     // ------------ runtime --------------
@@ -131,6 +131,12 @@ public:
 
 protected:
 
+    // --------- dsp related -------------
+
+    /** Calls Module::updateDspStorage() for each dsp Module
+        in dspmodules_ */
+    void updateDspStorage_();
+
     // ----------- id --------------------
 
     std::string
@@ -143,7 +149,7 @@ protected:
     Connections cons_;
 
     /** all dsp modules in execution order */
-    DspModules dspmodules_;
+    Modules dspmodules_;
 
     // XXX there will be multiple ins and outs
     //std::vector<MODULE::DSP::AudioOut*>

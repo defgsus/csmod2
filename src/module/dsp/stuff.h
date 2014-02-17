@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef CSMOD_MODULE_DSP_DSPBASE_H
 #define CSMOD_MODULE_DSP_DSPBASE_H
 
-#include "mod/dspmodule.h"
+#include "mod/module.h"
 
 namespace CSMOD {
 namespace MODULE {
@@ -32,7 +32,7 @@ namespace DSP {
  * Currently i'm playing around with Modules to see
  * what patterns work best. */
 
-class Stuff : public DspModule
+class Stuff : public Module
 {
 public:
 

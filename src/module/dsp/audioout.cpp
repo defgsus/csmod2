@@ -32,7 +32,7 @@ CSMOD_REGISTER_MODULE(AudioOut)
 CSMOD_REGISTER_MODULE(AudioIn)
 
 AudioOut::AudioOut()
-    :   DspModule       ("AudioOut~", "AudioOut~"),
+    :   Module       ("AudioOut~", "AudioOut~"),
         numChannels_    (0),
         buffer_         (0)
 {
@@ -64,7 +64,7 @@ void AudioOut::dspStep()
 
 
 AudioIn::AudioIn()
-    :   DspModule       ("AudioIn~", "AudioIn~"),
+    :   Module       ("AudioIn~", "AudioIn~"),
         numChannels_    (0),
         buffer_         (0)
 {

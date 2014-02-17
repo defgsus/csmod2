@@ -44,7 +44,6 @@ SOURCES += \
     tool/io.cpp \
     audio/audiodevices.cpp \
     audio/audiodevice.cpp \
-    mod/dspmodule.cpp \
     module/dsp/stuff.cpp \
     mod/dspgraph.cpp \
     gui/audiodeviceframe.cpp \
@@ -70,11 +69,11 @@ HEADERS += \
     tool/io.h \
     audio/audiodevices.h \
     audio/audiodevice.h \
-    mod/dspmodule.h \
     module/dsp/stuff.h \
     mod/dspgraph.h \
     gui/audiodeviceframe.h \
-    module/dsp/audioout.h
+    module/dsp/audioout.h \
+    doc.h
 
 ######### MODULES ########
 

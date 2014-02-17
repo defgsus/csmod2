@@ -37,7 +37,6 @@ typedef int (*numModulesFunction)();
 typedef Module * (*getModuleFunction)(int index);
 
 
-class Container;
 class Patch;
 
 class Module
@@ -83,6 +82,11 @@ class Module
     /** return Patch, this Module belongs to */
     Patch * patch() const { return patch_; }
 
+    // --------- types / usability --------------------
+
+    /** Returns true when this Module contains DspConnectors */
+    bool isDsp() const { return is_dsp_; }
+
     // ------------ basic settings --------------------
 
     /** set a new user name */
@@ -102,10 +106,6 @@ class Module
     // ------------- connections ----------------------
 
 
-    // -------------- container -----------------------
-
-    /** return the container this module belongs to */
-    Container * container() const { return container_; }
 
     // ------------- config ---------------------------
 
@@ -118,12 +118,19 @@ class Module
     /** Sets the number of samples per dsp-block.
         Although only dsp modules depend on this setting,
         also normal Modules know the value. */
-    virtual void setBlockSize(size_t size) { blockSize_ = size; }
+    virtual void setBlockSize(size_t size);
     size_t blockSize() const { return blockSize_; }
 
     // ---------------- runtime -----------------------
 
-    /** actual worker. */
+    /** Prepare storage (if any) in input DspConnectors.
+        This will be called before each dspStep(). */
+    virtual void sumDspInputs();
+
+    /** execute action for one dsp block */
+    virtual void dspStep() = 0;
+
+    /** XXX maybe between dsp steps? */
     virtual void step() { }
 
     // ------------- debug ---------------
@@ -145,11 +152,6 @@ class Module
         this module by appending or increasing digits if nescessary.</p> */
     virtual Connector* add_(Connector * c);
 
-    // -------------- container -----------------------
-
-    /** the container this module belongs to */
-    Container* container_;
-
     // __________________ PRIVATE _____________________
 
     private:
@@ -164,6 +166,8 @@ class Module
 
     /** all Connectors of this module */
     std::vector<Connector*> cons_;
+    /** DspConnector inputs that need to be summed */
+    std::vector<DspConnector*> dsp_inputs_;
 
     std::string
     /** derived classes name */
@@ -174,6 +178,8 @@ class Module
         name_;
 
     // -------- config -----------
+
+    bool is_dsp_;
 
     /** sampling rate of the containing patch. */
     size_t sampleRate_,
