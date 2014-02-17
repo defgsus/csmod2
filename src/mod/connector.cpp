@@ -26,6 +26,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
+Connector::Connector(Module * module, Direction dir,
+          const String& idName, const String& name)
+    :	module_	(module),
+        dir_    (dir),
+        idName_	(idName),
+        name_	(name)
+{
+    CSMOD_DEBUGF("Connector::Connector() this=" << this);
+}
+
 Connector::~Connector()
 {
     CSMOD_DEBUGF("Connector::~Connector() this=" << this);

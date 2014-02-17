@@ -83,6 +83,9 @@ public:
     /** Creates a Module in the specified patch. */
     bool createModule(Patch * patch, const String& idName);
 
+    /** Updates the Module from changed Properties */
+    void applyProperties(Module * mod);
+
     // -------- connection handling -------
 
     bool connect(Connector * from, Connector * to);

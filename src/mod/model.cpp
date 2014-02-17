@@ -220,6 +220,14 @@ bool Model::createModule(Patch * patch, const String& idName)
     return true;
 }
 
+void Model::applyProperties(Module * mod)
+{
+    CSMOD_DEBUGF("Model::applyProperties(" << mod << ")");
+
+    CSMOD_MODEL_LOCK;
+    patch_->applyProperties(mod);
+    updateViews_();
+}
 
 // -------- connection handling -------
 

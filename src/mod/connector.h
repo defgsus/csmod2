@@ -47,12 +47,7 @@ class Connector
     };
 
     Connector(Module * module, Direction dir,
-              const String& idName, const String& name)
-        :	module_	(module),
-            dir_    (dir),
-            idName_	(idName),
-            name_	(name)
-    { }
+              const String& idName, const String& name);
     virtual ~Connector();
 
     // ------ info ---------

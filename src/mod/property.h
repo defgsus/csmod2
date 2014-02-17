@@ -26,6 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "log.h"
 #include "tool/io.h"
+#include "tool/stringmanip.h"
+#include "gui/propertywidget.h"
 
 namespace CSMOD {
 
@@ -47,20 +49,21 @@ public:
     const String& idName() const { return idName_; }
     const String& name() const { return name_; }
 
-    bool changed() const { return changed_; }
-    bool accept() { if (changed_) { changed_ = false; return true; } else return false; }
-    void setChanged() { changed_ = true; }
+    virtual bool changed() const = 0;
+    virtual bool accept() = 0;
 
     // ----------- io --------------
 
     virtual bool store(Io * io) = 0;
     virtual bool restore(Io * io) = 0;
 
+    // --------- gui ---------------
+
+    virtual GUI::PropertyWidget * createWidget(QWidget * parent) = 0;
+
 private:
 
     String idName_, name_;
-
-    bool changed_;
 };
 
 // ######################### Properties ##############################
@@ -78,8 +81,13 @@ public:
 
     Property * find(const String& idName_);
 
+    size_t size() const { return props_.size(); }
     Property * operator[] (size_t index) { return props_[index]; }
     const Property * operator[] (size_t index) const { return props_[index]; }
+
+    // -------- info ---------------
+
+    bool changed() const;
 
     // ----------- io --------------
 
@@ -101,34 +109,48 @@ public:
 
     ValueProperty(const String& id, const String& name,
                 const T& value)
-        :   Property(id, name),
-            value_  (value),
-            default_(value),
-            limit_  (false)
+        :   Property (id, name),
+            value_   (value),
+            default_ (value),
+            newvalue_(value),
+            limit_   (false),
+            changed_ (true)
     { }
 
     ValueProperty(const String& id, const String& name,
                 const T& value, const T& minvalue, const T& maxvalue)
-        :   Property(id, name),
-            value_  (std::max(minvalue,std::min(maxvalue, value ))),
-            min_    (minvalue),
-            max_    (maxvalue),
-            default_(value_),
-            limit_  (true)
+        :   Property (id, name),
+            value_   (std::max(minvalue,std::min(maxvalue, value ))),
+            min_     (minvalue),
+            max_     (maxvalue),
+            default_ (value_),
+            newvalue_(value),
+            limit_   (true),
+            changed_ (true)
     { }
 
+    virtual bool changed() const { return changed_; }
+    virtual bool accept() { bool c = changed(); if (c) { changed_ = false; value_ = newvalue_; } return c; }
+
     virtual const T& value() const { return value_; }
-    virtual void value(const T& value) { value_ = value; setChanged(); }
+    virtual void value(const T& value) { if (value != value_) { newvalue_ = value; changed_ = true; } }
 
     // ----------- io --------------
 
     virtual bool store(Io * io) { return io->write("v", value_); }
-    virtual bool restore(Io * io) { return io->read("v", value_, default_); }
+    virtual bool restore(Io * io) { return io->read("v", newvalue_, default_); changed_ = true; }
+
+    // ------------ gui ------------
+
+    virtual GUI::PropertyWidget * createWidget(QWidget * parent);
 
 protected:
-    T value_, min_, max_, default_;
+    T value_, min_, max_, default_, newvalue_;
     bool limit_;
+    bool changed_;
+
 };
+
 
 
 
@@ -148,13 +170,17 @@ public:
         :   Property(id, name),
             value_  (value),
             default_(value),
+            changed_(false),
             values_ (item_values),
             ids_    (item_ids),
             names_  (item_names)
     { }
 
+    virtual bool changed() const { return changed_; }
+    virtual bool accept() { bool c = changed(); if (c) { changed_ = false; value_ = newvalue_; } return c; }
+
     const T& value() const { return value_; }
-    void value(const T& value) { value_ = value; setChanged(); }
+    virtual void value(const T& value) { if (value != value_) { newvalue_ = value; changed_ = true; } }
 
     T idToValue(const String& id);
     String valueToId(const T& value);
@@ -164,11 +190,17 @@ public:
     virtual bool store(Io * io) { return io->write("v", valueToId(value_)); }
     virtual bool restore(Io * io);
 
+    // ------------ gui ------------
+
+    virtual GUI::PropertyWidget * createWidget(QWidget * parent);
+
 protected:
-    T value_, default_;
+    T value_, default_, newvalue_;
+    bool changed_;
     std::vector<T> values_;
     std::vector<String> ids_, names_;
 };
+
 
 template <class T>
 T ListProperty<T>::idToValue(const String& id)
@@ -197,7 +229,8 @@ bool ListProperty<T>::restore(Io * io)
     for (size_t i=0; i<ids_.size(); ++i)
         if (vstr == ids_[i])
         {
-            value_ = values_[i];
+            newvalue_ = values_[i];
+            changed_ = true;
             return true;
         }
 
@@ -205,6 +238,31 @@ bool ListProperty<T>::restore(Io * io)
 
     return false;
 }
+
+} // namespace CSMOD
+
+
+// ############################ WIDGET IMPLEMENTATION #############################
+
+#include "gui/propertywidget_impl.h"
+
+namespace CSMOD {
+
+
+template <class T>
+GUI::PropertyWidget * ValueProperty<T>::createWidget(QWidget * parent)
+{
+    auto w = new GUI::ValuePropertyWidget<T>(this, parent);
+    return w;
+}
+
+template <class T>
+GUI::PropertyWidget * ListProperty<T>::createWidget(QWidget * parent)
+{
+    auto w = new GUI::ListPropertyWidget<T>(this, parent);
+    return w;
+}
+
 
 } // namespace CSMOD
 

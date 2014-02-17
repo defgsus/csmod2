@@ -18,26 +18,45 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_GUI_BASE_H
-#define CSMOD_GUI_BASE_H
+#include "propertiesview.h"
 
-#include "mod/base.h"
+#include <QLayout>
+
+#include "mod/property.h"
+#include "propertywidget.h"
 
 namespace CSMOD {
 namespace GUI {
 
-    // forwards
-    class PatchGraphicsView;
-    class ModuleItem;
-    class ConnectorItem;
-    class CableItem;
-    class ValueEditItem;
-    class ModuleStockMenu;
-    class PropertyWidget;
-    class PropertiesView;
-    class PatchView;
+
+PropertiesView::PropertiesView(Properties *prop, QWidget *parent)
+    :   QWidget(parent),
+      props_   (prop)
+{
+    CSMOD_DEBUGF("PropertiesView::PropertiesView(" << prop << ", " << parent << ")");
+
+    auto l0 = new QVBoxLayout(this);
+
+    for (size_t i=0; i<props_->size(); ++i)
+    {
+        // create a widget for each property
+        auto p = (*props_)[i]->createWidget(this);
+        l0->addWidget(p);
+
+        // set value
+        p->updateWidget();
+
+        // on user input change
+        connect(p, &PropertyWidget::userInput, [this](PropertyWidget * w)
+        {
+            w->updateProperty();
+            propertyChanged(w->property());
+        });
+    }
+
+    l0->addStretch(2);
+}
+
 
 } // namespace GUI
 } // namespace CSMOD
-
-#endif // CSMOD_GUI_BASE_H

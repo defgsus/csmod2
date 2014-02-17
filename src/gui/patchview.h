@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 }
 #endif
 
+class QHBoxLayout;
 
 namespace CSMOD {
 namespace GUI {
@@ -76,7 +77,7 @@ public:
     /** update all cable positions */
     void updateCables();
     /** update all cables connected to this module */
-    void updateCables(CSMOD::Module * mod);
+    void updateCables(Module * mod);
 
     /** update all Connector values */
     void updateValueDisplays();
@@ -84,6 +85,11 @@ public:
     /** Starts or stops automatic value update.
         A value of 0 will stop the automatic update. */
     void setValueUpdateInterval(int milliseconds);
+
+    // ------------- functionallity --------------------
+
+    void openProperties(Module * mod);
+    void closeProperties();
 
 signals:
 
@@ -135,10 +141,17 @@ protected:
 
     std::stringstream infostream_;
 
+    QTimer update_timer_;
+
+    // --- widgets ---
+
+    QHBoxLayout * layout_;
     ModuleStockMenu * stockmenu_;
+    PropertiesView * propview_;
+    Module * propmodule_;
+
     QLabel * infoLabel_;
 
-    QTimer update_timer_;
 };
 
 

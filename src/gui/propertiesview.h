@@ -18,26 +18,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_GUI_BASE_H
-#define CSMOD_GUI_BASE_H
+#ifndef CSMOD_GUI_PROPERTIESVIEW_H
+#define CSMOD_GUI_PROPERTIESVIEW_H
 
-#include "mod/base.h"
+#include <QWidget>
+
+#include "base.h"
 
 namespace CSMOD {
 namespace GUI {
 
-    // forwards
-    class PatchGraphicsView;
-    class ModuleItem;
-    class ConnectorItem;
-    class CableItem;
-    class ValueEditItem;
-    class ModuleStockMenu;
-    class PropertyWidget;
-    class PropertiesView;
-    class PatchView;
+class PropertiesView : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit PropertiesView(Properties * prop, QWidget *parent = 0);
+
+signals:
+
+    void propertyChanged(Property * prop);
+
+public slots:
+
+protected:
+    Properties * props_;
+};
+
 
 } // namespace GUI
 } // namespace CSMOD
 
-#endif // CSMOD_GUI_BASE_H
+#endif // CSMOD_GUI_PROPERTIESVIEW_H

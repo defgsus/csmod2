@@ -43,6 +43,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "cableitem.h"
 #include "patchgraphicsview.h"
 #include "modulestockmenu.h"
+#include "propertiesview.h"
+
 
 namespace CSMOD {
 namespace GUI {
@@ -51,7 +53,9 @@ PatchView::PatchView(QWidget *parent) :
     QFrame(parent),
     model_  (0),
     patch_  (0),
-    pview_  (0)
+    pview_  (0),
+    propview_(0),
+    propmodule_(0)
 {
     CSMOD_DEBUGF("PatchView::PatchView(" << parent << ")");
 
@@ -73,10 +77,14 @@ PatchView::PatchView(QWidget *parent) :
         model_->createModule(patch_, idName);
     });
 
-    // layout
-    auto l0 = new QVBoxLayout(this);
-    l0->setContentsMargins(lineWidth(), lineWidth(),
-                           lineWidth(), lineWidth());
+    // horiz layout for properties
+    layout_ = new QHBoxLayout(this);
+    layout_->setContentsMargins(lineWidth(), lineWidth(),
+                               lineWidth(), lineWidth());
+
+    // vert layout
+    auto l0 = new QVBoxLayout;
+    layout_->addLayout(l0);
 
         // --- toolbar ---
         auto tb = new QToolBar(this);
@@ -228,7 +236,8 @@ void PatchView::updateFromPatch()
             mitem = createModuleItem_(m);
         }
 
-        // update TODO
+        // update connectors and such
+        mitem->updateFromModule();
     }
 
     // remove all ModuleItems that are not needed
@@ -280,6 +289,39 @@ void PatchView::updateFromPatch()
     }
 
     updateCables();
+}
+
+
+
+// ------------- functionallity --------------------
+
+void PatchView::openProperties(Module * mod)
+{
+    if (propview_) closeProperties();
+
+    // remember module
+    propmodule_ = mod;
+    // create properties view
+    propview_ = new PropertiesView(&mod->properties(), this);
+    layout_->addWidget(propview_);
+    // get signals
+    connect(propview_, &PropertiesView::propertyChanged, [this](Property *)
+    {
+        // XXX We simply signal that any one Property has changed
+        if (propmodule_)
+            model_->applyProperties(propmodule_);
+    });
+}
+
+void PatchView::closeProperties()
+{
+    if (propview_)
+    {
+        layout_->removeWidget(propview_);
+        delete propview_;
+        propview_ = 0;
+    }
+    propmodule_ = 0;
 }
 
 

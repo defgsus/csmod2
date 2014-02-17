@@ -18,16 +18,51 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "propertyview.h"
+#ifndef CSMOD_GUI_PROPERTYWIDGET_H
+#define CSMOD_GUI_PROPERTYWIDGET_H
+
+#include <QWidget>
+#include <QVBoxLayout>
+
+#include "base.h"
 
 namespace CSMOD {
 namespace GUI {
 
-PropertyView::PropertyView(QWidget *parent) :
-    QWidget(parent)
+class PropertyWidget : public QWidget
 {
-}
+    Q_OBJECT
+public:
+    PropertyWidget(Property * prop, QWidget *parent = 0);
+
+    Property * property() { return prop_; }
+
+signals:
+
+    void userInput(PropertyWidget * prop);
+
+public slots:
+
+    virtual void updateWidget() = 0;
+    virtual void updateProperty() = 0;
+
+protected:
+
+    void issueEdited() { userInput(this); }
+
+    QVBoxLayout * layout_;
+    Property * prop_;
+};
+
+
+template <class T>
+class ValuePropertyWidget;
+
+template <class T>
+class ListPropertyWidget;
 
 
 } // namespace GUI
 } // namespace CSMOD
+
+#endif // CSMOD_GUI_PROPERTYWIDGET_H

@@ -18,30 +18,41 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_GUI_PROPERTYVIEW_H
-#define CSMOD_GUI_PROPERTYVIEW_H
+#include "propertywidget.h"
 
-#include <QWidget>
+#include <QLabel>
+#include <QLayout>
 
-#include "base.h"
+#include "log.h"
+#include "mod/property.h"
 
 namespace CSMOD {
 namespace GUI {
 
-class PropertyView : public QWidget
+
+
+PropertyWidget::PropertyWidget(Property * prop, QWidget *parent) :
+    QWidget(parent),
+    prop_   (prop)
 {
-    Q_OBJECT
-public:
-    explicit PropertyView(QWidget *parent = 0);
+    CSMOD_DEBUGF("PropertyWidget::PropertyWidget(" << prop << ", " << parent << ")");
 
-signals:
+    layout_ = new QVBoxLayout(this);
 
-public slots:
+    auto label = new QLabel(QString::fromStdString(prop->name()), this);
+    layout_->addWidget(label);
+}
 
-};
+/*
+void PropertyWidget::leaveEvent(QEvent * event)
+{
+    CSMOD_DEBUGF("########" << prop_->idName());
+    QWidget::leaveEvent(event);
+}*/
+
+
+
 
 
 } // namespace GUI
 } // namespace CSMOD
-
-#endif // CSMOD_GUI_PROPERTYVIEW_H

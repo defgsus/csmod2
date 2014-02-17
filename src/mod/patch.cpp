@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "module.h"
 #include "modulestock.h"
 #include "dspgraph.h"
+#include "property.h"
 #include "module/dsp/audioout.h"
 
 namespace CSMOD {
@@ -152,6 +153,18 @@ bool Patch::restore(CSMOD::Io * io)
     }
 
     return true;
+}
+
+// -------------------- handling -----------------------
+
+void Patch::applyProperties(Module * mod)
+{
+    CSMOD_DEBUGF("Patch::applyProperties(" << mod << ")");
+
+    if (!mod->properties().changed()) return;
+
+    mod->applyProperties();
+    updateDspGraph();
 }
 
 

@@ -56,6 +56,9 @@ public:
 
     // --- gui ----
 
+    /** update Connectors, views and all kinds of subitems */
+    void updateFromModule();
+
     /** refresh the value displays */
     void updateValueDisplays();
 
@@ -70,6 +73,7 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
     /* TODO virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *);
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);

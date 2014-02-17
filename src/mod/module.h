@@ -113,7 +113,7 @@ class Module
     const Properties& properties() const { return *props_; }
 
     /** Called after a property change, or after restore.
-        Check the Property::changed() flag to react to changes. */
+        Check the Property::accept() flag to react to changes. */
     virtual void applyProperties();
 
     // ------------- config ---------------------------

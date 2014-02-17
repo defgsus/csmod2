@@ -105,6 +105,11 @@ void ModuleItem::setInfo(const String& info)
 }
 
 
+void ModuleItem::updateFromModule()
+{
+    updateFromModule_(module_);
+}
+
 void ModuleItem::updateFromModule_(CSMOD::Module * module)
 {
     CSMOD_DEBUGF("ModuleItem::updateFromModule_(" << module << ")");
@@ -195,6 +200,20 @@ void ModuleItem::paint(QPainter * p, const
 
 
 
+void ModuleItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * e)
+{
+    CSMOD_DEBUGE("ModuleItem::mouseDoubleClickEvent("
+                 << e->pos().x() << ", " << e->pos().y() << ", " << e->button() << ")");
+
+    // open object properties
+    if (e->button() == Qt::LeftButton)
+    {
+        view_->patchView()->openProperties(module_);
+        e->accept();
+        return;
+    }
+    QGraphicsRectItem::mousePressEvent(e);
+}
 
 void ModuleItem::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {

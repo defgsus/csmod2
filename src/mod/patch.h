@@ -60,6 +60,9 @@ public:
 
     // ----------- handling --------------
 
+    /** Updates the Module from changed Properties */
+    void applyProperties(Module * mod);
+
     // --------- modules -----------------
 
     /** Returns Module by id, or NULL */

@@ -50,7 +50,8 @@ SOURCES += \
     module/dsp/audioout.cpp \
     gui/valueedititem.cpp \
     mod/property.cpp \
-    gui/propertyview.cpp
+    gui/propertiesview.cpp \
+    gui/propertywidget.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -80,7 +81,9 @@ HEADERS += \
     gui/valueedititem.h \
     mod/property.h \
     gui/base.h \
-    gui/propertyview.h
+    gui/propertiesview.h \
+    gui/propertywidget.h \
+    gui/propertywidget_impl.h
 
 ######### MODULES ########
 

@@ -30,8 +30,7 @@ namespace CSMOD {
 
 Property::Property(const String& id, const String& name)
     :   idName_     (id),
-        name_       (name),
-        changed_    (true)
+        name_       (name)
 {
     CSMOD_DEBUGF("Property::Property(" << id << ", " << name << ")");
 }
@@ -73,6 +72,13 @@ Property* Properties::add(Property * p)
     props_.push_back(p);
 
     return p;
+}
+
+bool Properties::changed() const
+{
+    for (auto p : props_)
+        if (p->changed()) return true;
+    return false;
 }
 
 
@@ -120,7 +126,6 @@ bool Properties::restore(Io * io)
                 CSMOD_IO_ERROR("could not restore Property '" << id << "'");
                 return false;
             }
-            prop->setChanged();
         }
 
         io->leaveSection();

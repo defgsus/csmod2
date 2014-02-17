@@ -51,6 +51,7 @@ class Connector;
 class DspConnector;
 class Connection;
 class Property;
+class Properties;
 
 typedef std::vector<Module*> Modules;
 typedef std::vector<Connector*> Connectors;
