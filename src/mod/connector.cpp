@@ -171,7 +171,7 @@ void DspConnector::updateDspStorage_()
         dsp_block_.resize(blockSize_);
         dsp_block_ptr_ = &dsp_block_[0];
         // multiple INs need to be summed
-        do_sum_dsp_inputs_ = (dir() == IN);
+        do_sum_dsp_inputs_ = (dir() == IN && numConnections() > 1);
     }
     // single input connectors can reuse the
     // storage of another output
