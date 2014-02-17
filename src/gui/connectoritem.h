@@ -23,25 +23,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsRectItem>
 
+#include "mod/base.h"
+
 namespace CSMOD { class Connector; }
 
 class ModuleItem;
 class PatchGraphicsView;
+class QGraphicsTextItem;
 
 class ConnectorItem : public QGraphicsRectItem
 {
 public:
     explicit ConnectorItem(ModuleItem * parent, CSMOD::Connector * con);
 
+    /** Sets PatchView info field. */
     void setInfo(const std::string& info);
 
+    /** Returns assigned CSMOD::Connector instance. */
     CSMOD::Connector * connector() const { return con_; }
 
-    /** return point for connection in scene coords */
+    /** Returns point for connection in scene coords. */
     QPointF sceneConnectPoint() const;
 
-    /** see if connectors match and set internal state. */
+    /** Checks if connectors match. */
     void matchConnector(CSMOD::Connector * con);
+
+    /** Does Connector have a value input textfield */
+    bool hasValueInput() const;
+
+    /** Does Connector display it's value. */
+    bool hasValueDisplay() const;
 
 protected:
 
@@ -57,8 +68,13 @@ protected:
     CSMOD::Connector * con_;
     PatchGraphicsView * view_;
 
+    QGraphicsSimpleTextItem * tname_;
+    QGraphicsTextItem * tvalue_;
+
     bool is_con_,
         matches_;
+
+    QString last_value_;
 };
 
 #endif // CONNECTORITEM_H

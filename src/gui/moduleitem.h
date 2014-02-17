@@ -60,10 +60,6 @@ public slots:
 
 protected:
 
-    virtual void updateFromModule_(CSMOD::Module * module);
-
-    void deleteChildItems_();
-
     // ------------------- paint -------------------------
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -78,11 +74,24 @@ protected:
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
     */
+    //
+
+protected:
+
+    virtual void updateFromModule_(CSMOD::Module * module);
+
+    void deleteChildItems_();
+
+    // _____________ PROTECTED MEMBER _________
+
     CSMOD::Module * module_;
     PatchGraphicsView * view_;
 
     Action action_;
 
+    // --- gui stuff ---
+
+    QGraphicsSimpleTextItem * tlabel_;
 };
 
 #endif // MODULEITEM_H

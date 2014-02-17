@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <string>
 #include <vector>
 
+/** @todo What kind of string to use anyway? */
+#include <QString>
+
 #include "mod/base.h"
 
 namespace CSMOD {
@@ -52,7 +55,7 @@ class Connector
     { }
     virtual ~Connector();
 
-    // ------ getter ---------
+    // ------ info ---------
 
     /** Module, this Connector belongs to */
     Module * module() const { return module_; }
@@ -67,6 +70,8 @@ class Connector
     std::string longIdName() const;
     /** Returns moduleName.connectorName */
     std::string longName() const;
+
+    virtual bool isDsp() const { return false; }
 
     // -------- connections -------------
 
@@ -96,6 +101,11 @@ class Connector
 
     /** read access to the list of connected modules */
     const Modules& modules() const { return modules_; }
+
+    // ------------- values --------------
+
+    /** Reimplement and return textual representation of current value. */
+    virtual QString valueQString() const { return "-"; }
 
     // ------------- debug ---------------
 
@@ -136,6 +146,10 @@ public:
     virtual bool isConnectable(Connector * other) const
     { return (dir() != other->dir() && dynamic_cast<ValueConnector*>(other) != 0); }
 
+    // ------------- values --------------
+
+    virtual QString valueQString() const { return QString::number(value_, 'g', 4); }
+
     csfloat value() const { return value_; }
     void value(csfloat v) { value_ = v; }
 
@@ -151,16 +165,20 @@ public:
     DspConnector(Module * module, Direction dir,
                  const std::string& idname, const std::string& name);
 
+    // ------------ info ----------------
+
+    bool isDsp() const { return true; }
+
     size_t blockSize() const { return blockSize_; }
     void setBlockSize(size_t size);
 
     virtual bool isConnectable(Connector * other) const
     { return (dir() != other->dir() && dynamic_cast<DspConnector*>(other) != 0); }
 
-    /** add the Connector to the list of connections. */
-    virtual bool connectTo(Connector *con);
-    /** remove the Connector from the list of connections. */
-    virtual bool disconnectFrom(Connector *con);
+    // -------------- value -----------------
+
+    /** Returns average of dsp block */
+    virtual QString valueQString() const { return QString::number(blockAverage(),'g',4); }
 
     // ------------- runtime ----------------
 
@@ -172,6 +190,9 @@ public:
     const csfloat * block() const { return dsp_block_ptr_; }
     /** write access to the dsp block */
     csfloat * block() { return dsp_block_ptr_; }
+
+    /** Returns average of dsp block */
+    csfloat blockAverage() const;
 
     // ------------- debug ---------------
 

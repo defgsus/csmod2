@@ -146,19 +146,21 @@ void DspConnector::setBlockSize(size_t size)
     updateDspStorage_();
 }
 
-bool DspConnector::connectTo(Connector * con)
+
+// ----------------------- value ------------------------
+
+csfloat DspConnector::blockAverage() const
 {
-    if (!Connector::connectTo(con)) return false;
-    //updateDspStorage_();
-    return true;
+    if (!dsp_block_ptr_ || !blockSize_) return 0.f;
+
+    csfloat sum = 0.f;
+    for (size_t i=0; i<blockSize_; ++i)
+        sum += dsp_block_ptr_[i];
+
+    return sum / blockSize_;
 }
 
-bool DspConnector::disconnectFrom(Connector * con)
-{
-    if (!Connector::disconnectFrom(con)) return false;
-    //updateDspStorage_();
-    return true;
-}
+// ---------------------- runtime -----------------------
 
 void DspConnector::updateDspStorage_()
 {
@@ -182,7 +184,7 @@ void DspConnector::updateDspStorage_()
         // clear storage memory
         csfloats tmp; tmp.swap(dsp_block_);
 
-        // point to the connected output Connector
+        // point to the incomming output Connector
         auto dspcon = dynamic_cast<DspConnector*>(cons_[0]);
         if (dspcon)
             dsp_block_ptr_ = &dspcon->dsp_block_[0];

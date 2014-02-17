@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QBrush>
 #include <QPainter>
+#include <QGraphicsTextItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
 
@@ -38,7 +39,8 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
         con_            (con),
         view_           (parent->view()),
         is_con_         (false),
-        matches_        (false)
+        matches_        (false),
+        last_value_     (-1)
 {
     CSMOD_DEBUGF("ConnectorItem::ConnectorItem(" << parent << ", " << con << ")");
 
@@ -50,6 +52,35 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
 
     setBrush(QBrush(QColor(50,50,50)));
     setRect(0,0, 10, 10);
+
+    // XXX no real strategy right now for handling connector labels
+
+    // name label
+    tname_ = new QGraphicsSimpleTextItem(QString::fromStdString(con_->name()), this);
+    tname_->setY(-rect().height()*2/3);
+    tname_->setX(con_->dir() == CSMOD::Connector::IN?
+                      12 :
+                      -(tname_->boundingRect().width())
+                      );
+    tname_->setBrush(QBrush(QColor(155,200,155)));
+
+    if (hasValueDisplay())
+    {
+        // value label
+        tvalue_ = new QGraphicsTextItem(con_->valueQString(), this);
+        tvalue_->setDefaultTextColor(QColor(200,200,200));
+        tvalue_->setY(tname_->boundingRect().y());
+        tvalue_->setX(con_->dir() == CSMOD::Connector::IN?
+                          12 :
+                          -(tvalue_->boundingRect().width())
+                          );
+        // input editable
+        if (hasValueInput())
+        {
+            tvalue_->setTextInteractionFlags(Qt::TextEditorInteraction);
+            tvalue_->setTabChangesFocus(true);
+        }
+    }
 }
 
 void ConnectorItem::setInfo(const std::string& info)
@@ -71,6 +102,19 @@ void ConnectorItem::matchConnector(CSMOD::Connector * con)
                 con_->isConnectable(con);
 }
 
+// ---------------- info ------------------------
+
+bool ConnectorItem::hasValueInput() const
+{
+    return ( (con_->dir() == CSMOD::Connector::IN)
+             && (!con_->isDsp())
+             );
+}
+
+bool ConnectorItem::hasValueDisplay() const
+{
+    return true; //(con_->dir() == CSMOD::Connector::OUT);
+}
 
 // ---------------------- paint ---------------------------
 
@@ -88,6 +132,20 @@ void ConnectorItem::paint(QPainter *p, const QStyleOptionGraphicsItem * /*option
                        50 + isSelected() * 100
                        ));
     p->drawRect(rect());
+
+    // udpate value display
+    if (hasValueDisplay() && !hasValueInput())
+    {
+        QString v = con_->valueQString();
+        if (v != last_value_)
+        {
+            tvalue_->setPlainText(v);
+            // update alignment
+            if (con_->dir() == CSMOD::Connector::OUT)
+                tvalue_->setX(-(tvalue_->boundingRect().width()));
+        }
+        last_value_ = v;
+    }
 }
 
 // ---------------------- events --------------------------

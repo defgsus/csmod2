@@ -41,6 +41,7 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
         view_   (view),
         action_ (A_NOTHING)
 {
+    //setAcceptHoverEvents(true);
 
     setFlags(
 //        QGraphicsItem::ItemIsMovable
@@ -51,6 +52,8 @@ ModuleItem::ModuleItem(CSMOD::Module * module,
         //| QGraphicsItem::ItemSendsGeometryChanges
         //| QGraphicsItem::ItemSendsScenePositionChanges
                 );
+
+    // --- default child items ---
 
     updateFromModule_(module);
 
@@ -109,7 +112,16 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
     if (!module_) return;
 
     int width = 100;
+    int ystart = 23;
+    int conspace = 23;
 
+    // -- label --
+    tlabel_ = new QGraphicsSimpleTextItem(this);
+    tlabel_->setText(QString::fromStdString(module_->idName()));
+    tlabel_->setPos((width - tlabel_->boundingRect().width())/2, 4);
+    tlabel_->setBrush(QBrush(QColor(255,255,255)));
+
+    // -- connectors --
     int num_in = 0, num_out = 0;
     for (size_t i=0; i<module_->connectors().size(); ++i)
     {
@@ -118,21 +130,18 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
 
         if (c->dir() == CSMOD::Connector::IN)
         {
-            ci->setPos(0, 10 + num_in * 15);
+            ci->setPos(0, ystart + num_in * conspace);
             ++num_in;
         }
         else
         {
-            ci->setPos(width - 10, 10 + num_out * 15);
+            ci->setPos(width - 10, ystart + num_out * conspace);
             ++num_out;
         }
     }
 
-    setRect(0,0,width, std::max(num_in, num_out) * 15 + 20);
+    setRect(0,0,width, std::max(num_in, num_out) * conspace + ystart + 2);
 
-    auto text = new QGraphicsTextItem(QString::fromStdString(module_->idName()), this);
-    text->moveBy(10,0);//(width - text->textWidth())/2,0);
-    text->setDefaultTextColor(QColor(255,255,255));
 }
 
 void ModuleItem::deleteChildItems_()
