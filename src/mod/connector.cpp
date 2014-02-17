@@ -199,7 +199,7 @@ void DspConnector::updateDspStorage_()
     }
 }
 
-void DspConnector::sumDspInputs()
+void DspConnector::updateInputs()
 {
     // NOTE: We don't use dynamic_cast
     // because we assume that all connected Connectors are

@@ -126,13 +126,14 @@ Connector* Module::add_(Connector * c)
     // keep in general list
     cons_.push_back(c);
 
-    // dsp inputs are kept additionaly
+    // inputs are kept additionaly
     if (c->dir() == Connector::IN)
-    if (auto dsp = dynamic_cast<DspConnector*>(c))
     {
-        dsp_inputs_.push_back(dsp);
-        is_dsp_ = true;
+        inputs_.push_back(c);
     }
+
+    // check for dsp connectors
+    is_dsp_ |= (dynamic_cast<DspConnector*>(c) != 0);
 
     return c;
 }
@@ -142,16 +143,16 @@ void Module::deleteConnectors_()
     for (auto c : cons_)
         delete c;
     cons_.clear();
-    dsp_inputs_.clear();
+    inputs_.clear();
 }
 
 // -------------- runtime ------------
 
-void Module::sumDspInputs()
+void Module::updateInputs()
 {
-    for (auto c : dsp_inputs_)
+    for (auto c : inputs_)
     {
-        c->sumDspInputs();
+        c->updateInputs();
     }
 }
 

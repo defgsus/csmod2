@@ -255,14 +255,14 @@ bool Model::disconnect(Connection * con)
 
 // ------------- connector handling -----------------
 
-bool Model::setConnectorValue(Connector * con, csfloat value)
+bool Model::setConnectorUserValue(Connector * con, csfloat value)
 {
-    CSMOD_DEBUGF("Model::setConnectorValue(" << con << ", " << value << ")");
+    CSMOD_DEBUGF("Model::setConnectorUserValue(" << con << ", " << value << ")");
 
     if (auto v = dynamic_cast<ValueConnector*>(con))
     {
         CSMOD_MODEL_LOCK;
-        v->value(value);
+        v->userValue(value);
         return true;
     }
     return false;

@@ -99,9 +99,9 @@ public:
 
     // -------- connector handling --------
 
-    /** Sets a value for an input connector.
-        If the Connector can't set a value, false is returned. */
-    bool setConnectorValue(Connector * con, csfloat value);
+    /** Sets a user value for an input connector.
+        If the Connector can't set a user value, false is returned. */
+    bool setConnectorUserValue(Connector * con, csfloat value);
 
 private:
 

@@ -107,6 +107,12 @@ class Connector
     /** Reimplement and return textual representation of current value. */
     virtual QString valueQString() const { return "-"; }
 
+    // --------------- runtime -----------
+
+    /** When this is called, all outputs leading to this input
+        are evaluated and can be summed up. */
+    virtual void updateInputs() = 0;
+
     // ------------- debug ---------------
 
     virtual void debug_dump();
@@ -141,7 +147,8 @@ public:
     ValueConnector(Module * module, Direction dir,
                    const std::string& idname, const std::string& name)
         : Connector (module, dir, idname, name),
-          value_    (0.f)
+          value_    (0),
+          userValue_(0)
     { }
 
     virtual bool isConnectable(Connector * other) const
@@ -154,8 +161,24 @@ public:
     csfloat value() const { return value_; }
     void value(csfloat v) { value_ = v; }
 
+    csfloat userValue() const { return userValue_; }
+    void userValue(csfloat v) { userValue_ = v; }
+
+    // ----------- runtime ---------------
+
+    /** Sums all inputs into value_ */
+    virtual void updateInputs()
+    {
+        if (dir_ != IN) return;
+        value_ = userValue_;
+        for (auto c : cons_)
+        {
+            value_ += static_cast<ValueConnector*>(c)->value();
+        }
+    }
+
 protected:
-    csfloat value_;
+    csfloat value_, userValue_;
 };
 
 
@@ -185,7 +208,7 @@ public:
 
     /** This will sum the dspblocks of multiple input Connectors.
         For outputs or single inputs this does nothing. */
-    void sumDspInputs();
+    void updateInputs();
 
     /** read access to the dsp block */
     const csfloat * block() const { return dsp_block_ptr_; }

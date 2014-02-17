@@ -81,7 +81,7 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
             // callback from value input
             tvalue_->setValueChanged([this](double v)
             {
-                moduleItem_->view()->model()->setConnectorValue(con_, v);
+                moduleItem_->view()->model()->setConnectorUserValue(con_, v);
             });
         }
     }

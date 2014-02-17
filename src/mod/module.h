@@ -123,9 +123,9 @@ class Module
 
     // ---------------- runtime -----------------------
 
-    /** Prepare storage (if any) in input DspConnectors.
-        This will be called before each dspStep(). */
-    virtual void sumDspInputs();
+    /** Sums up value inputs or prepares storage (if any) in input DspConnectors.
+        This will be called before each step()/dspStep(). */
+    virtual void updateInputs();
 
     /** execute action for one dsp block */
     virtual void dspStep() = 0;
@@ -166,8 +166,8 @@ class Module
 
     /** all Connectors of this module */
     std::vector<Connector*> cons_;
-    /** DspConnector inputs that need to be summed */
-    std::vector<DspConnector*> dsp_inputs_;
+    /** Connector inputs that need to be summed */
+    std::vector<Connector*> inputs_;
 
     std::string
     /** derived classes name */
