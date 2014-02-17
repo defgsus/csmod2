@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsView>
 
+#include "base.h"
+
 
 #ifndef CSMOD_PATCH_INFO
 #define CSMOD_PATCH_INFO(arg__) \
@@ -63,7 +65,7 @@ public:
     PatchView * patchView() const { return view_; }
     CSMOD::Model * model() const { return model_; }
 
-    void setInfo(const std::string& info);
+    void setInfo(const String& info);
 
     // -------- for dragging cables -----------
 

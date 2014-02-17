@@ -56,7 +56,7 @@ class Module
         when loading the patch to determine the class to instantiate.
         <p>Both parameters get their whitespace or unknown chars
         replaced by an underscore.</p> */
-    Module(const std::string& idName, const std::string& className);
+    Module(const String& idName, const String& className);
 
     virtual ~Module();
 
@@ -73,13 +73,13 @@ class Module
     // -------------- info ----------------------------
 
     /** Returns the name of the derived class */
-    const std::string& className() const { return className_; }
+    const String& className() const { return className_; }
 
     /** Returns the <b>global unique</b> ID of the Module */
-    const std::string& idName() const { return idName_; }
+    const String& idName() const { return idName_; }
 
     /** returns the user-defined name */
-    const std::string& name() const;
+    const String& name() const;
 
     /** return Patch, this Module belongs to */
     Patch * patch() const { return patch_; }
@@ -92,7 +92,7 @@ class Module
     // ------------ basic settings --------------------
 
     /** set a new user name */
-    void name(const std::string& name);
+    void name(const String& name);
 
     // ------------ initializers ----------------------
 
@@ -100,7 +100,7 @@ class Module
     // ------------- connectors -----------------------
 
     /** Returns the Connector matching the id, or NULL if not present. */
-    Connector * findConnector(const std::string& idName);
+    Connector * findConnector(const String& idName);
 
     /** Read-access to all Connectors of this module. */
     const std::vector<Connector*>& connectors() const { return cons_; }
@@ -182,7 +182,7 @@ class Module
     /** Connector inputs that need to be summed */
     std::vector<Connector*> inputs_;
 
-    std::string
+    String
     /** derived classes name */
         className_,
     /** patch unique id */

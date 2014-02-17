@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsRectItem>
 
-#include "mod/base.h"
+#include "base.h"
 
 class ValueEditItem;
 
@@ -39,7 +39,7 @@ public:
     explicit ConnectorItem(ModuleItem * parent, CSMOD::Connector * con);
 
     /** Sets PatchView info field. */
-    void setInfo(const std::string& info);
+    void setInfo(const String& info);
 
     /** Returns assigned CSMOD::Connector instance. */
     CSMOD::Connector * connector() const { return con_; }

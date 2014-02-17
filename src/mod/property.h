@@ -38,14 +38,14 @@ class Property
 public:
     // ----------- ctor ------------
 
-    Property(const std::string& id, const std::string& name);
+    Property(const String& id, const String& name);
 
     virtual ~Property() { }
 
     // --------- info --------------
 
-    const std::string& idName() const { return idName_; }
-    const std::string& name() const { return name_; }
+    const String& idName() const { return idName_; }
+    const String& name() const { return name_; }
 
     bool changed() const { return changed_; }
     bool accept() { if (changed_) { changed_ = false; return true; } else return false; }
@@ -58,7 +58,7 @@ public:
 
 private:
 
-    std::string idName_, name_;
+    String idName_, name_;
 
     bool changed_;
 };
@@ -75,7 +75,7 @@ public:
 
     // -------- access -------------
 
-    Property * find(const std::string& idName_);
+    Property * find(const String& idName_);
 
     Property * operator[] (size_t index) { return props_[index]; }
     const Property * operator[] (size_t index) const { return props_[index]; }
@@ -97,7 +97,7 @@ class ValueProperty : public Property
 public:
     // ----------- ctor ------------
 
-    ValueProperty(const std::string& id, const std::string& name,
+    ValueProperty(const String& id, const String& name,
                 const T& value)
         :   Property(id, name),
             value_  (value),
@@ -105,7 +105,7 @@ public:
             limit_  (false)
     { }
 
-    ValueProperty(const std::string& id, const std::string& name,
+    ValueProperty(const String& id, const String& name,
                 const T& value, const T& minvalue, const T& maxvalue)
         :   Property(id, name),
             value_  (std::max(minvalue,std::min(maxvalue, value ))),

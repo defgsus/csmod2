@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     //testAudio(); return 0;
     //CSMOD::testIo(); return 0;
     /*
-    std::string s("bla"), s2(s);
+    String s("bla"), s2(s);
     CSMOD::increase_number(s2, 0);
     std::cout << s << ": " << s2 << std::endl;
     return 0;

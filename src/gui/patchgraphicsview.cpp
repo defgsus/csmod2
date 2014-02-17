@@ -55,7 +55,7 @@ PatchGraphicsView::~PatchGraphicsView()
     CSMOD_DEBUGF("PatchGraphicsView::~PatchGraphicsView()");
 }
 
-void PatchGraphicsView::setInfo(const std::string& info)
+void PatchGraphicsView::setInfo(const String& info)
 {
     view_->setInfo(info);
 }

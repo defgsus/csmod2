@@ -53,7 +53,7 @@ CableItem::CableItem(CSMOD::Connection * con,
 
 }
 
-void CableItem::setInfo(const std::string& info)
+void CableItem::setInfo(const String& info)
 {
     view_->setInfo(info);
 }

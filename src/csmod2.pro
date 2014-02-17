@@ -77,7 +77,8 @@ HEADERS += \
     module/dsp/audioout.h \
     doc.h \
     gui/valueedititem.h \
-    mod/property.h
+    mod/property.h \
+    gui/base.h
 
 ######### MODULES ########
 

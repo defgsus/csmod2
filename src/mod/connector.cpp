@@ -33,12 +33,12 @@ Connector::~Connector()
 
 // --------------- info -------------
 
-std::string Connector::longIdName() const
+String Connector::longIdName() const
 {
     return module_->idName() + "." + idName_;
 }
 
-std::string Connector::longName() const
+String Connector::longName() const
 {
     return module_->name() + "." + name_;
 }
@@ -130,7 +130,7 @@ void Connector::debug_dump()
 // ------------------------ DspConnector ---------------------------
 
 DspConnector::DspConnector(Module * module, Direction dir,
-                           const std::string& idname, const std::string& name)
+                           const String& idname, const String& name)
     : Connector         (module, dir, idname, name),
       blockSize_        (0),
       dsp_block_ptr_    (0),

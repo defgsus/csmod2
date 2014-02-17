@@ -48,7 +48,7 @@ ModuleStock & ModuleStock::instance()
     return *instance_;
 }
 
-Module * ModuleStock::getModule(const std::string& className)
+Module * ModuleStock::getModule(const String& className)
 {
     CSMOD_DEBUGF("ModuleStock::getModule(\"" << className << "\")");
 
@@ -61,7 +61,7 @@ Module * ModuleStock::getModule(const std::string& className)
     return i->second->cloneClass();
 }
 
-const Module * ModuleStock::inspectModule(const std::string& className) const
+const Module * ModuleStock::inspectModule(const String& className) const
 {
     CSMOD_DEBUGF("ModuleStock::inspectModule(\"" << className << "\")");
 
@@ -74,7 +74,7 @@ const Module * ModuleStock::inspectModule(const std::string& className) const
     return i->second;
 }
 
-void ModuleStock::getClassNames(std::vector<std::string>& classNames) const
+void ModuleStock::getClassNames(std::vector<String>& classNames) const
 {
     CSMOD_DEBUGF("ModuleStock::getClassNames(...)");
 
@@ -100,7 +100,7 @@ bool ModuleStock::registerModule(Module * mod)
     return true;
 }
 
-bool ModuleStock::addDll(const std::string& filename)
+bool ModuleStock::addDll(const String& filename)
 {
     CSMOD_DEBUGF("ModuleStock::addDll(\"" << filename << "\")");
 

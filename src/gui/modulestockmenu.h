@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QMenu>
 
+#include "base.h"
+
 /** A menu containg all Modules. */
 class ModuleStockMenu : public QMenu
 {
@@ -36,7 +38,7 @@ public:
 
 signals:
     /** signal when a module was selected. */
-    void moduleSelected(const std::string& idName);
+    void moduleSelected(const String& idName);
 
 public slots:
 

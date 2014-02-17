@@ -18,43 +18,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#include "modulestockmenu.h"
+#ifndef CSMOD_GUI_BASE_H
+#define CSMOD_GUI_BASE_H
 
-#include "log.h"
-#include "mod/module.h"
-#include "mod/modulestock.h"
+#include "mod/base.h"
 
-ModuleStockMenu::ModuleStockMenu(QWidget *parent) :
-    QMenu(parent)
-{
-    CSMOD_DEBUGF("ModuleStockMenu::ModuleStockMenu(" << parent << ")");
+typedef CSMOD::String String;
 
-    updateMenu();
-}
-
-void ModuleStockMenu::updateMenu()
-{
-    CSMOD_DEBUGF("ModuleStockMenu::updateMenu()");
-
-    clear();
-
-    // get all module names
-    std::vector<String> ids;
-    CSMOD::ModuleStock::instance().getClassNames(ids);
-
-    for (auto id : ids)
-    {
-        // get the module class
-        auto mod = CSMOD::ModuleStock::instance().inspectModule(id);
-
-        // create an action for each
-        auto act = new QAction(this);
-        act->setText(QString::fromStdString(mod->name()));
-        connect(act, &QAction::triggered, [=](bool)
-        {
-            moduleSelected(mod->className());
-        });
-        addAction(act);
-    }
-}
-
+#endif // CSMOD_GUI_BASE_H

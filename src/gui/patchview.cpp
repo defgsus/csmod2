@@ -66,7 +66,7 @@ PatchView::PatchView(QWidget *parent) :
     // setup stockmenu
     stockmenu_ = new ModuleStockMenu(this);
     connect(stockmenu_, &ModuleStockMenu::moduleSelected,
-            [=](const std::string& idName)
+            [=](const String& idName)
     {
         model_->createModule(patch_, idName);
     });
@@ -111,7 +111,7 @@ QSize PatchView::sizeHint() const
     return QSize(800,600);
 }
 
-void PatchView::setInfo(const std::string& str)
+void PatchView::setInfo(const String& str)
 {
     infoLabel_->setText(QString::fromStdString(str));
 }
@@ -154,7 +154,7 @@ bool PatchView::restore(CSMOD::Io * io)
         if (io->isSection("moditem"))
         {
             // get the ModuleItem meant by current section
-            std::string mid;
+            String mid;
             CSMOD_CHECKIO(io->read("id", mid), "could not find moduleitem id");
             auto mi = findModuleItem_(mid);
             if (!mi)
@@ -370,7 +370,7 @@ ModuleItem * PatchView::findModuleItem_(CSMOD::Module * mod)
     return 0;
 }
 
-ModuleItem * PatchView::findModuleItem_(const std::string& idName)
+ModuleItem * PatchView::findModuleItem_(const String& idName)
 {
     for (auto m : moduleitems_)
     {

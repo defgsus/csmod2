@@ -128,7 +128,7 @@ bool Patch::restore(CSMOD::Io * io)
         if (io->isSection("con"))
         {
             // get module/connector id's
-            std::string fm, fc, tm, tc;
+            String fm, fc, tm, tc;
             io->read("fm", fm);
             io->read("fc", fc);
             io->read("tm", tm);
@@ -167,7 +167,7 @@ bool Patch::hasModule(const Module * mod)
     return false;
 }
 
-Module * Patch::findModule(const std::string& idname)
+Module * Patch::findModule(const String& idname)
 {
     CSMOD_DEBUGF("Patch::getModule(" << idname << ")");
 

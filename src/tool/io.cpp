@@ -49,7 +49,7 @@ Io::~Io()
 
 // -------------- file io -----------------------
 
-bool Io::save(const std::string& filename)
+bool Io::save(const String& filename)
 {
     QFile f(QString::fromStdString(filename));
     if (!f.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -65,7 +65,7 @@ bool Io::save(const std::string& filename)
     return true;
 }
 
-bool Io::load(const std::string& filename)
+bool Io::load(const String& filename)
 {
     QFile f(QString::fromStdString(filename));
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -143,7 +143,7 @@ bool Io::readable() { return xmlr_; }
 
 // ------------------ sections ------------------
 
-bool Io::newSection(const std::string& name)
+bool Io::newSection(const String& name)
 {
     if (!xmlw_) return false;
     xmlw_->writeStartElement(QString::fromStdString(name));
@@ -166,12 +166,12 @@ bool Io::endSection()
     return true;
 }
 
-bool Io::isSection(const std::string& name) const
+bool Io::isSection(const String& name) const
 {
     return (name == cur_section_);
 }
 
-const std::string& Io::section() const
+const String& Io::section() const
 {
     return cur_section_;
 }
@@ -195,49 +195,49 @@ bool Io::leaveSection()
 
 // ----------------- data write -----------------
 
-bool Io::write(const std::string& key, const std::string& v)
+bool Io::write(const String& key, const String& v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::fromStdString(v));
     return true;
 }
 
-bool Io::write(const std::string& key, int v)
+bool Io::write(const String& key, int v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
     return true;
 }
 
-bool Io::write(const std::string& key, unsigned int v)
+bool Io::write(const String& key, unsigned int v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
     return true;
 }
 
-bool Io::write(const std::string& key, long int v)
+bool Io::write(const String& key, long int v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
     return true;
 }
 
-bool Io::write(const std::string& key, long unsigned int v)
+bool Io::write(const String& key, long unsigned int v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
     return true;
 }
 
-bool Io::write(const std::string& key, float v)
+bool Io::write(const String& key, float v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
     return true;
 }
 
-bool Io::write(const std::string& key, double v)
+bool Io::write(const String& key, double v)
 {
     if (!xmlw_) return false;
     xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
@@ -256,49 +256,49 @@ bool Io::write(const std::string& key, double v)
     } \
     const auto a = xmlr_->attributes().value(k__);
 
-bool Io::read(const std::string& key, std::string& v, const std::string& def) const
+bool Io::read(const String& key, String& v, const String& def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toString().toStdString();
     return true;
 }
 
-bool Io::read(const std::string& key, int& v, int def) const
+bool Io::read(const String& key, int& v, int def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toInt();
     return true;
 }
 
-bool Io::read(const std::string& key, unsigned int& v, unsigned int def) const
+bool Io::read(const String& key, unsigned int& v, unsigned int def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toUInt();
     return true;
 }
 
-bool Io::read(const std::string& key, long int& v, long int def) const
+bool Io::read(const String& key, long int& v, long int def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toInt();
     return true;
 }
 
-bool Io::read(const std::string& key, long unsigned int& v, long unsigned int def) const
+bool Io::read(const String& key, long unsigned int& v, long unsigned int def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toUInt();
     return true;
 }
 
-bool Io::read(const std::string& key, float& v, float def) const
+bool Io::read(const String& key, float& v, float def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toFloat();
     return true;
 }
 
-bool Io::read(const std::string& key, double& v, double def) const
+bool Io::read(const String& key, double& v, double def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toDouble();

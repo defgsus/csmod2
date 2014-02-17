@@ -47,7 +47,7 @@ class Connector
     };
 
     Connector(Module * module, Direction dir,
-              const std::string& idName, const std::string& name)
+              const String& idName, const String& name)
         :	module_	(module),
             dir_    (dir),
             idName_	(idName),
@@ -62,14 +62,14 @@ class Connector
     /** direction (input or output) */
     Direction dir() const { return dir_; }
     /** persistent global id */
-    const std::string& idName() const { return idName_; }
+    const String& idName() const { return idName_; }
     /** human-readable name */
-    const std::string& name() const { return name_; }
+    const String& name() const { return name_; }
 
     /** Returns moduleId.connectorId */
-    std::string longIdName() const;
+    String longIdName() const;
     /** Returns moduleName.connectorName */
-    std::string longName() const;
+    String longName() const;
 
     virtual bool isDsp() const { return false; }
 
@@ -127,7 +127,7 @@ class Connector
     /** direction in/out */
     Direction dir_;
 
-    std::string
+    String
     /** persistent name */
         idName_,
     /** user defined name */
@@ -145,7 +145,7 @@ class ValueConnector : public Connector
 {
 public:
     ValueConnector(Module * module, Direction dir,
-                   const std::string& idname, const std::string& name)
+                   const String& idname, const String& name)
         : Connector (module, dir, idname, name),
           value_    (0),
           userValue_(0)
@@ -187,7 +187,7 @@ class DspConnector : public Connector
 {
 public:
     DspConnector(Module * module, Direction dir,
-                 const std::string& idname, const std::string& name);
+                 const String& idname, const String& name);
 
     // ------------ info ----------------
 

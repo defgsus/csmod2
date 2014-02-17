@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 namespace CSMOD {
 
 
-void increase_number(std::string& str, int init)
+void increase_number(String& str, int init)
 {
     if (str.empty()) return;
 
@@ -59,7 +59,7 @@ void increase_number(std::string& str, int init)
 
 
 
-void checkIdName(std::string& str)
+void checkIdName(String& str)
 {
     for (auto i = str.begin(); i!=str.end(); ++i)
         if (*i <= ' ' || (unsigned char)*i >= 128)

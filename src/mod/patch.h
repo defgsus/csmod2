@@ -55,15 +55,15 @@ public:
 
     // ------------ info -----------------
 
-    const std::string& idName() const { return idName_; }
-    const std::string& name() const { return name_; }
+    const String& idName() const { return idName_; }
+    const String& name() const { return name_; }
 
     // ----------- handling --------------
 
     // --------- modules -----------------
 
     /** Returns Module by id, or NULL */
-    Module * findModule(const std::string& idname);
+    Module * findModule(const String& idname);
 
     /** Sees if that instance is already there */
     bool hasModule(const Module * m);
@@ -139,7 +139,7 @@ protected:
 
     // ----------- id --------------------
 
-    std::string
+    String
         idName_,
         name_;
 

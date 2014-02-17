@@ -21,9 +21,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef AUDIODEVICE_H
 #define AUDIODEVICE_H
 
-#include <string>
 #include <vector>
 #include <functional>
+
+#include "mod/base.h"
 
 namespace CSMOD {
 
@@ -118,7 +119,7 @@ public:
     bool playing() const { return play_; }
 
     /** name of the audio device */
-    const std::string& name() const { return name_; }
+    const String& name() const { return name_; }
     /** host-os index of the selected device */
     size_t deviceId() const { return deviceId_; }
     /** number of channel in input */
@@ -191,7 +192,7 @@ private:
         chanIn_,
         chanOut_;
 
-    std::string name_;
+    String name_;
 
     volatile bool ok_, play_;
 

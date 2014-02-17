@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <vector>
 #include <map>
 
+#include "base.h"
+
 /** Macro for registering a Module at runtime.
     <p>Place this somewhere in the .cpp file in the
     same namespace as your class:</p>
@@ -91,19 +93,19 @@ public:
     size_t numModules() const { return modules_.size(); }
 
     /** Returns a fresh instance, or NULL if not found. */
-    Module * getModule(const std::string& className);
+    Module * getModule(const String& className);
 
     /** Returns a pointer to the module instance without
         making a copy, or NULL if not found. */
-    const Module * inspectModule(const std::string& className) const;
+    const Module * inspectModule(const String& className) const;
 
     /** pushes all ClassNames on the vector. */
-    void getClassNames(std::vector<std::string>& classNames) const;
+    void getClassNames(std::vector<String>& classNames) const;
 
     // ---------- register modules at runtime --
 
     /** add a dll to the stock */
-    bool addDll(const std::string& filename);
+    bool addDll(const String& filename);
 
     /** Registers a Module. Ownership is taken.
         <p>return-value signifies success. although it's not irrelevant
@@ -120,7 +122,7 @@ private:
     std::vector<void*> dlls_;
 
     /** List of all constructed modules, ready to copy themselves. */
-    std::map<std::string, Module*> modules_;
+    std::map<String, Module*> modules_;
 };
 
 } // namespace CSMOD

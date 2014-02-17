@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QGraphicsItem>
 
+#include "base.h"
+
 namespace CSMOD { class Module; class Connector; class Io; }
 
 class PatchGraphicsView;
@@ -48,7 +50,7 @@ public:
     CSMOD::Module * module() const { return module_; }
     PatchGraphicsView * view() const { return view_; }
 
-    void setInfo(const std::string& info);
+    void setInfo(const String& info);
 
     // -------- selection / highlighting ---------------
 

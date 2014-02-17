@@ -96,7 +96,7 @@ bool ModuleItem::restore(CSMOD::Io * io)
 }
 
 
-void ModuleItem::setInfo(const std::string& info)
+void ModuleItem::setInfo(const String& info)
 {
     view_->setInfo(info);
 }

@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <string>
 #include <sstream>
 
+#include "mod/base.h"
+
 namespace CSMOD {
 
 
@@ -33,25 +35,25 @@ template <typename C>
 void replace(std::basic_string<C>& str, C old_, C new_);
 
 template <typename T>
-std::string to_string(const T& value);
+String to_string(const T& value);
 
 template <typename T>
-T from_string(const std::string& str);
+T from_string(const String& str);
 
 // --------------- id specific ---------------------
 
 /** Increases the last number found in @p str.
     If there is no number in it, it will be set to @p init,
     if it is >= 0 */
-void increase_number(std::string& str, int init = -1);
+void increase_number(String& str, int init = -1);
 
 /** Correct idNames, e.g. replace spaces with _ */
-void checkIdName(std::string& idName);
+void checkIdName(String& idName);
 
 // ------------------ implementation -------------------------
 
 template <typename T>
-std::string to_string(const T& value)
+String to_string(const T& value)
 {
     std::stringstream s;
     s << value;
@@ -59,7 +61,7 @@ std::string to_string(const T& value)
 }
 
 template <typename T>
-T from_string(const std::string& str)
+T from_string(const String& str)
 {
     std::stringstream s(str);
     T value;

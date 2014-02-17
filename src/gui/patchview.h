@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QLabel>
 #include <QTimer>
 
+#include "gui/base.h"
+
 // --- forwards ---
 
 namespace CSMOD {
@@ -79,7 +81,7 @@ public:
     // ----------- graphics update -------------
 
     /** Sets the contents of the info string in the toolbar */
-    void setInfo(const std::string& info);
+    void setInfo(const String& info);
 
     /** update changes in patch */
     void updateFromPatch();
@@ -107,7 +109,7 @@ protected:
     ModuleItem * findModuleItem_(CSMOD::Module * mod);
 
     /** return the ModuleItem for the Module with the idName, or NULL */
-    ModuleItem * findModuleItem_(const std::string& idName);
+    ModuleItem * findModuleItem_(const String& idName);
 
     /** create and install a ModuleItem for the module */
     ModuleItem * createModuleItem_(CSMOD::Module * mod);

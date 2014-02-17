@@ -21,8 +21,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef CSMOD_TOOL_IO_H
 #define CSMOD_TOOL_IO_H
 
-#include <string>
 #include <vector>
+
+#include "mod/base.h"
 
 class QString;
 class QXmlStreamWriter;
@@ -44,8 +45,8 @@ public:
 
     // -------------- file io -----------------------
 
-    bool save(const std::string& filename);
-    bool load(const std::string& filename);
+    bool save(const String& filename);
+    bool load(const String& filename);
 
     // --------------- streaming --------------------
 
@@ -60,16 +61,16 @@ public:
     // ------------------ sections ------------------
 
     /** Create a new (sub-)section. WRITE */
-    bool newSection(const std::string& name);
+    bool newSection(const String& name);
 
     /** Ends the current sub-section and goes to containing section. WRITE */
     bool endSection();
 
     /** Returns if the current section matches @p name. READ/WRITE */
-    bool isSection(const std::string& name) const;
+    bool isSection(const String& name) const;
 
     /** Returns name of the current section. READ/WRITE */
-    const std::string& section() const;
+    const String& section() const;
 
     /** open next sub-section. READ */
     bool nextSection();
@@ -79,37 +80,37 @@ public:
 
     // ----------------- data write -----------------
 
-    bool write(const std::string& key, const std::string& v);
-    bool write(const std::string& key, int v);
-    bool write(const std::string& key, unsigned int v);
-    bool write(const std::string& key, long int v);
-    bool write(const std::string& key, long unsigned int v);
-    bool write(const std::string& key, float);
-    bool write(const std::string& key, double);
+    bool write(const String& key, const String& v);
+    bool write(const String& key, int v);
+    bool write(const String& key, unsigned int v);
+    bool write(const String& key, long int v);
+    bool write(const String& key, long unsigned int v);
+    bool write(const String& key, float);
+    bool write(const String& key, double);
 
     // ----------------- data read ------------------
 
-    bool read(const std::string& key, std::string& v, const std::string& def = "") const;
-    bool read(const std::string& key, int& v, int def = 0) const;
-    bool read(const std::string& key, unsigned int& v, unsigned int def = 0) const;
-    bool read(const std::string& key, long int& v, long int def = 0) const;
-    bool read(const std::string& key, long unsigned int& v, long unsigned int def = 0) const;
-    bool read(const std::string& key, float& v, float def = 0) const;
-    bool read(const std::string& key, double& v, double def = 0) const;
+    bool read(const String& key, String& v, const String& def = "") const;
+    bool read(const String& key, int& v, int def = 0) const;
+    bool read(const String& key, unsigned int& v, unsigned int def = 0) const;
+    bool read(const String& key, long int& v, long int def = 0) const;
+    bool read(const String& key, long unsigned int& v, long unsigned int def = 0) const;
+    bool read(const String& key, float& v, float def = 0) const;
+    bool read(const String& key, double& v, double def = 0) const;
 
-    std::string readString(const std::string& key, const std::string& def = "") const { std::string v; read(key, v, def); return v; }
-    int readInt(const std::string& key, int def = 0) const { int v; read(key, v, def); return v; }
-    unsigned int readUInt(const std::string& key, unsigned int def = 0) const { unsigned int v; read(key, v, def); return v; }
-    long int readLInt(const std::string& key, long int def = 0) const { long int v; read(key, v, def); return v; }
-    long unsigned int readLUInt(const std::string& key, long unsigned int def = 0) const { long unsigned int v; read(key, v, def); return v; }
-    float readFloat(const std::string& key, float def = 0) const { float v; read(key, v, def); return v; }
-    double readDouble(const std::string& key, double def = 0) const { double v; read(key, v, def); return v; }
+    String readString(const String& key, const String& def = "") const { String v; read(key, v, def); return v; }
+    int readInt(const String& key, int def = 0) const { int v; read(key, v, def); return v; }
+    unsigned int readUInt(const String& key, unsigned int def = 0) const { unsigned int v; read(key, v, def); return v; }
+    long int readLInt(const String& key, long int def = 0) const { long int v; read(key, v, def); return v; }
+    long unsigned int readLUInt(const String& key, long unsigned int def = 0) const { long unsigned int v; read(key, v, def); return v; }
+    float readFloat(const String& key, float def = 0) const { float v; read(key, v, def); return v; }
+    double readDouble(const String& key, double def = 0) const { double v; read(key, v, def); return v; }
 
     // _______________ PRIVATE AREA _________________
 
 private:
-    std::string cur_section_;
-    std::vector<std::string> section_stack_;
+    String cur_section_;
+    std::vector<String> section_stack_;
 
     QXmlStreamWriter * xmlw_;
     QXmlStreamReader * xmlr_;

@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QGraphicsLineItem>
 #include <QColor>
 
+#include "base.h"
+
 namespace CSMOD { class Connection; }
 
 class PatchGraphicsView;
@@ -38,7 +40,7 @@ public:
                        PatchGraphicsView * view,
                        QGraphicsItem * parent = 0);
 
-    void setInfo(const std::string& info);
+    void setInfo(const String& info);
 
     CSMOD::Connection * connection() const { return con_; }
 

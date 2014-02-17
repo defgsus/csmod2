@@ -60,7 +60,7 @@ Model::~Model()
 #define CSMOD_CHECKIO(command__, errortext__) \
     if (!(command__)) { CSMOD_IO_ERROR(errortext__); return false; }
 
-bool Model::savePatch(const std::string& filename)
+bool Model::savePatch(const String& filename)
 {
     CSMOD_DEBUGF("Model::savePatch(\"" << filename << "\")");
 
@@ -82,7 +82,7 @@ bool Model::savePatch(const std::string& filename)
 }
 
 
-bool Model::loadPatch(const std::string& filename)
+bool Model::loadPatch(const String& filename)
 {
     CSMOD_DEBUGF("Model::loadPatch(\"" << filename << "\")");
 
@@ -197,7 +197,7 @@ void Model::audio_callback_(const csfloat * in, csfloat * out)
 
 // -------- module handling -----------
 
-bool Model::createModule(Patch * patch, const std::string& idName)
+bool Model::createModule(Patch * patch, const String& idName)
 {
     CSMOD_DEBUGF("Model::createModule(" << patch << ", \"" << idName << "\")");
 

@@ -63,8 +63,8 @@ public:
 
     // --------------- io -----------------
 
-    bool savePatch(const std::string& filename);
-    bool loadPatch(const std::string& filename);
+    bool savePatch(const String& filename);
+    bool loadPatch(const String& filename);
 
     // ------------- content classes -----------
 
@@ -89,7 +89,7 @@ public:
     // -------- module handling -----------
 
     /** Creates a Module in the specified patch. */
-    bool createModule(Patch * patch, const std::string& idName);
+    bool createModule(Patch * patch, const String& idName);
 
     // -------- connection handling -------
 

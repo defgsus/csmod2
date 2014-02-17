@@ -89,7 +89,7 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
     updateValueDisplay();
 }
 
-void ConnectorItem::setInfo(const std::string& info)
+void ConnectorItem::setInfo(const String& info)
 {
     view_->setInfo(info);
 }

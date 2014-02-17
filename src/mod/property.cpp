@@ -28,7 +28,7 @@ namespace CSMOD {
 
 
 
-Property::Property(const std::string& id, const std::string& name)
+Property::Property(const String& id, const String& name)
     :   idName_     (id),
         name_       (name),
         changed_    (true)
@@ -46,7 +46,7 @@ Properties::~Properties()
         delete p;
 }
 
-Property * Properties::find(const std::string& idName)
+Property * Properties::find(const String& idName)
 {
     for (auto p : props_)
         if (idName == p->idName())
@@ -60,7 +60,7 @@ Property* Properties::add(Property * p)
     // check for duplicate id
     if (find(p->idName()))
     {
-        std::string id(p->idName());
+        String id(p->idName());
         do
         {
             increase_number(id,1);
@@ -104,7 +104,7 @@ bool Properties::restore(Io * io)
 
     while (io->nextSection() && io->isSection("prop"))
     {
-        std::string id;
+        String id;
         if (!io->read("id", id)) return false;
         auto prop = find(id);
         if (!prop)

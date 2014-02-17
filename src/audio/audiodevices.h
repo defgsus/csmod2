@@ -21,9 +21,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #ifndef CSMOD_AUDIO_AUDIODEVICE_H
 #define CSMOD_AUDIO_AUDIODEVICE_H
 
-#include <string>
 #include <vector>
 #include <iostream>
+
+#include "mod/base.h"
 
 namespace CSMOD {
 
@@ -39,14 +40,14 @@ class AudioDevices
 
     struct ApiInfo
     {
-        std::string name;
+        String name;
         size_t
             numDevices;
     };
 
     struct DeviceInfo
     {
-        std::string name;
+        String name;
         size_t
             numInputChannels,
             numOutputChannels,

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 namespace CSMOD {
 
-Module::Module(const std::string& idName, const std::string& className)
+Module::Module(const String& idName, const String& className)
     :   patch_      (0),
         className_  (className),
         idName_     (idName),
@@ -98,7 +98,7 @@ bool Module::restore(CSMOD::Io * io)
 
 // ------------------- info ---------------------------
 
-const std::string& Module::name() const
+const String& Module::name() const
 {
     return name_->value();
 }
@@ -119,7 +119,7 @@ void Module::setBlockSize(size_t size)
 
 // ------------------- connectors ---------------------
 
-Connector * Module::findConnector(const std::string& idName)
+Connector * Module::findConnector(const String& idName)
 {
     for (auto c : cons_)
         if (idName == c->idName())
@@ -132,7 +132,7 @@ Connector* Module::add_(Connector * c)
     // check for duplicate id
     if (findConnector(c->idName()))
     {
-        std::string id(c->idName());
+        String id(c->idName());
         do
         {
             increase_number(id,1);
