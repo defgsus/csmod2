@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QToolBar>
 #include <QPushButton>
 #include <QAction>
+#include <QKeyEvent>
 
 #include "log.h"
 #include "tool/io.h"
@@ -542,17 +543,18 @@ void PatchView::paintEvent(QPaintEvent * event)
     QFrame::paintEvent(event);
 }
 
-/*
-void PatchView::paintEvent(QPaintEvent * event)
+void PatchView::keyPressEvent(QKeyEvent * event)
 {
-    QFrame::paintEvent(event);
-
-    QPainter p(this);
-    p.setBrush(QBrush(QColor(200,200,200)));
-    p.drawLine(QLineF(0,0,width(),height()));
+    if (event->key() == Qt::Key_Escape && propview_ != 0)
+    {
+        closeProperties();
+        event->accept();
+        return;
+    }
+    QFrame::keyPressEvent(event);
 }
 
-
+/*
 void PatchView::mousePressEvent(QMouseEvent * e)
 {
     QFrame::mousePressEvent(e);

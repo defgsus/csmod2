@@ -100,7 +100,10 @@ public slots:
 
 protected:
 
+    // ----------------- events ------------------------
+
     virtual void paintEvent(QPaintEvent * event);
+    virtual void keyPressEvent(QKeyEvent * event);
 
     // ---------------- module items -------------------
 
