@@ -55,6 +55,7 @@ void MathOperator::applyProperties()
     {
         deleteConnectors_();
 
+        inputs_.clear();
         for (size_t i=0; i<num_inputs_->value(); ++i)
         {
            auto in = new ValueConnector(this, Connector::IN,  "in", "in");
@@ -73,13 +74,21 @@ void MathOperator::applyProperties()
 
 void MathOperator::step()
 {
-    csfloat o = 0;
+    if (inputs_.size() < 1)
+    {
+        output_->value(0);
+        return;
+    }
+
+    auto i = inputs_.begin();
+    csfloat o = (*i)->value();
+    ++i;
     switch (op_->value())
     {
-        case O_ADD: for (auto i : inputs_) o += i->value(); break;
-        case O_SUB: for (auto i : inputs_) o -= i->value(); break;
-        case O_DIV: for (auto i : inputs_) o /= i->value(); break;
-        case O_MUL: o = 1; for (auto i : inputs_) o *= i->value(); break;
+        case O_ADD: for (;i!=inputs_.end(); ++i) o += (*i)->value(); break;
+        case O_SUB: for (;i!=inputs_.end(); ++i) o -= (*i)->value(); break;
+        case O_DIV: for (;i!=inputs_.end(); ++i) o /= (*i)->value(); break;
+        case O_MUL: for (;i!=inputs_.end(); ++i) o *= (*i)->value(); break;
     }
     output_->value(o);
 }
