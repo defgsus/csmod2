@@ -92,6 +92,11 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
     updateValueDisplay();
 }
 
+ConnectorItem::~ConnectorItem()
+{
+    CSMOD_DEBUGF("ConnectorItem::~ConnectorItem() this=" << this);
+}
+
 void ConnectorItem::setInfo(const String& info)
 {
     view_->setInfo(info);
@@ -206,7 +211,7 @@ void ConnectorItem::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
 
 void ConnectorItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
 {
-    CSMOD_DEBUGE("ConnectorItem::mouseReleaseEvent(" << e->pos().x() << ", " << e->pos().y() << ")");
+    CSMOD_DEBUGE("ConnectorItem::mouseReleaseEvent(" << e->pos().x() << ", " << e->pos().y() << ") this=" << this);
 
     if (is_con_)
         view_->endConnect();

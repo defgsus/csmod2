@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "patch.h"
 
+#include <set>
+
 #include "log.h"
 #include "tool/stringmanip.h"
 #include "tool/io.h"
@@ -163,8 +165,78 @@ void Patch::applyProperties(Module * mod)
 
     if (!mod->properties().changed()) return;
 
+    // keep all connections from module
+    Connections cons;
+    getConnections(cons, mod);
+    // keep path strings
+    std::vector<String> conids;
+    for (auto c : cons)
+    {
+        conids.push_back(c->moduleFrom()->idName());
+        conids.push_back(c->connectorFrom()->idName());
+        conids.push_back(c->moduleTo()->idName());
+        conids.push_back(c->connectorTo()->idName());
+    }
+    // keep if incoming or outgoing to 'mod'
+    const int INCOMING = 1,
+              OUTGOING = 2;
+    std::vector<unsigned short> dirs;
+    for (auto c : cons)
+        dirs.push_back( (INCOMING * (mod == c->moduleTo()))
+                      | (OUTGOING * (mod == c->moduleFrom())) );
+
+
+    // apply changes
     mod->applyProperties();
-    updateDspGraph();
+
+    // --- maybe reconnect ---
+
+    bool changed = false;
+
+    for (size_t i=0; i<cons.size(); ++i)
+    {
+        Connection * old = cons[i];
+        Connector  * oldf = old->connectorFrom(),
+                   * oldt = old->connectorTo(),
+                   * newf, * newt;
+
+        // changed input Connector?
+        if (dirs[i] & INCOMING)
+        {
+            newt = mod->findConnector(conids[i*4+3]);
+            // has changed, so we need to destroy the connection
+            if (oldt != newt)
+            {
+                old->detachFrom(oldt);
+            }
+        } else newt = oldt;
+
+        // changed output Connector?
+        if (dirs[i] & OUTGOING)
+        {
+            newf = mod->findConnector(conids[i*4+1]);
+            // has changed, so we need to destroy the connection
+            if (oldf != newf)
+            {
+                old->detachFrom(oldf);
+            }
+        } else newf = oldf;
+
+        // some Connector on Module has changed?
+        if (oldf != newf || oldt != newt)
+        {
+            changed = true;
+
+            // remove the Connection
+            deleteConnection(old);
+            // reconnect
+            if (newf && newt)
+                connect(newf, newt);
+        }
+    }
+
+    if (changed) updateDspGraph();
+
 }
 
 
@@ -282,6 +354,22 @@ bool Patch::deleteConnection(Connection * con)
     return false;
 }
 
+void Patch::getConnections(Connections& cons, Module * mod)
+{
+    std::set<Connection*> set;
+
+    for (auto c : cons_)
+    {
+        if (mod == c->moduleFrom()
+         || mod == c->moduleTo())
+        {
+            set.insert(c);
+        }
+    }
+
+    for (auto c : set)
+        cons.push_back(c);
+}
 
 // ------------ configuration --------
 

@@ -34,6 +34,7 @@ class ConnectorItem : public QGraphicsRectItem
 {
 public:
     explicit ConnectorItem(ModuleItem * parent, CSMOD::Connector * con);
+    ~ConnectorItem();
 
     /** Sets PatchView info field. */
     void setInfo(const String& info);

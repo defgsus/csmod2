@@ -42,7 +42,8 @@ CableItem::CableItem(CSMOD::Connection * con,
         citem2_          (ci2),
         color_           (120,150,120)
 {
-    CSMOD_DEBUGF("CableItem::CableItem(" << con << ", " << ci1 << ", " << ci2 << ", " << parent << ")");
+    CSMOD_DEBUGF("CableItem::CableItem(" << con << ", " << ci1 << ", " << ci2
+                                << ", " << view << ", " << parent << ") this=" << this);
 
     setFlags(
           QGraphicsItem::ItemIsSelectable

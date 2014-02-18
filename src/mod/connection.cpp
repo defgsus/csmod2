@@ -108,12 +108,26 @@ bool Connection::restore(CSMOD::Io * io)
 
 void Connection::disconnect()
 {
-    connectorFrom_->disconnectFrom(connectorTo_);
-    connectorTo_->disconnectFrom(connectorFrom_);
+    if (connectorFrom_) connectorFrom_->disconnectFrom(connectorTo_);
+    if (connectorTo_) connectorTo_->disconnectFrom(connectorFrom_);
     connectorFrom_ = 0;
     connectorTo_ = 0;
     moduleFrom_ = 0;
     moduleTo_ = 0;
+}
+
+void Connection::detachFrom(Connector * c)
+{
+    if (connectorFrom_ == c)
+    {
+        connectorFrom_ = 0;
+        moduleFrom_ = 0;
+    }
+    if (connectorTo_ == c)
+    {
+        connectorTo_ = 0;
+        moduleTo_ = 0;
+    }
 }
 
 // ------------- debug ---------------

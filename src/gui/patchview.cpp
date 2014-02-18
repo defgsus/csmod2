@@ -54,6 +54,7 @@ PatchView::PatchView(QWidget *parent) :
     model_  (0),
     patch_  (0),
     pview_  (0),
+    doUpdateFromPatchLater_(false),
     propview_(0),
     propmodule_(0)
 {
@@ -224,6 +225,8 @@ void PatchView::setModel(CSMOD::Model * model)
 void PatchView::updateFromPatch()
 {
     CSMOD_DEBUGF("PatchView::updateFromPatch()");
+
+    doUpdateFromPatchLater_ = false;
 
     // update ModuleItem for each Module
     for (auto m : patch_->modules())
@@ -480,6 +483,12 @@ CableItem * PatchView::createCableItem_(CSMOD::Connection * con)
     return citem;
 }
 
+
+void PatchView::paintEvent(QPaintEvent * event)
+{
+    if (doUpdateFromPatchLater_) updateFromPatch();
+    QFrame::paintEvent(event);
+}
 
 /*
 void PatchView::paintEvent(QPaintEvent * event)

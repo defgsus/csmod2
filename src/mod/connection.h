@@ -57,8 +57,13 @@ class Connection
     // ------- handling ------
 
     /** This will remove references from the Connectors to each other.
-        Note! This has to be done before deleting the Connection. */
+        Note! This has to be done before deleting any of the assigned Connectors. */
     void disconnect();
+
+    /** Removes references of this Connection to the Connector.
+        The Connector is left unchanged. This only makes sense when the Connector
+        is already destroyed. */
+    void detachFrom(Connector * fromOrTo);
 
     // ------------- debug ---------------
 

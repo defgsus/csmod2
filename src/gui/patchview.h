@@ -71,8 +71,11 @@ public:
     /** Sets the contents of the info string in the toolbar */
     void setInfo(const String& info);
 
-    /** update changes in patch */
+    /** immidiately updates changes in patch */
     void updateFromPatch();
+
+    /** Sets update request which will be fulfilled on next draw */
+    void updateFromPatchLater() { doUpdateFromPatchLater_ = true; }
 
     /** update all cable positions */
     void updateCables();
@@ -96,6 +99,9 @@ signals:
 public slots:
 
 protected:
+
+    virtual void paintEvent(QPaintEvent * event);
+
     // ---------------- module items -------------------
 
     /** return the ModuleItem for the Module, or NULL */
@@ -142,6 +148,8 @@ protected:
     std::stringstream infostream_;
 
     QTimer update_timer_;
+
+    bool doUpdateFromPatchLater_;
 
     // --- widgets ---
 

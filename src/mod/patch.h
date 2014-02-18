@@ -95,6 +95,9 @@ public:
 
     bool isConnected(Connector * con1, Connector * con2) const;
 
+    /** Pushes every Connection belonging to module on the vector @p cons. */
+    void getConnections(Connections& cons, Module * module);
+
     // ------------ configuration --------
 
     /** Sets the blocksize of this patch, as well as for
