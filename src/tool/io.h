@@ -73,7 +73,7 @@ public:
     const String& section() const;
 
     /** open next sub-section. READ */
-    bool nextSection();
+    bool nextSubSection();
 
     /** leave current (sub-)section. READ */
     bool leaveSection();

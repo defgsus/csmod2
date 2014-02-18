@@ -71,6 +71,20 @@ bool Module::store(CSMOD::Io * io)
     CSMOD_CHECKIO(props_->store(io), "could not store Properties");
     io->endSection();
 
+    // store input ValueConnector values
+    if (!connector_values_.empty())
+    {
+        io->newSection("values");
+        for (auto m : connector_values_)
+        {
+            io->newSection("v");
+            io->write("n", m.first);
+            io->write("v", m.second);
+            io->endSection();
+        }
+        io->endSection();
+    }
+
     return true;
 }
 
@@ -85,11 +99,34 @@ bool Module::restore(CSMOD::Io * io)
     CSMOD_CHECKIO(io->read("id", idName_), "could not read module id");
 
     // restore properties
-    if (io->nextSection() && io->isSection("props"))
+    while (io->nextSubSection())
     {
-        CSMOD_CHECKIO(props_->restore(io), "could not restore Properties");
+        CSMOD_DEBUGIO("Module::restore:: section = " << io->section());
+
+        if (io->isSection("props"))
+        {
+            CSMOD_CHECKIO(props_->restore(io), "could not restore Properties");
+        }
+        else
+        if (io->isSection("values"))
+        {
+            while (io->nextSubSection() && io->isSection("v"))
+            {
+                String name;
+                csfloat value;
+                CSMOD_CHECKIO(io->read("n", name), "could not read Connector value name");
+                CSMOD_CHECKIO(io->read("v", value), "could not read Connector value");
+                // add to list
+                connector_values_.insert(std::make_pair(name, value));
+                CSMOD_DEBUG("name = " << name << " value = " << value);
+                io->leaveSection();
+            }
+        }
+
         io->leaveSection();
     }
+
+    CSMOD_DEBUGIO("on end of module restore, section = " << io->section());
 
     return true;
 }
@@ -170,32 +207,35 @@ void Module::deleteConnectors_()
     inputs_.clear();
 }
 
-void Module::storeConnectorValues_()
-{
-    CSMOD_DEBUGF("Module::storeConnectorValues_()");
-
-    // store the user values of all input connectors
-    prev_connector_values_.clear();
-    for (auto c : cons_)
-    if (c->dir() == Connector::IN)
-    if (auto vc = dynamic_cast<ValueConnector*>(c))
-    {
-        prev_connector_values_.insert(std::make_pair(vc->idName(), vc->userValue()));
-    }
-}
 
 void Module::restoreConnectorValues_()
 {
     CSMOD_DEBUGF("Module::restoreConnectorValues_()");
 
-    for (auto &m : prev_connector_values_)
+    for (auto &m : connector_values_)
     {
         auto c = findConnector(m.first);
         if (auto vc = dynamic_cast<ValueConnector*>(c))
         {
             vc->userValue(m.second);
         }
+        else CSMOD_RT_WARN("Could not restore uservalue for " << m.first);
     }
+}
+
+void Module::setUserValue(const String& id, csfloat value)
+{
+    auto c = findConnector(id);
+    if (!c) { CSMOD_RT_WARN("Module::setUserValue: unknown Connector " << id); return; }
+
+    if (auto vc = dynamic_cast<ValueConnector*>(c))
+    {
+        vc->userValue(value);
+        // store also in map
+        connector_values_[id] = value;
+    }
+    else
+        CSMOD_RT_WARN("Module::setUserValue: Connector " << id << " is no ValueConnector");
 }
 
 // ----------- properties ------------
@@ -209,7 +249,6 @@ Property* Module::add_(Property * p)
 void Module::applyProperties()
 {
     CSMOD_DEBUGF("Module::applyProperties() this=" << this << " / " << idName_);
-    storeConnectorValues_();
 }
 
 // -------------- runtime ------------
@@ -226,14 +265,15 @@ void Module::updateInputs()
 
 void Module::debug_dump()
 {
-    std::cout << "module " << this << " " << idName()
-              << " blocks=" << blockSize() << "\n"
-              << "\n";
+    std::cout << "--- module " << this << " " << idName()
+              << " blocks=" << blockSize() << "\n";
+    for (auto m : connector_values_)
+        std::cout << "con=" << m.first << " uvalue=" << m.second << "\n";
+
     for (auto i : cons_)
-    {
         i->debug_dump();
-    }
-    std::cout << "\n";
+
+    std::cout << std::endl;
 }
 
 

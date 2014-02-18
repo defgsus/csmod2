@@ -84,6 +84,8 @@ bool Model::savePatch(const String& filename)
 
 bool Model::loadPatch(const String& filename)
 {
+    CSMOD_MODEL_LOCK;
+
     CSMOD_DEBUGF("Model::loadPatch(\"" << filename << "\")");
 
     CSMOD::Io io;
@@ -96,7 +98,7 @@ bool Model::loadPatch(const String& filename)
     if (!views_.empty()) view = views_[0];
 
     // read patch
-    while (io.nextSection())
+    while (io.nextSubSection())
     {
         if (io.isSection("patch"))
         {
@@ -216,7 +218,7 @@ bool Model::createModule(Patch * patch, const String& idName)
         }
     }
 
-    updateViews_();
+    updateViewsLater_();
     return true;
 }
 
@@ -226,7 +228,7 @@ void Model::applyProperties(Module * mod)
 
     CSMOD_MODEL_LOCK;
     patch_->applyProperties(mod);
-    updateViews_();
+    updateViewsLater_();
 }
 
 // -------- connection handling -------
@@ -244,7 +246,7 @@ bool Model::connect(Connector * from, Connector * to)
         if (!patch_->connect(from, to)) return false;
     }
 
-    updateViews_();
+    updateViewsLater_();
     return true;
 }
 
@@ -257,7 +259,7 @@ bool Model::disconnect(Connection * con)
         if (!con || !patch_->deleteConnection(con)) return false;
     }
 
-    updateViews_();
+    updateViewsLater_();
     return true;
 }
 
@@ -267,12 +269,21 @@ bool Model::setConnectorUserValue(Connector * con, csfloat value)
 {
     CSMOD_DEBUGF("Model::setConnectorUserValue(" << con << ", " << value << ")");
 
-    if (auto v = dynamic_cast<ValueConnector*>(con))
+    if (dynamic_cast<ValueConnector*>(con))
     {
-        CSMOD_MODEL_LOCK;
-        v->userValue(value);
-        return true;
+        if (con->module())
+        {
+            CSMOD_MODEL_LOCK;
+            con->module()->setUserValue(con->idName(), value);
+            return true;
+        }
+        else
+        {
+            CSMOD_RT_ERROR("setConnectorUserValue: Connector " << con << " has no Module");
+            return false;
+        }
     }
+    CSMOD_RT_ERROR("setConnectorUserValue: Connector " << con << " not a ValueConnector");
     return false;
 }
 
@@ -282,14 +293,23 @@ bool Model::setConnectorUserValue(Connector * con, csfloat value)
 
 // ------------------ views -------------------------
 
+void Model::updateViewsLater_()
+{
+    CSMOD_DEBUGF("Model::updateViewsLater_() (" << views_.size() << " views)");
+
+    for (auto v : views_)
+    {
+        v->updateFromPatchLater();
+    }
+}
+
 void Model::updateViews_()
 {
     CSMOD_DEBUGF("Model::updateViews_() (" << views_.size() << " views)");
 
     for (auto v : views_)
     {
-        v->updateFromPatchLater();
-        //v->updateCables();
+        v->updateFromPatch();
     }
 }
 

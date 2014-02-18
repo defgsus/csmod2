@@ -161,7 +161,7 @@ bool PatchView::restore(CSMOD::Io * io)
     CSMOD_CHECKIO(io->read("ver", ver), "could not read patchview version");
     CSMOD_CHECKIO(ver <= 1, "unknown patchview version " << ver);
 
-    while (io->nextSection())
+    while (io->nextSubSection())
     {
         if (io->isSection("moditem"))
         {
@@ -171,7 +171,7 @@ bool PatchView::restore(CSMOD::Io * io)
             auto mi = findModuleItem_(mid);
             if (!mi)
             {
-                CSMOD_IO_ERROR("skipping unknown module" << mid);
+                CSMOD_IO_ERROR("skipping unknown module " << mid);
             }
             else
                 CSMOD_CHECKIO(mi->restore(io), "error reading moduleitem");

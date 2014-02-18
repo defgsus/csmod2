@@ -39,6 +39,9 @@ Connector::Connector(Module * module, Direction dir,
 Connector::~Connector()
 {
     CSMOD_DEBUGF("Connector::~Connector() this=" << this);
+    // tell neighbours goodbye
+    for (auto c : cons_)
+        c->disconnectFrom(this);
 }
 
 // --------------- info -------------
@@ -140,6 +143,17 @@ void Connector::debug_dump()
 }
 
 
+// ---------------------- ValueConnector ---------------------------
+
+void ValueConnector::debug_dump()
+{
+    std::cout << "connector " << this << " " << idName()
+              << " uvalue = " << userValue_ << "\n";
+    for (auto c : cons_)
+        std::cout << "  c ->  " << c << "\n";
+    for (auto m : modules_)
+        std::cout << "  m ->  " << m << "\n";
+}
 
 
 

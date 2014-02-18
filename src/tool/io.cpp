@@ -126,6 +126,7 @@ bool Io::startReading()
           xmlr_->name() == "csmod-io"))
         return false;
     cur_section_ = "csmod-io";
+    section_stack_.clear();
     return true;
 }
 
@@ -176,7 +177,7 @@ const String& Io::section() const
     return cur_section_;
 }
 
-bool Io::nextSection()
+bool Io::nextSubSection()
 {
     if (!xmlr_) return false;
     cur_section_ = "";
@@ -188,7 +189,8 @@ bool Io::nextSection()
 
 bool Io::leaveSection()
 {
-    xmlr_->skipCurrentElement();
+    if (!xmlr_->isEndElement())
+        xmlr_->skipCurrentElement();
     cur_section_ = xmlr_->name().toString().toStdString();
     return true;
 }
@@ -343,7 +345,7 @@ void testIo()
 
     io.startReading();
 
-    io.nextSection();
+    io.nextSubSection();
     if (io.section() != "patch") { std::cout << "expected patch\n"; exit(-1); }
 
     std::cout << "version " << io.readInt("version") << std::endl;

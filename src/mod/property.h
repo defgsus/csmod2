@@ -138,7 +138,7 @@ public:
     // ----------- io --------------
 
     virtual bool store(Io * io) { return io->write("v", value_); }
-    virtual bool restore(Io * io) { return io->read("v", newvalue_, default_); changed_ = true; }
+    virtual bool restore(Io * io) { return changed_ = io->read("v", newvalue_, default_); }
 
     // ------------ gui ------------
 

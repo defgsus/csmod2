@@ -90,8 +90,9 @@ public:
     Connection * connect(Connector * con1, Connector * con2);
 
     /** Removes the given Connection.
-        @p con will be deleted! */
-    bool deleteConnection(Connection * con);
+        @p con will be deleted and the Connectors will be notified,
+        if @p connectorsExist is true. */
+    bool deleteConnection(Connection * con, bool connectorsExist = true);
 
     bool isConnected(Connector * con1, Connector * con2) const;
 

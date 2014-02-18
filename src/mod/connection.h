@@ -56,6 +56,9 @@ class Connection
 
     // ------- handling ------
 
+    /** This creates the references in each Connector of each other. */
+    void connect();
+
     /** This will remove references from the Connectors to each other.
         Note! This has to be done before deleting any of the assigned Connectors. */
     void disconnect();
@@ -64,7 +67,7 @@ class Connection
         The Connector is left unchanged. This only makes sense when the Connector
         is already destroyed. If the other end of the Connection is not detached from,
         then the reference to @p fromOrTo will be deleted in the other Connector. */
-    void detachFrom(Connector * fromOrTo);
+    //void detachFrom(Connector * fromOrTo);
 
     // ------------- debug ---------------
 

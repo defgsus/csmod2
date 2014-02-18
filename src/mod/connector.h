@@ -157,6 +157,9 @@ public:
     void value(csfloat v) { value_ = v; }
 
     csfloat userValue() const { return userValue_; }
+    /** Sets the user value (a value that is added to all inputs).
+        @note You must call Module::setUserValue() instead of this function,
+        so Module can keep track of these values. */
     void userValue(csfloat v) { userValue_ = v; }
 
     // ----------- runtime ---------------
@@ -171,6 +174,10 @@ public:
             value_ += static_cast<ValueConnector*>(c)->value();
         }
     }
+
+    // -------- debug --------------------
+
+    virtual void debug_dump();
 
 protected:
     csfloat value_, userValue_;

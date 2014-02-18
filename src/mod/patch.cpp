@@ -103,12 +103,11 @@ bool Patch::restore(CSMOD::Io * io)
     CSMOD_CHECKIO(io->read("name", name_), "could not read name");
 
     // read all modules and connections
-    while (io->nextSection())
+    while (io->nextSubSection())
     {
         // a module
         if (io->isSection("module"))
         {
-
             // --- create the object ---
 
             auto modclass = io->readString("class");
@@ -185,7 +184,9 @@ void Patch::applyProperties(Module * mod)
     for (auto c : cons)
         dirs.push_back( (INCOMING * (mod == c->moduleTo()))
                       | (OUTGOING * (mod == c->moduleFrom())) );
-
+    // temporari
+    //for (auto c : cons)
+        //c->disconnect();
 
     // apply changes
     mod->applyProperties();
@@ -202,27 +203,22 @@ void Patch::applyProperties(Module * mod)
                    * oldt = old->connectorTo(),
                    * newf, * newt;
 
+        CSMOD_DEBUG("fixing connection " << old
+                    << " " << conids[i*4] << "." << conids[i*4+1]
+                    << " -> " << conids[i*4+2] << "." << conids[i*4+3]
+                    );
+
         // changed input Connector?
         if (dirs[i] & INCOMING)
-        {
             newt = mod->findConnector(conids[i*4+3]);
-            // has changed, so we need to destroy the connection
-            if (oldt != newt)
-            {
-                old->detachFrom(oldt);
-            }
-        } else newt = oldt;
+        else
+            newt = oldt;
 
         // changed output Connector?
         if (dirs[i] & OUTGOING)
-        {
             newf = mod->findConnector(conids[i*4+1]);
-            // has changed, so we need to destroy the connection
-            if (oldf != newf)
-            {
-                old->detachFrom(oldf);
-            }
-        } else newf = oldf;
+        else
+            newf = oldf;
 
         // some Connector on Module has changed?
         if (oldf != newf || oldt != newt)
@@ -230,7 +226,7 @@ void Patch::applyProperties(Module * mod)
             changed = true;
 
             // remove the Connection
-            deleteConnection(old);
+            deleteConnection(old, false);
             // reconnect
             if (newf && newt)
                 connect(newf, newt);
@@ -330,12 +326,15 @@ Connection * Patch::connect(Connector * con1, Connector * con2)
     auto c = new Connection(con1, con2);
     cons_.push_back(c);
 
+    // update Connector ties
+    c->connect();
+
     updateDspGraph();
 
     return c;
 }
 
-bool Patch::deleteConnection(Connection * con)
+bool Patch::deleteConnection(Connection * con, bool connectorsExist)
 {
     CSMOD_DEBUGF("Patch::deleteConnection(" << con << ")");
 
@@ -343,7 +342,8 @@ bool Patch::deleteConnection(Connection * con)
     if (*i == con)
     {
         // update connector ties
-        con->disconnect();
+        if (connectorsExist)
+            con->disconnect();
 
         // wipe out Connection
         delete *i;
@@ -540,6 +540,7 @@ void Patch::debug_dump()
     {
         i->debug_dump();
     }
+    std::cout.flush();
 }
 
 

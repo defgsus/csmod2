@@ -100,6 +100,7 @@ public:
 
 private:
 
+    void updateViewsLater_();
     void updateViews_();
 
     void audio_callback_(const csfloat * in, csfloat * out);

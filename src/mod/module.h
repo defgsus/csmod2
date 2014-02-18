@@ -103,6 +103,9 @@ class Module
     /** Read-access to all Connectors of this module. */
     const std::vector<Connector*>& connectors() const { return cons_; }
 
+    /** Sets the uservalue for the input ValueConnector. */
+    void setUserValue(const String& connectorIdName, csfloat value);
+
     // ------------- connections ----------------------
 
     // --------------- properties ---------------------
@@ -170,7 +173,6 @@ class Module
 
     private:
 
-    void storeConnectorValues_();
     void restoreConnectorValues_();
 
     // _______________ PRIVATE MEMBER _________________
@@ -183,7 +185,8 @@ class Module
     /** Connector inputs that need to be summed */
     std::vector<Connector*> inputs_;
 
-    std::map<String, csfloat> prev_connector_values_;
+    /** list of input ValueConnector uservalues */
+    std::map<String, csfloat> connector_values_;
 
     String
     /** derived classes name */

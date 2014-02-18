@@ -57,7 +57,7 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
                        << " -> " << moduleTo_->idName() << "." << connectorTo_->idName());
     }
 
-    // same goes for this error check
+/*    // same goes for this error check
     if (!connectorFrom_->connectTo(connectorTo_) ||
         !connectorTo_->connectTo(connectorFrom_))
     {
@@ -65,6 +65,7 @@ Connection::Connection(Connector * connectorFrom, Connector * connectorTo)
                        << moduleFrom_->idName() << "." << connectorFrom_->idName()
                        << " -> " << moduleTo_->idName() << "." << connectorTo_->idName());
     }
+*/
 }
 
 Connection::~Connection()
@@ -106,16 +107,18 @@ bool Connection::restore(CSMOD::Io * io)
 
 // ------------- handling ----------------
 
+void Connection::connect()
+{
+    connectorFrom_->connectTo(connectorTo_);
+    connectorTo_->connectTo(connectorFrom_);
+}
+
 void Connection::disconnect()
 {
     if (connectorFrom_) connectorFrom_->disconnectFrom(connectorTo_);
     if (connectorTo_) connectorTo_->disconnectFrom(connectorFrom_);
-    connectorFrom_ = 0;
-    connectorTo_ = 0;
-    moduleFrom_ = 0;
-    moduleTo_ = 0;
 }
-
+/*
 void Connection::detachFrom(Connector * c)
 {
     CSMOD_DEBUGF("Connection::detachFrom(" << c << ")");
@@ -133,7 +136,7 @@ void Connection::detachFrom(Connector * c)
         moduleTo_ = 0;
     }
 }
-
+*/
 // ------------- debug ---------------
 
 void Connection::debug_dump()

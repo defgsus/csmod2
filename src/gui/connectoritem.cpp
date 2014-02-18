@@ -86,6 +86,10 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
             {
                 moduleItem_->view()->model()->setConnectorUserValue(con_, v);
             });
+
+            // init display value
+            auto vc = dynamic_cast<ValueConnector*>(con_);
+            if (vc) tvalue_->setValue(vc->userValue());
         }
     }
 
@@ -121,7 +125,7 @@ void ConnectorItem::matchConnector(CSMOD::Connector * con)
 bool ConnectorItem::hasValueInput() const
 {
     return ( (con_->dir() == CSMOD::Connector::IN)
-             && (!con_->isDsp())
+             && (dynamic_cast<ValueConnector*>(con_) != 0)
              );
 }
 

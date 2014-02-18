@@ -108,7 +108,7 @@ bool Properties::restore(Io * io)
 {
     CSMOD_DEBUGF("Properties::restore(" << io << ")");
 
-    while (io->nextSection() && io->isSection("prop"))
+    while (io->nextSubSection() && io->isSection("prop"))
     {
         String id;
         if (!io->read("id", id)) return false;
