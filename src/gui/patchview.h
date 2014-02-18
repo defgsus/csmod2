@@ -75,7 +75,7 @@ public:
     void updateFromPatch();
 
     /** Sets update request which will be fulfilled on next draw */
-    void updateFromPatchLater() { doUpdateFromPatchLater_ = true; }
+    void updateFromPatchLater() { doUpdateFromPatchLater_ = true; update(); }
 
     /** update all cable positions */
     void updateCables();
@@ -113,6 +113,9 @@ protected:
     /** create and install a ModuleItem for the module */
     ModuleItem * createModuleItem_(CSMOD::Module * mod);
 
+    /** remove the ModuleItem from GUI */
+    void deleteModuleItem_(ModuleItem * ci);
+
     // ------------- connector items -------------------
 
     /** return the ConnectorItem for the Connector, or NULL */
@@ -123,10 +126,19 @@ protected:
     /** Returns the installed CableItem, or NULL */
     CableItem * findCableItem_(CSMOD::Connection * con);
 
+    /** Returns the installed CableItem leading to or coming from @p ci, or NULL */
+    CableItem * findCableItem_(ConnectorItem * ci);
+
     /** create and install a CableItem for the Connection.
         @note The referred ModuleItem must exist already,
         if not, NULL will be returned. */
     CableItem * createCableItem_(CSMOD::Connection * con);
+
+    /** remove the CableItem from GUI */
+    void deleteCableItem_(CableItem * ci);
+
+    /** remove all CableItems from GUI */
+    void deleteCableItems_();
 
     // ----------------- event -------------------------
     /*

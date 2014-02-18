@@ -208,6 +208,7 @@ void ModuleItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * e)
     // open object properties
     if (e->button() == Qt::LeftButton)
     {
+        action_ = A_NOTHING;
         view_->patchView()->openProperties(module_);
         e->accept();
         return;

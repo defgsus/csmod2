@@ -60,9 +60,10 @@ class Connection
         Note! This has to be done before deleting any of the assigned Connectors. */
     void disconnect();
 
-    /** Removes references of this Connection to the Connector.
+    /** Removes references to the Connector.
         The Connector is left unchanged. This only makes sense when the Connector
-        is already destroyed. */
+        is already destroyed. If the other end of the Connection is not detached from,
+        then the reference to @p fromOrTo will be deleted in the other Connector. */
     void detachFrom(Connector * fromOrTo);
 
     // ------------- debug ---------------

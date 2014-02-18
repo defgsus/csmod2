@@ -118,13 +118,17 @@ void Connection::disconnect()
 
 void Connection::detachFrom(Connector * c)
 {
+    CSMOD_DEBUGF("Connection::detachFrom(" << c << ")");
+
     if (connectorFrom_ == c)
     {
+        if (connectorTo_) connectorTo_->disconnectFrom(c);
         connectorFrom_ = 0;
         moduleFrom_ = 0;
     }
     if (connectorTo_ == c)
     {
+        if (connectorFrom_) connectorFrom_->disconnectFrom(c);
         connectorTo_ = 0;
         moduleTo_ = 0;
     }

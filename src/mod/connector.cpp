@@ -75,6 +75,8 @@ bool Connector::connectTo(Connector * con)
 
 bool Connector::disconnectFrom(Connector * con)
 {
+    CSMOD_DEBUGF("Connector::disconnectFrom(" << con << ")");
+
     // delete the connector from list
     bool found = false;
     for (auto c = cons_.begin(); c!=cons_.end(); ++c)
@@ -131,6 +133,10 @@ bool Connector::isConnectedTo(Module * module) const
 void Connector::debug_dump()
 {
     std::cout << "connector " << this << " " << idName() << "\n";
+    for (auto c : cons_)
+        std::cout << "  c ->  " << c << "\n";
+    for (auto m : modules_)
+        std::cout << "  m ->  " << m << "\n";
 }
 
 

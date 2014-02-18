@@ -177,7 +177,7 @@ void Patch::applyProperties(Module * mod)
         conids.push_back(c->moduleTo()->idName());
         conids.push_back(c->connectorTo()->idName());
     }
-    // keep if incoming or outgoing to 'mod'
+    // keep if incoming to and/or outgoing from 'mod'
     const int INCOMING = 1,
               OUTGOING = 2;
     std::vector<unsigned short> dirs;

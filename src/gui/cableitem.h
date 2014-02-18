@@ -42,6 +42,10 @@ public:
 
     CSMOD::Connection * connection() const { return con_; }
 
+    ConnectorItem * connectorItemFrom() { return citem1_; }
+    ConnectorItem * connectorItemTo() { return citem2_; }
+
+
     /** update position to module's connectors */
     void updatePos();
 

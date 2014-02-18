@@ -45,30 +45,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 // function entries
 #if !defined(NDEBUG) && (1)
-#define CSMOD_DEBUGF(arg__) { std::cerr << arg__ << std::endl; }
+#define CSMOD_DEBUGF(arg__) { std::cerr << "F:   " << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGF(unused__) { }
 #endif
 
 // io stuff
 #if !defined(NDEBUG) && (1)
-#define CSMOD_DEBUGIO(arg__) { std::cerr << arg__ << std::endl; }
+#define CSMOD_DEBUGIO(arg__) { std::cerr << "IO:  " << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGIO(unused__) { }
 #endif
 
 // device stuff
 #if !defined(NDEBUG) && (1)
-#define CSMOD_DEBUGDEV(arg__) { std::cerr << arg__ << std::endl; }
+#define CSMOD_DEBUGDEV(arg__) { std::cerr << "DEV: " << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGDEV(unused__) { }
 #endif
 
 // events
 #if !defined(NDEBUG) && (0)
-#define CSMOD_DEBUGE(arg__) { std::cerr << arg__ << std::endl; }
+#define CSMOD_DEBUGE(arg__) { std::cerr << "EVN: " << arg__ << std::endl; }
 #else
 #define CSMOD_DEBUGE(unused__) { }
+#endif
+
+// gui stuff
+#if !defined(NDEBUG) && (1)
+#define CSMOD_DEBUGGUI(arg__) { std::cerr << "GUI: " << arg__ << std::endl; }
+#else
+#define CSMOD_DEBUGGUI(unused__) { }
 #endif
 
 // ------------------- error reporting --------------------------

@@ -228,22 +228,8 @@ void PatchView::updateFromPatch()
 
     doUpdateFromPatchLater_ = false;
 
-    // update ModuleItem for each Module
-    for (auto m : patch_->modules())
-    {
-        // find ModuleItem
-        auto mitem = findModuleItem_(m);
-
-        if (!mitem)
-        {   // not there? create one
-            mitem = createModuleItem_(m);
-        }
-
-        // update connectors and such
-        mitem->updateFromModule();
-    }
-
     // remove all ModuleItems that are not needed
+    std::vector<ModuleItem*> removeModules;
     for (auto mi = moduleitems_.begin(); mi!=moduleitems_.end(); ++mi)
     {
         bool present = false;
@@ -253,27 +239,35 @@ void PatchView::updateFromPatch()
                 { present = true; break; }
 
         if (!present)
-        {
-            // remove from everywhere
-            pview_->scene()->removeItem(*mi);
-            delete *mi;
-            moduleitems_.erase(*mi);
-        }
+            removeModules.push_back(*mi);
     }
+    for (auto mi : removeModules)
+        deleteModuleItem_(mi);
 
-    // update CableItem for each Connection
-    for (auto c : patch_->connections())
+    // create and update ModuleItem for each Module
+    for (auto m : patch_->modules())
     {
         // find ModuleItem
-        auto citem = findCableItem_(c);
+        auto mitem = findModuleItem_(m);
 
-        if (!citem)
-        {   // not there? create one
-            citem = createCableItem_(c);
+        if (!mitem)
+        {
+            // not there? create one
+            mitem = createModuleItem_(m);
+
+            CSMOD_DEBUGGUI("created ModuleItem " << mitem);
         }
+
+
+
+        // update connectors and such
+        mitem->updateFromModule();
     }
 
+    deleteCableItems_();
+    /*
     // remove all CableItems that are not needed
+    std::vector<CableItem*> removeCables;
     for (auto ci = cableitems_.begin(); ci!=cableitems_.end(); ++ci)
     {
         bool present = false;
@@ -283,13 +277,28 @@ void PatchView::updateFromPatch()
                 { present = true; break; }
 
         if (!present)
+            removeCables.push_back(*ci);
+    }
+
+    for (auto ci : removeCables)
+        deleteCableItem_(ci);
+    */
+
+    // update CableItem for each Connection
+    for (auto c : patch_->connections())
+    {
+        // find ModuleItem
+        auto citem = findCableItem_(c);
+
+        if (!citem)
         {
-            // remove from everywhere
-            pview_->scene()->removeItem(*ci);
-            delete *ci;
-            cableitems_.erase(*ci);
+            // not there? create one
+            citem = createCableItem_(c);
+
+            CSMOD_DEBUGGUI("created CableItem " << citem);
         }
     }
+
 
     updateCables();
 }
@@ -426,6 +435,16 @@ ModuleItem * PatchView::findModuleItem_(const String& idName)
     return 0;
 }
 
+void PatchView::deleteModuleItem_(ModuleItem * mi)
+{
+    CSMOD_DEBUGF("PatchView::deleteModuleItem_(" << mi << ")");
+
+    pview_->scene()->removeItem(mi);
+    delete mi;
+    moduleitems_.erase(mi);
+}
+
+
 // ---------------------- connector items --------------------------
 
 ConnectorItem * PatchView::findConnectorItem_(CSMOD::Connector * con)
@@ -456,6 +475,17 @@ CableItem * PatchView::findCableItem_(CSMOD::Connection * con)
 
 }
 
+CableItem * PatchView::findCableItem_(ConnectorItem * ci)
+{
+    for (auto c : cableitems_)
+    {
+        if (ci == c->connectorItemFrom() ||
+            ci == c->connectorItemTo())
+            return c;
+    }
+    return 0;
+}
+
 /** create and install a CableItem for the Connection */
 CableItem * PatchView::createCableItem_(CSMOD::Connection * con)
 {
@@ -483,6 +513,28 @@ CableItem * PatchView::createCableItem_(CSMOD::Connection * con)
     return citem;
 }
 
+
+void PatchView::deleteCableItem_(CableItem * ci)
+{
+    CSMOD_DEBUGF("PatchView::deleteCableItem_(" << ci << ")");
+
+    pview_->scene()->removeItem(ci);
+    delete ci;
+    cableitems_.erase(ci);
+}
+
+void PatchView::deleteCableItems_()
+{
+    CSMOD_DEBUGF("PatchView::deleteCableItems");
+    for (auto c : cableitems_)
+    {
+        pview_->scene()->removeItem(c);
+        delete c;
+    }
+    cableitems_.clear();
+}
+
+// ---------------------------- events ---------------------------
 
 void PatchView::paintEvent(QPaintEvent * event)
 {

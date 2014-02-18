@@ -62,6 +62,10 @@ public:
     /** refresh the value displays */
     void updateValueDisplays();
 
+    // --------- access ----------
+
+    const std::vector<ConnectorItem*>& connectorItems() const { return conitems_; }
+
 protected:
 
     // ------------------- paint -------------------------
