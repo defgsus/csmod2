@@ -38,7 +38,7 @@ MathOperator::MathOperator(Operation op)
     add_( op_ = new ListProperty<Operation>("op", "math operation",
                         { O_ADD, O_SUB, O_MUL, O_DIV },
                         { "add", "sub", "mul", "div" },
-                        { "addition", "subtraction", "multiplication", "division" },
+                        { "+ addition", "- subtraction", "* multiplication", "/ division" },
                         op ));
 }
 
@@ -68,7 +68,7 @@ void MathOperator::applyProperties()
 
     if (op_->accept())
     {
-        setName(className() + " " + op_->valueToId(op_->value()));
+        setName( op_->valueToId(op_->value()) );
     }
 }
 

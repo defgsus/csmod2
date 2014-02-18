@@ -145,6 +145,7 @@ const String& Module::name() const
 void Module::setName(const String &name)
 {
     name_->value(name);
+    name_->accept();
 }
 
 void Module::setBlockSize(size_t size)
@@ -249,6 +250,7 @@ Property* Module::add_(Property * p)
 void Module::applyProperties()
 {
     CSMOD_DEBUGF("Module::applyProperties() this=" << this << " / " << idName_);
+    name_->accept();
 }
 
 // -------------- runtime ------------

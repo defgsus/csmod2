@@ -125,7 +125,7 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
 
     // -- label --
     tlabel_ = new QGraphicsSimpleTextItem(this);
-    tlabel_->setText(QString::fromStdString(module_->idName()));
+    tlabel_->setText(QString::fromStdString(module_->name()));
     tlabel_->setPos((width - tlabel_->boundingRect().width())/2, 4);
     tlabel_->setBrush(QBrush(QColor(255,255,255)));
 
