@@ -25,15 +25,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "connector.h"
 #include "connection.h"
 
-#include <string>
 #include <vector>
+#include <map>
+
+#include "base.h"
 
 namespace CSMOD {
 
-class Io;
-class Module;
-class Property;
-class Properties;
 
 typedef int (*numModulesFunction)();
 typedef Module * (*getModuleFunction)(int index);
@@ -172,6 +170,9 @@ class Module
 
     private:
 
+    void storeConnectorValues_();
+    void restoreConnectorValues_();
+
     // _______________ PRIVATE MEMBER _________________
 
     /** containing Patch */
@@ -181,6 +182,8 @@ class Module
     std::vector<Connector*> cons_;
     /** Connector inputs that need to be summed */
     std::vector<Connector*> inputs_;
+
+    std::map<String, csfloat> prev_connector_values_;
 
     String
     /** derived classes name */

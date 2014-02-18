@@ -74,9 +74,12 @@ void MathOperator::applyProperties()
 void MathOperator::step()
 {
     csfloat o = 0;
-    for (auto i : inputs_)
+    switch (op_->value())
     {
-        o += i->value();
+        case O_ADD: for (auto i : inputs_) o += i->value(); break;
+        case O_SUB: for (auto i : inputs_) o -= i->value(); break;
+        case O_DIV: for (auto i : inputs_) o /= i->value(); break;
+        case O_MUL: o = 1; for (auto i : inputs_) o *= i->value(); break;
     }
     output_->value(o);
 }

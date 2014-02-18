@@ -170,6 +170,34 @@ void Module::deleteConnectors_()
     inputs_.clear();
 }
 
+void Module::storeConnectorValues_()
+{
+    CSMOD_DEBUGF("Module::storeConnectorValues_()");
+
+    // store the user values of all input connectors
+    prev_connector_values_.clear();
+    for (auto c : cons_)
+    if (c->dir() == Connector::IN)
+    if (auto vc = dynamic_cast<ValueConnector*>(c))
+    {
+        prev_connector_values_.insert(std::make_pair(vc->idName(), vc->userValue()));
+    }
+}
+
+void Module::restoreConnectorValues_()
+{
+    CSMOD_DEBUGF("Module::restoreConnectorValues_()");
+
+    for (auto &m : prev_connector_values_)
+    {
+        auto c = findConnector(m.first);
+        if (auto vc = dynamic_cast<ValueConnector*>(c))
+        {
+            vc->userValue(m.second);
+        }
+    }
+}
+
 // ----------- properties ------------
 
 Property* Module::add_(Property * p)
@@ -181,6 +209,7 @@ Property* Module::add_(Property * p)
 void Module::applyProperties()
 {
     CSMOD_DEBUGF("Module::applyProperties() this=" << this << " / " << idName_);
+    storeConnectorValues_();
 }
 
 // -------------- runtime ------------

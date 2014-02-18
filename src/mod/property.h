@@ -185,6 +185,18 @@ public:
     T idToValue(const String& id);
     String valueToId(const T& value);
 
+    /** return index in values() for a value, or -1 if not found. */
+    int indexOf(const T& value);
+
+    /** Read access to the values associated to each item */
+    const std::vector<T>& values() const { return values_; }
+
+    /** Read access to the id strings associated to each item */
+    const std::vector<String>& ids() const { return ids_; }
+
+    /** Read access to the name strings associated to each item */
+    const std::vector<String>& names() const { return names_; }
+
     // ----------- io --------------
 
     virtual bool store(Io * io) { return io->write("v", valueToId(value_)); }
@@ -218,6 +230,15 @@ String ListProperty<T>::valueToId(const T & value)
         if (value == values_[i])
             return ids_[i];
     return "";
+}
+
+template <class T>
+int ListProperty<T>::indexOf(const T& value)
+{
+    for (size_t i=0; i<values_.size(); ++i)
+        if (value == values_[i])
+            return i;
+    return -1;
 }
 
 template <class T>

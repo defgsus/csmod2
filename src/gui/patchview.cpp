@@ -79,14 +79,10 @@ PatchView::PatchView(QWidget *parent) :
         model_->createModule(patch_, idName);
     });
 
-    // horiz layout for properties
-    layout_ = new QHBoxLayout(this);
-    layout_->setContentsMargins(lineWidth(), lineWidth(),
-                               lineWidth(), lineWidth());
-
     // vert layout
-    auto l0 = new QVBoxLayout;
-    layout_->addLayout(l0);
+    auto l0 = new QVBoxLayout(this);
+    l0->setContentsMargins(lineWidth(), lineWidth(),
+                            lineWidth(), lineWidth());
 
         // --- toolbar ---
         auto tb = new QToolBar(this);
@@ -107,9 +103,13 @@ PatchView::PatchView(QWidget *parent) :
             // info label
             tb->addWidget(infoLabel_ = new QLabel("info", tb));
 
-        // actual patch view
-        pview_ = new PatchGraphicsView(this, this);
-        l0->addWidget(pview_);
+        // horiz layout for properties right of patch
+        layout_ = new QHBoxLayout;
+        l0->addLayout(layout_);
+
+            // actual patch view
+            pview_ = new PatchGraphicsView(this, this);
+            layout_->addWidget(pview_,2);
 
     // update timer callback
     connect(&update_timer_, &QTimer::timeout, [this]()

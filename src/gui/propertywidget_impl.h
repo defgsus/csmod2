@@ -25,7 +25,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include <QLineEdit>
 #include <QLabel>
+#include <QListWidget>
+#include <QAction>
 
+#include "log.h"
 #include "tool/stringmanip.h"
 
 namespace CSMOD {
@@ -97,23 +100,55 @@ public:
         :   PropertyWidget(prop, parent),
             lprop_  (prop)
     {
-        //layout_->addWidget(text_);
+        list_ = new QListWidget(this);
+        layout_->addWidget(list_);
+
+        oldvalue_ = prop->value();
+
+        // create entry of each item
+        for (size_t i = 0; i<prop->values().size(); ++i)
+        {
+            auto item = new QListWidgetItem(list_);
+            item->setText(QString::fromStdString(prop->names()[i]));
+            list_->addItem(item);
+        }
+
+        // select current item
+        list_->setCurrentRow(lprop_->indexOf(lprop_->value()));
+
+        // signal user input
+        parent->connect(list_, &QListWidget::currentItemChanged, [=](QListWidgetItem*, QListWidgetItem*)
+        {
+            if (list_->currentRow() >= 0
+                    && list_->currentRow() < (int)lprop_->values().size())
+            {
+                T val = prop->values()[list_->currentRow()];
+                if (oldvalue_ != val)
+                    issueEdited();
+                oldvalue_ = val;
+            }
+        });
+
     }
 
     virtual void updateWidget()
     {
-        //text_->setPlainText(QString::fromStdString(to_string(vprop_->value())));
+        int i = lprop_->indexOf(lprop_->value());
+        if (i>=0) list_->setCurrentRow(i);
     }
 
     virtual void updateProperty()
     {
-        //text_->setPlainText(QString::fromStdString(to_string(vprop_->value())));
+        int i = list_->currentRow();
+        if (i>=0 && i<=(int)lprop_->values().size())
+            lprop_->value(lprop_->values()[i]);
     }
 
 protected:
 
     ListProperty<T> * lprop_;
-    //QTextEdit * text_;
+    QListWidget * list_;
+    T oldvalue_;
 };
 
 } // namespace GUI

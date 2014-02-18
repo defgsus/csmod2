@@ -125,6 +125,7 @@ bool Patch::restore(CSMOD::Io * io)
             CSMOD_CHECKIO(mod->restore(io), "could not load module " << modclass);
 
             mod->applyProperties();
+            mod->restoreConnectorValues_();
         }
         else
         // a connection
@@ -188,6 +189,7 @@ void Patch::applyProperties(Module * mod)
 
     // apply changes
     mod->applyProperties();
+    mod->restoreConnectorValues_();
 
     // --- maybe reconnect ---
 
@@ -287,6 +289,7 @@ bool Patch::addModule(Module * module)
 
     // initialize module
     module->applyProperties();
+    module->restoreConnectorValues_();
 
     updateDspGraph();
 
