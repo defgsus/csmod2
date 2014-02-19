@@ -18,51 +18,44 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 ****************************************************************************/
 
-#ifndef CSMOD_GUI_VALUEEDITITEM_H
-#define CSMOD_GUI_VALUEEDITITEM_H
+#ifndef PALETTE_H
+#define PALETTE_H
 
-#include <functional>
+#include <map>
 
-#include <QGraphicsTextItem>
 #include <QColor>
+
+#include "base.h"
 
 namespace CSMOD {
 namespace GUI {
 
-class ValueEditItem : public QGraphicsTextItem
+class Palette
 {
-
 public:
-    explicit ValueEditItem(QGraphicsItem *parent = 0);
+    /** Calls setFactoryDefault */
+    Palette();
 
-    void setColors(const QColor& color, const QColor& edit_color);
+    // --------- colors -----------
 
-    void setEditable(bool editable);
+    void setFactoryDefault();
 
-    /** update the text display */
-    void setValue(double value);
+    /** color to return when id not found */
+    void setDefaultColor(const QColor& color);
 
-    /** Installs a callback for whenever the textedit was changed
-        by the user and a new value was declared. */
-    void setValueChanged(std::function<void(double)> callback)
-        { change_callback_ = callback; }
+    /** Adds a new color group */
+    void set(const String& id, const QColor& color);
 
+    /** Returns the color for the group */
+    const QColor& get(const String& id) const;
 
-protected:
+private:
 
-    virtual void keyPressEvent(QKeyEvent *event);
-
-    // ___________ MEMBER _________
-
-    double last_value_;
-
-    std::function<void (double)> change_callback_;
-
-    QColor col_, editcol_;
+    std::map<String,QColor> map_;
+    QColor default_color_;
 };
-
 
 } // namespace GUI
 } // namespace CSMOD
 
-#endif // CSMOD_GUI_VALUEEDITITEM_H
+#endif // PALETTE_H

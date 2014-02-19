@@ -58,6 +58,9 @@ public:
     const String& idName() const { return idName_; }
     const String& name() const { return name_; }
 
+    /** True if dsps are ready to run */
+    bool ok() { return dsp_ok_; }
+
     // ----------- handling --------------
 
     /** Updates the Module from changed Properties */
@@ -157,6 +160,8 @@ protected:
 
     /** all dsp modules in execution order */
     Modules dspmodules_;
+
+    bool dsp_ok_;
 
     // XXX there will be multiple ins and outs
     //std::vector<MODULE::DSP::AudioOut*>

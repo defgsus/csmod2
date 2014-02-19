@@ -36,6 +36,7 @@ namespace GUI {
     class PropertyWidget;
     class PropertiesView;
     class PatchView;
+    class Palette;
 
 } // namespace GUI
 } // namespace CSMOD

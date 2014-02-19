@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include <QTimer>
 
 #include "base.h"
-
+#include "palette.h"
 
 #ifndef CSMOD_PATCH_INFO
 #define CSMOD_PATCH_INFO(arg__) \
@@ -65,6 +65,10 @@ public:
     /** Assigns a patch for editing/viewing.
         Set to NULL to deconnect. */
     void setPatch(CSMOD::Patch * patch);
+
+    // ------------ look and feel --------------
+
+    const Palette& palette() const { return palette_; }
 
     // ----------- graphics update -------------
 
@@ -162,11 +166,15 @@ protected:
 
     std::stringstream infostream_;
 
+    // ---- updates ---
+
     QTimer update_timer_;
 
     bool doUpdateFromPatchLater_;
 
     // --- widgets ---
+
+    Palette palette_;
 
     QHBoxLayout * layout_;
     ModuleStockMenu * stockmenu_;

@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #include "mod/connector.h"
 #include "mod/module.h"
 #include "mod/model.h"
+#include "mod/patch.h"
 #include "connectoritem.h"
 #include "cableitem.h"
 #include "moduleitem.h"
@@ -200,7 +201,10 @@ void PatchGraphicsView::paintEvent(QPaintEvent *event)
 
     // ---- background ----
 
-    p.setBrush(QBrush(QColor(30,30,40)));
+    QColor back = patch_->ok()?
+                view_->palette().get("patch.background")
+            :   view_->palette().get("patch.background.error");
+    p.setBrush(QBrush(back));
     QRect r(rect());
     // we need to paint a bit over the edge to
     // facilitate QPainter's efficient repaint
@@ -209,7 +213,7 @@ void PatchGraphicsView::paintEvent(QPaintEvent *event)
 
     // grid
 
-    p.setPen(QPen(QColor(40,40,45)));
+    p.setPen(QPen(back.lighter()));
 
     // line distance with zoom
     int dist = mapFromScene(50,0).x() - mapFromScene(0,0).x();

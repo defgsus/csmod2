@@ -51,7 +51,8 @@ SOURCES += \
     gui/valueedititem.cpp \
     mod/property.cpp \
     gui/propertiesview.cpp \
-    gui/propertywidget.cpp
+    gui/propertywidget.cpp \
+    gui/palette.cpp
 
 HEADERS += \
     gui/mainwindow.h \
@@ -83,7 +84,8 @@ HEADERS += \
     gui/base.h \
     gui/propertiesview.h \
     gui/propertywidget.h \
-    gui/propertywidget_impl.h
+    gui/propertywidget_impl.h \
+    gui/palette.h
 
 ######### MODULES ########
 

@@ -44,9 +44,12 @@ public:
 
 protected:
 
+    ValueConnector * freq_, *amp_;
     DspConnector * in_, * out_;
 
     csdouble phase_;
+
+
 };
 
 

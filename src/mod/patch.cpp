@@ -39,6 +39,7 @@ namespace CSMOD {
 Patch::Patch()
     :   idName_         ("patch"),
         name_           ("patch"),
+        dsp_ok_         (false),
         audioInModule_  (0),
         audioOutModule_ (0),
         blockSize_      (0),
@@ -447,7 +448,7 @@ bool Patch::updateDspGraph()
     if (!graph.initFromPatch(this))
     {
         dspmodules_.clear();
-        return false;
+        return dsp_ok_ = false;
     }
 
     graph.getSortedModules(dspmodules_);
@@ -481,7 +482,7 @@ bool Patch::updateDspGraph()
         }
     }
 
-    return true;
+    return dsp_ok_ = true;
 }
 
 void Patch::updateDspStorage_()

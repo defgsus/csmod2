@@ -39,7 +39,11 @@ Stuff::Stuff()
 {
     CSMOD_DEBUGF("Stuff::Stuff()");
 
-    add_(in_  = new DspConnector(this, Connector::IN,  "in",  "in" ));
+    add_(amp_= new ValueConnector(this, Connector::IN, "amp", "amp"));
+    amp_->userValue(1);
+    add_(freq_= new ValueConnector(this, Connector::IN, "freq", "freq"));
+    freq_->userValue(300);
+    add_(in_  = new DspConnector(this, Connector::IN,  "phase",  "phase" ));
     add_(out_ = new DspConnector(this, Connector::OUT, "out", "out"));
 }
 
@@ -47,9 +51,13 @@ void Stuff::dspStep()
 {
     for (size_t i = 0; i < blockSize(); ++i)
     {
-        out_->block()[i] = 0.5f * sinf(phase_);
-        phase_ += 6.28 * 350.0 / sampleRate()
-                + in_->block()[i];
+        out_->block()[i] = amp_->value() * sinf(6.283 * (phase_ + in_->block()[i]));
+
+        phase_ += freq_->value() / sampleRate();
+
+        // keep number in range
+        if (phase_>1.0) phase_ -= 2.0; else
+        if (phase_<-1.0) phase_ += 2.0;
     }
 }
 

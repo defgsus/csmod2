@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #include "valueedititem.h"
 #include "moduleitem.h"
+#include "patchview.h"
 #include "patchgraphicsview.h"
 
 namespace CSMOD {
@@ -55,7 +56,6 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
         //| QGraphicsItem::ItemClipsToShape
         );
 
-    setBrush(QBrush(QColor(50,50,50)));
     setRect(0,0, 10, 10);
 
     // XXX no real strategy right now for handling connector labels
@@ -66,7 +66,11 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
                       12 :
                       -(tname_->boundingRect().width())
                       , -rect().height()*2/3);
-    tname_->setBrush(QBrush(QColor(155,200,155)));
+    tname_->setBrush(QBrush(
+                         con_->isDsp()?
+                             view_->patchView()->palette().get("connector.dsp.label")
+                           : view_->patchView()->palette().get("connector.value.label")
+                            ));
 
     if (hasValueDisplay())
     {
@@ -76,8 +80,17 @@ ConnectorItem::ConnectorItem(ModuleItem * parent, CSMOD::Connector * con)
                           12 :
                           -(tvalue_->boundingRect().width())
                           , tname_->boundingRect().y());
-        // input editable
+        // value input is editable
         tvalue_->setEditable(hasValueInput());
+        // palette
+        tvalue_->setColors(
+                    con_->isDsp()?
+                        view_->patchView()->palette().get("connector.dsp.label").lighter(80)
+                      : view_->patchView()->palette().get("connector.value.label")
+                    , con_->isDsp()?
+                            view_->patchView()->palette().get("connector.dsp.label.edit").lighter(80)
+                          : view_->patchView()->palette().get("connector.value.label.edit")
+                    );
 
         if (hasValueInput())
         {
@@ -140,15 +153,18 @@ void ConnectorItem::paint(QPainter *p, const QStyleOptionGraphicsItem * /*option
 {
     CSMOD_DEBUGE("ConnectorItem::paint(" << p << ")");
 
+    QColor col = con_->isDsp()?
+                view_->patchView()->palette().get("connector.dsp")
+              : view_->patchView()->palette().get("connector.value");
+
+    col = col.lighter(100 + 100 * (hasFocus() || hasCursor() || isSelected()));
+
     if (matches_)
-        p->setPen(QPen(QColor(200,200,200)));
+        p->setPen(QPen(col.lighter(100)));
     else
         p->setPen(Qt::NoPen);
 
-    p->setBrush(QColor(50 + hasFocus() * 180,
-                       100 + hasCursor() * 50,
-                       50 + isSelected() * 100
-                       ));
+    p->setBrush(col);
     p->drawRect(rect());
 }
 

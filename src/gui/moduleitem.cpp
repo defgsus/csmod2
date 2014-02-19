@@ -127,7 +127,7 @@ void ModuleItem::updateFromModule_(CSMOD::Module * module)
     tlabel_ = new QGraphicsSimpleTextItem(this);
     tlabel_->setText(QString::fromStdString(module_->name()));
     tlabel_->setPos((width - tlabel_->boundingRect().width())/2, 4);
-    tlabel_->setBrush(QBrush(QColor(255,255,255)));
+    tlabel_->setBrush(QBrush(view_->patchView()->palette().get("connector.label.name")));
 
     // -- connectors --
     int num_in = 0, num_out = 0;
@@ -193,7 +193,12 @@ void ModuleItem::paint(QPainter * p, const
                        QWidget * /*widget*/)
 {
     int f = hasFocus() || isSelected();
-    p->setBrush(QColor(30,50,30).lighter(100+f * 50));
+
+    QColor col = module_->isDsp()?
+              view_->patchView()->palette().get("module.dsp")
+            : view_->patchView()->palette().get("module");
+
+    p->setBrush(col.lighter(100 + f * 20));
 
     p->drawRect(rect());
 }

@@ -28,13 +28,20 @@ namespace GUI {
 ValueEditItem::ValueEditItem(QGraphicsItem *parent) :
     QGraphicsTextItem(parent),
     last_value_ (0),
-    change_callback_    (0)
+    change_callback_    (0),
+    col_                (200,200,200),
+    editcol_            (255,255,255)
 {
     setEditable(false);
     setPlainText("0");
 
 }
 
+void ValueEditItem::setColors(const QColor& color, const QColor& edit_color)
+{
+    col_ = color;
+    editcol_ = edit_color;
+}
 
 void ValueEditItem::setEditable(bool editable)
 {
@@ -42,12 +49,12 @@ void ValueEditItem::setEditable(bool editable)
     {
         setTextInteractionFlags(Qt::TextEditorInteraction);
         setTabChangesFocus(true);
-        setDefaultTextColor(QColor(255,255,255));
+        setDefaultTextColor(editcol_);
     }
     else
     {
         setTextInteractionFlags(0);
-        setDefaultTextColor(QColor(200,200,200));
+        setDefaultTextColor(col_);
     }
 }
 
