@@ -204,6 +204,13 @@ bool Io::write(const String& key, const String& v)
     return true;
 }
 
+bool Io::write(const String& key, bool v)
+{
+    if (!xmlw_) return false;
+    xmlw_->writeAttribute(QString::fromStdString(key), QString::number(v));
+    return true;
+}
+
 bool Io::write(const String& key, int v)
 {
     if (!xmlw_) return false;
@@ -262,6 +269,13 @@ bool Io::read(const String& key, String& v, const String& def) const
 {
     CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
     v = a.toString().toStdString();
+    return true;
+}
+
+bool Io::read(const String& key, bool& v, bool def) const
+{
+    CSMOD_IO_CHECK_ATTRIBUTE(key, v, def);
+    v = a.toInt();
     return true;
 }
 

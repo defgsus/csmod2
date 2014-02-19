@@ -35,6 +35,7 @@ MathOperator::MathOperator(Operation op)
     : Module("Math Operator", "Math Operator")
 {
     add_( num_inputs_ = new ValueProperty<size_t>("num_in","number of inputs",2, 2,CSMOD_MAX_INPUTS) );
+    //add_( do_dsp_     = new ValueProperty<bool>("dsp","value or dsp",false) );
     add_( op_ = new ListProperty<Operation>("op", "math operation",
                         { O_ADD, O_SUB, O_MUL, O_DIV },
                         { "add", "sub", "mul", "div" },

@@ -60,7 +60,9 @@ protected:
     ValueConnector * output_;
 
     ValueProperty<size_t> * num_inputs_;
+    //ValueProperty<bool> * do_dsp_;
     ListProperty<Operation> * op_;
+
 };
 
 
@@ -88,6 +90,7 @@ protected:
 
     std::vector<ValueConnector*>
         inputs_, outputs_;
+
 };
 
 

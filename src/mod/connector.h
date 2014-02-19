@@ -56,7 +56,7 @@ class Connector
     Module * module() const { return module_; }
     /** direction (input or output) */
     Direction dir() const { return dir_; }
-    /** persistent global id */
+    /** persistent module wide id */
     const String& idName() const { return idName_; }
     /** human-readable name */
     const String& name() const { return name_; }
@@ -199,7 +199,14 @@ public:
     void setBlockSize(size_t size);
 
     virtual bool isConnectable(Connector * other) const
-    { return (dir() != other->dir() && dynamic_cast<DspConnector*>(other) != 0); }
+    {
+        return (
+                dir() != other->dir()
+                && dynamic_cast<DspConnector*>(other) != 0
+      //              || (dynamic_cast<ValueConnector*>(other) != 0
+      //                      && dir()==IN))
+                );
+    }
 
     // -------------- value -----------------
 
@@ -235,6 +242,8 @@ protected:
     /** flag if inputs must be summed, or a single input
         is simply referenced */
     bool do_sum_dsp_inputs_;
+
+    //std::vector<std::function<void()>>
 };
 
 

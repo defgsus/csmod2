@@ -81,6 +81,7 @@ public:
     // ----------------- data write -----------------
 
     bool write(const String& key, const String& v);
+    bool write(const String& key, bool v);
     bool write(const String& key, int v);
     bool write(const String& key, unsigned int v);
     bool write(const String& key, long int v);
@@ -91,6 +92,7 @@ public:
     // ----------------- data read ------------------
 
     bool read(const String& key, String& v, const String& def = "") const;
+    bool read(const String& key, bool& v, bool def = false) const;
     bool read(const String& key, int& v, int def = 0) const;
     bool read(const String& key, unsigned int& v, unsigned int def = 0) const;
     bool read(const String& key, long int& v, long int def = 0) const;
@@ -99,6 +101,7 @@ public:
     bool read(const String& key, double& v, double def = 0) const;
 
     String readString(const String& key, const String& def = "") const { String v; read(key, v, def); return v; }
+    bool readBool(const String& key, bool def = false) const { bool v; read(key, v, def); return v; }
     int readInt(const String& key, int def = 0) const { int v; read(key, v, def); return v; }
     unsigned int readUInt(const String& key, unsigned int def = 0) const { unsigned int v; read(key, v, def); return v; }
     long int readLInt(const String& key, long int def = 0) const { long int v; read(key, v, def); return v; }
